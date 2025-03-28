@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import { Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import "react-toastify/dist/ReactToastify.css";
 import Header from './components/Header/Header';
+import Footer from "./components/Footer/Footer";
+import Login from "./Pages/Login";
+import SignUp from "./Pages/SignUp";
 
 function App() {
 
@@ -69,6 +73,10 @@ function App() {
     <>
     <div className="page-wrapper"> 
          <Header />
+         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+        </Routes>
           {/* <Routes>  */}
             {/* <Route path="/" element={<Index />} /> */}
             {/* <Route path="/index2" element={<Index2 />} />
@@ -101,10 +109,10 @@ function App() {
             <Route path="/blog-listing-2" element={<BlogsList2 />} />
             <Route path="/blog-single" element={<BlogSingle />} />
             <Route path="/contact-us" element={<ContatctUs />} /> */}
-          {/* </Routes>
+          {/* </Routes> */}
         <Footer />
 
-        <BackToTop /> */}
+        {/* <BackToTop /> */}
       </div>
 
     </>
