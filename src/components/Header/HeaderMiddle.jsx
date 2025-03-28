@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import.meta.glob('../../assets/css/*.css')
 
 export default function HeaderMiddle(props) {
   const { options } = props;
@@ -12,7 +12,7 @@ export default function HeaderMiddle(props) {
           <div className="row align-items-center">
             <div className="col-md-6 d-none d-md-flex align-items-center">
               <Link className="navbar-brand logo d-none d-lg-block" to="/">
-                <img className="img-fluid" src="assets/images/logo.png" alt="" />
+                <img className="img-fluid" src="src\assets\image\image.png" alt="" />
               </Link>
               <div className="media ml-lg-11">
                 <i className="las la-mobile-alt ic-2x bg-white rounded p-2 shadow-sm mr-2 text-primary"></i>
