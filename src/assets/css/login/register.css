@@ -1,0 +1,9 @@
+/* Màu đỏ khi username đã tồn tại */
+.is-invalid {
+    border: 1px solid red !important;
+}
+
+/* Màu xanh khi username hợp lệ */
+.is-valid {
+    border: 1px solid #0fde69 !important;
+}

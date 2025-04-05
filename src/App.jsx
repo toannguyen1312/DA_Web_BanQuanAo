@@ -5,7 +5,7 @@ import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import "react-toastify/dist/ReactToastify.css";
 import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
-import Login from "./Pages/Login";
+import Login from "./pages/Login";
 import SignUp from "./Pages/SignUp";
 
 function App() {

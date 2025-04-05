@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import '../../assets/css/bootstrap.min.css'
 import.meta.glob('../../assets/css/*.css')
-
+import "../../assets/css/header/HeaderNavBar.css"
 
 export default function HeaderTop() {
     const languages = [
@@ -44,12 +44,19 @@ export default function HeaderTop() {
                   <div className="language-selection mr-2">
                     <div className="dropdown">
                       <button
-                        className="btn btn-sm text-white dropdown-toggle"
-                        data-toggle="dropdown"
+                        className="btn btn-sm text-white dropdown-button"
+
                       >
-                        {selectedLanguage}
+                   
+                   English
                       </button>
-                      <div className="dropdown-menu">
+                      <div class="dropdown-content">
+      <a href="#">Arabic</a>
+      <a href="#">French</a>
+      <a href="#">Italian</a>
+    </div>
+
+                      {/* <div className="dropdown-menu">
                         {languages.map((language) => (
                           <Link
                             key={language.value}
@@ -60,7 +67,7 @@ export default function HeaderTop() {
                             {language.name}
                           </Link>
                         ))}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="social-icons">

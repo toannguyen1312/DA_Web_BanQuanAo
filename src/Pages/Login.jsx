@@ -2,17 +2,44 @@ import React from 'react'
 import PageHeading from '../Components/PageHeading/PageHeading'
 import { Container, Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
-
-
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { login } from '../store/reducer/authSlice'
+import { store } from "../store/store";
+import { useNavigate } from 'react-router-dom'
 function Login() {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate(); 
+
     const firstBreadcrumb = { label: "Pages" };
     const secondBreadcrumb = {
         label: "Login",
         active: true,
     };
+
+   
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+    });
+
+
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission logic
+        dispatch(login(formData)).then((res) => {
+            if (res.meta.requestStatus === "fulfilled") {
+                navigate('/App')
+            // console.log("✅ Login thành công, payload:", store.getState().auth.token); // 👈 log ở đây
+            } else {
+            console.log("❌ Login thất bại:", res.payload);
+            }
+          });
     };
 
     return (
@@ -35,9 +62,11 @@ function Login() {
                                         <FormGroup>
                                             <Input
                                                 type="text"
-                                                name="name"
+                                                name="username"
                                                 id="form_name"
                                                 placeholder="Username"
+                                                value={formData.username}
+                                                onChange={handleChange}
                                                 required
                                             />
                                             <div className="help-block with-errors"></div>
@@ -47,6 +76,8 @@ function Login() {
                                                 type="password"
                                                 name="password"
                                                 id="form_password"
+                                                value={formData.password}
+                                                onChange={handleChange}
                                                 placeholder="Password"
                                                 required
                                             />
@@ -61,7 +92,7 @@ function Login() {
                                                 <Link to="#">Forgot Password?</Link>
                                             </div>
                                         </div>
-                                        <Button color="primary" block>Login Now</Button>
+                                        <Button type="submit" color="primary" block>Login Now</Button>
                                     </Form>
                                     <div className="d-flex align-items-center text-center justify-content-center mt-4">
                                         <span className="text-muted mr-1">Don't have an account?</span>

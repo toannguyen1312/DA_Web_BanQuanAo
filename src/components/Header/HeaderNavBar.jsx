@@ -1,5 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode"; 
+import "../../assets/css/header/HeaderNavBar.css"
+import { useState } from "react";
+import { logout } from "../../store/reducer/authSlice"; 
 import {
   Button,
   Col,
@@ -13,6 +18,26 @@ import ShopDropdown from "./DropDownMenuBarTable";
 import DropdownMenuNavBar from "./DropDownMenuNavBar";
 
 export default function HeaderNavBar() {
+
+  const dispatch = useDispatch();
+  const token = useSelector(state =>state.auth.token)
+  let decoded = null;
+
+  try {
+    if (token) {
+      decoded = jwtDecode(token);
+    }else {
+      decoded = "";
+    }
+  } catch (error) {
+    console.error("Invalid token:", error);
+  }
+  
+  const handleLogout = () => {
+    dispatch(logout({token: token})); 
+  };
+
+
   const homeLinks = [
     { url: "/", label: "Home - Fashion 1" },
     { url: "/index2", label: "Home - Fashion 2" },
@@ -76,7 +101,7 @@ export default function HeaderNavBar() {
   //     return total + itemTotal;
   //   }, 0);
   // };
-
+ 
   return (
     <div>
       <header className="site-header">
@@ -113,24 +138,50 @@ export default function HeaderNavBar() {
                     </ul>
                   </div>
                   <div className="right-nav align-items-center d-flex justify-content-end">
-                    <Link className="login-btn btn-link ms-3" to="/login">
-                      <i className="las la-user-alt"></i>
-                    </Link>
+
+                    <div className="user-info-wrapper " style={{ paddingRight: "10px" }}>
+                    
+                      {token ?  (
+                         <div className="dropdown login-btn btn-link ms-3 d-flex align-items-center text-dark text-decoration-none">
+                            <i className="las la-user-alt me-1" style={{fontSize: "27px"}}></i>
+                            <div>{decoded.sub}</div>
+                            <div class="dropdown-content">
+                              <a href="#">Tài Khoản Của Tôi</a>
+                              <a href="#">Đơn Mua</a>
+                              <a href="#"onClick={handleLogout}>Đăng Xuất</a>
+                            </div>
+                        </div>
+
+                        
+                      ) : ( 
+                      <Link
+                        className="login-btn btn-link ms-3 d-flex align-items-center text-dark text-decoration-none"
+                        to="/login"
+                      >
+                        <i className="las la-user-alt me-1"></i>
+                        <div >{decoded.sub}</div>
+                      </Link>
+                      )}
+
+                    </div>
+
                     <Link className="wishlist-btn btn-link ms-3">
                       <i className="lar la-heart"></i>
                     </Link>
+
                     <Link className="d-flex align-items-center ms-3 mx-1">
-                      <span className="bg-white px-2 py-1 shadow-sm rounded">
-                        <i className="las la-shopping-cart"></i>
+                      <span className="bg-white px-2 py-1 rounded">
+                        <i className="las la-shopping-cart"  style={{fontSize: "27px"}}></i>
                       </span>
                     </Link>
+
                     <div>
                       <div className="ml-4 d-none d-md-block"> 
                         <small className="d-block text-muted">My Cart</small>
                         <span className="text-dark">0 Items - $0.00</span>
                       </div>
                     </div>
-                  </div>
+                  </div>              
                 </nav>
               </Col>
             </Row>

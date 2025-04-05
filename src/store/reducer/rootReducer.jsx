@@ -1,14 +1,36 @@
-// rootReducer.js
+
 import { combineReducers } from "redux";
-// import productReducer from "./productReducer";
-// import portFolioReducer from "./portFolioReducer";
-// import blogReducer from "./blogReducer";
-// import teamReducer from "./teamReducer";
+import { persistReducer, createTransform  } from "redux-persist";
+import registerReducer from "./registerSlice"
+import authReducer  from "./authSlice"
+import storage from "redux-persist/lib/storage";
+
+
+// Dùng để gộp nhiều reducer thành một rootReducer
 const rootReducer = combineReducers({
-//   products: productReducer,
-//   portFolio: portFolioReducer,
-//   blog: blogReducer,
-//   team: teamReducer,
+    register: registerReducer,
+    auth: authReducer
+
 });
 
-export default rootReducer;
+const authTransform = createTransform(
+  (inboundState, key) => {
+    if (inboundState.shouldPersist) {
+      return { token: inboundState.token, shouldPersist: true };
+    }
+    return { token: null, shouldPersist: false }; 
+  },
+  (outboundState) => outboundState,
+  { whitelist: ['auth'] }
+);
+
+
+const persistConfig = {
+  key: "root",
+  storage,
+  transforms: [authTransform],
+};
+
+
+// Dùng để bọc rootReducer giúp Redux Persist lưu trữ dữ liệu.  
+export default persistReducer(persistConfig, rootReducer);
