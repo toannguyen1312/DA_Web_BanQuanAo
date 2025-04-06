@@ -7,6 +7,7 @@ import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
 import Login from "./Pages/Login";
 import SignUp from "./Pages/SignUp";
+import ForgotPass from './Pages/ForgotPass';
 
 function App() {
 
@@ -76,6 +77,7 @@ function App() {
          <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgotpass" element={<ForgotPass />} />
         </Routes>
           {/* <Routes>  */}
             {/* <Route path="/" element={<Index />} /> */}
