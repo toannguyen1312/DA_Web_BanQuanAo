@@ -43,18 +43,16 @@ export default function HeaderTop() {
                 <div className="d-flex align-items-center">
                   <div className="language-selection mr-2">
                     <div className="dropdown">
-                      <button
-                        className="btn btn-sm text-white dropdown-button"
-
+                      <div
+                        className="dropdown-button language"
                       >
-                   
-                   English
-                      </button>
-                      <div class="dropdown-content">
-      <a href="#">Arabic</a>
-      <a href="#">French</a>
-      <a href="#">Italian</a>
-    </div>
+                       English
+                      </div>
+                      <div className="dropdown-content">
+                        <a href="#">Arabic</a>
+                        <a href="#">French</a>
+                        <a href="#">Italian</a>
+                      </div>
 
                       {/* <div className="dropdown-menu">
                         {languages.map((language) => (
@@ -88,6 +86,8 @@ export default function HeaderTop() {
                       ))}
                     </ul>
                   </div>
+                  <div className="option-size">Cách chọn Size</div>
+                  <div className="introduce">Giới thiệu</div>
                 </div>
               </div>
             </div>

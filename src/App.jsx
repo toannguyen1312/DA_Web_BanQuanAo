@@ -7,6 +7,7 @@ import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
 import Login from "./pages/Login";
 import SignUp from "./Pages/SignUp";
+import BackToTop from "./components/BackToTop/backToTop";
 
 function App() {
 
@@ -74,8 +75,8 @@ function App() {
     <div className="page-wrapper"> 
          <Header />
          <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login/>} />
+          <Route path="/signup" element={<SignUp/>} />
         </Routes>
           {/* <Routes>  */}
             {/* <Route path="/" element={<Index />} /> */}
@@ -112,7 +113,7 @@ function App() {
           {/* </Routes> */}
         <Footer />
 
-        {/* <BackToTop /> */}
+        <BackToTop />
       </div>
 
     </>

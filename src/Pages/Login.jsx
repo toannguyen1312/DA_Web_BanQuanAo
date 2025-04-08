@@ -11,6 +11,7 @@ function Login() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate(); 
+    const [errorMessage, setErrorMessage] = useState('');
 
     const firstBreadcrumb = { label: "Pages" };
     const secondBreadcrumb = {
@@ -35,9 +36,11 @@ function Login() {
         dispatch(login(formData)).then((res) => {
             if (res.meta.requestStatus === "fulfilled") {
                 navigate('/App')
+                setErrorMessage(''); 
             // console.log("✅ Login thành công, payload:", store.getState().auth.token); // 👈 log ở đây
             } else {
-            console.log("❌ Login thất bại:", res.payload);
+                const err = res.payload?.message || "Đăng nhập thất bại. Vui lòng thử lại!";
+                setErrorMessage(err);
             }
           });
     };
@@ -57,6 +60,11 @@ function Login() {
                                 <div className="shadow p-3">
                                     <img className="img-fluid mb-5" src="src\assets\image\login.png" alt="" />
                                     <h3 className="text-center mb-3 text-uppercase">User Login</h3>
+                                        {errorMessage && (
+                                            <div className="alert alert-danger text-center mb-3">
+                                                {errorMessage}
+                                            </div>
+                                        )}
                                     <Form id="contact-form" onSubmit={handleSubmit}>
                                         <div className="messages"></div>
                                         <FormGroup>

@@ -2,6 +2,7 @@
   position: relative;
   display: inline-block;
   cursor: pointer;
+  z-index: 999;
 }
 
 .dropdown-content {
@@ -60,3 +61,80 @@
   opacity: 1;
   transform: scale(1);
 }
+
+.nav-item:hover{
+  color: #dc460b;
+}
+
+.icon-with-badge {
+  position: relative;
+  display: inline-block;
+}
+
+.icon-with-badge .badge {
+  position: absolute;
+  top: -3px;
+  right: -13px;
+  color: red;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Hot bộ sưu tập */
+
+.position-relative {
+  position: relative;
+}
+
+.hot-badge {
+  position: absolute;
+  top: -18px;
+  left: 100px;
+  background-color: #b71c1c;
+  color: white;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 2px;
+  line-height: 1;
+  z-index: 10;
+}
+
+.hot-badge::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #b71c1c;
+}
+
+/* css giỏ hàng  */
+.modal-content {
+  overflow-y: visible;
+}
+
+/* Header top*/
+.option-size {
+  font-size: 14px;
+  margin: 0px 10px;
+}
+
+
+.introduce, .language {
+  font-size: 14px;
+}
+
+.option-size:hover,
+.introduce:hover,
+.language:hover {
+  cursor: pointer;
+  color: #dc460b;
+
+}
+
+
