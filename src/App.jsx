@@ -7,8 +7,8 @@ import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
 import Login from "./pages/Login";
 import SignUp from "./Pages/SignUp";
+import ForgotPass from './Pages/ForgotPass';
 import BackToTop from "./components/BackToTop/backToTop";
-
 function App() {
 
   const location = useLocation();
@@ -75,8 +75,9 @@ function App() {
     <div className="page-wrapper"> 
          <Header />
          <Routes>
-          <Route path="/login" element={<Login/>} />
-          <Route path="/signup" element={<SignUp/>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgotpass" element={<ForgotPass />} />
         </Routes>
           {/* <Routes>  */}
             {/* <Route path="/" element={<Index />} /> */}
