@@ -1,6 +1,7 @@
 import React from "react";
 import HeaderTop from "./HeaderTop";
 import HeaderMiddle from "./HeaderMiddle";
+import HeaderNavBar from "./HeaderNavBar";
 
 export default function Header() {
   return (
@@ -15,7 +16,7 @@ export default function Header() {
             { value: "kids", label: "Kids" },
           ]}
         />
-        {/* <HeaderNavBar /> */}
+        <HeaderNavBar />
       </header>
     </>
   );
