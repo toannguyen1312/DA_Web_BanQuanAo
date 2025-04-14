@@ -5,10 +5,12 @@ import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import "react-toastify/dist/ReactToastify.css";
 import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
-import Login from "./pages/Login";
+import Login from "./Pages/Login";
 import SignUp from "./Pages/SignUp";
 import ForgotPass from './Pages/ForgotPass';
 import BackToTop from "./components/BackToTop/backToTop";
+import SelectSize from './Pages/SelectSize';
+import Introduce from './Pages/Introduce';
 function App() {
 
   const location = useLocation();
@@ -76,6 +78,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpass" element={<ForgotPass />} />
+          <Route path="/selectsize" element={<SelectSize />} />
+          <Route path="/introduce" element={<Introduce />} />
         </Routes>
           {/* <Routes>  */}
             {/* <Route path="/" element={<Index />} /> */}

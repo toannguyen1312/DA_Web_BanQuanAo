@@ -21,10 +21,7 @@ export default function Footer() {
                 Eko<span className="text-primary">cart</span>
               </Link>
               <p className="my-3 text-muted">
-                Ekocart - Multi-purpose E-commerce Html5 Template Is fully
-                responsible, Build whatever you like with the Ekocart, Ekocart
-                is the creative, modern HTML5 Template suitable for Your
-                business.
+                Ekocart - Chúng tôi mang đến cho bạn những mẫu áo đẹp, đa dạng về kiểu dáng, mẫu mã và màu sắc, phù hợp với từng đối tượng.
               </p>
               <ul className="list-inline mb-0">
                 <li className="list-inline-item">
@@ -57,26 +54,26 @@ export default function Footer() {
             <div className="col-12 col-lg-6 mt-6 mt-lg-0">
               <div className="row">
                 <div className="col-12 col-sm-4 navbar-dark">
-                  <h5 className="mb-4 text-white">Quick Links</h5>
+                  <h5 className="mb-4 text-white">Mục lục</h5>
                   <ul className="navbar-nav list-unstyled mb-0">
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="/">
-                        Home
+                        Trang chủ
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="about-us">
-                        About
+                        Về chúng tôi
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="shop-grid-left-sidebar">
-                        Shop
+                        Cửa hàng
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="faq">
-                        Faq
+                        Câu hỏi và giải đáp
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
@@ -86,84 +83,75 @@ export default function Footer() {
                     </li>
                     <li className="nav-item">
                       <Link className="nav-link" to="contact-us">
-                        Contact Us
+                        Liên hệ 
                       </Link>
                     </li>
                   </ul>
                 </div>
                 <div className="col-12 col-sm-4 mt-6 mt-sm-0 navbar-dark">
-                  <h5 className="mb-4 text-white">Top Products</h5>
+                  <h5 className="mb-4 text-white">Top sản phẩm</h5>
                   <ul className="navbar-nav list-unstyled mb-0">
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        T-Shirts
+                        Áo nam
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Sneakers & Athletic
+                        Quần nam
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Shirts & Tops
+                        Phụ kiện
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Sunglasses
+                        Giày dép
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Bags & Wallets
+                        Túi xách
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Accessories
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="#">
-                        Shoes
+                        Mũ nón
                       </Link>
                     </li>
                   </ul>
                 </div>
                 <div className="col-12 col-sm-4 mt-6 mt-sm-0 navbar-dark">
-                  <h5 className="mb-4 text-white">Features</h5>
+                  <h5 className="mb-4 text-white">Tính năng</h5>
                   <ul className="navbar-nav list-unstyled mb-0">
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="terms-and-conditions">
-                        Term Of Service
+                      Điều khoản dịch vụ
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="privacy-policy">
-                        Privacy Policy
+                      Chính sách bảo mật
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Support
+                      Hỗ trợ
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Shipping & Returns
+                      Vận chuyển & Trả hàng
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Careers
+                      Tuyển dụng
                       </Link>
                     </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="#">
-                        Our Story
-                      </Link>
-                    </li>
+
                   </ul>
                 </div>
               </div>
@@ -175,9 +163,9 @@ export default function Footer() {
                   <i className="las la-map ic-2x text-primary"></i>
                 </div>
                 <div>
-                  <h6 className="mb-1 text-light">Store address</h6>
+                  <h6 className="mb-1 text-light">Địa chỉ cửa hàng</h6>
                   <p className="mb-0 text-muted">
-                    423B, Road Wordwide Country, USA
+                    Đại học nông lâm TP Hồ Chí Minh
                   </p>
                 </div>
               </div>
@@ -187,10 +175,10 @@ export default function Footer() {
                   <i className="las la-envelope ic-2x text-primary"></i>
                 </div>
                 <div>
-                  <h6 className="mb-1 text-light">Email Us</h6>
+                  <h6 className="mb-1 text-light">Email</h6>
                   <Link className="text-muted" to="mailto:skytouchinfotech01@gmail.com">
                     {" "}
-                    skytouchinfotech01@gmail.com                  </Link>
+                    sinhviennlu@gmail.com                  </Link>
                 </div>
               </div>
               <div className="d-flex mb-3">
@@ -199,8 +187,8 @@ export default function Footer() {
                   <i className="las la-mobile ic-2x text-primary"></i>
                 </div>
                 <div>
-                  <h6 className="mb-1 text-light">Phone Number</h6>
-                  <Link className="text-muted" to="tel:+912345678900">
+                  <h6 className="mb-1 text-light">Số điện thoại</h6>
+                  <Link className="text-muted" to="tel:+987654321">
                     +91-234-567-8900
                   </Link>
                 </div>
@@ -211,7 +199,7 @@ export default function Footer() {
                   <i className="las la-clock ic-2x text-primary"></i>
                 </div>
                 <div>
-                  <h6 className="mb-1 text-light">Working Hours</h6>
+                  <h6 className="mb-1 text-light">Thời gian làm việc</h6>
                   <span className="text-muted">Mon - Fri: 10AM - 7PM</span>
                 </div>
               </div>
@@ -220,11 +208,11 @@ export default function Footer() {
           <hr className="my-8" />
           <div className="row text-muted align-items-center">
             <div className="col-md-7">
-              Copyright ©2020 All rights reserved | This Template is made by{" "}
+              Copyright ©2025 All rights reserved | This Template is made by{" "}
               <i className="lar la-heart text-primary heartBeat2"></i>{" "}
               <u>
                 <Link className="text-primary" to="#">
-                  SkyTouch Infotech
+                  SinhvienNongLam
                 </Link>
               </u>
             </div>
