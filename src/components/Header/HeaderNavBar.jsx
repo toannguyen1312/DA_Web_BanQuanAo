@@ -13,7 +13,7 @@ import {
   ModalBody,
   Row
 } from "reactstrap";
-// import "../../assets/css/bootstrap.min.css"
+import "../../assets/css/bootstrap.min.css"
 import CatalogDropDown from "./CatalogDropDown";
 import ShopDropdown from "./DropDownMenuBarTable";
 import DropdownMenuNavBar from "./DropDownMenuNavBar";
@@ -169,8 +169,8 @@ export default function HeaderNavBar() {
 
                     <div>
                       <div className="ml-4 d-none d-md-block"> 
-                        <small className="d-block text-muted">My Cart</small>
-                        <span className="text-dark">0 Items - $0.00</span>
+                        <small className="d-block text-muted">Giỏ hàng</small>
+                        <span className="text-dark">0 sản phẩm - $0.00</span>
                       </div>
                     </div>
                   </div>              

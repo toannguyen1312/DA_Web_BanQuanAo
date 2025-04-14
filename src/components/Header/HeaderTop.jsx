@@ -33,11 +33,11 @@ export default function HeaderTop() {
                 <div className="d-none d-md-flex align-items-center">
                   <small className="mr-3">
                     <i className="las la-store text-primary mr-1 align-middle"></i>
-                    Welcome to Our store Ekocart
+                    Chào mừng đến với cửa hàng Ekocart
                   </small>{" "}
                   <small>
                     <i className="las la-truck text-primary mr-1 align-middle"></i>
-                    Free shipping worldwide
+                    Miễn phí vận chuyển toàn cầu
                   </small>
                 </div>
                 <div className="d-flex align-items-center">

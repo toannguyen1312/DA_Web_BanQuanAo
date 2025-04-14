@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import SignUp from "./Pages/SignUp";
 import ForgotPass from './Pages/ForgotPass';
 import BackToTop from "./components/BackToTop/backToTop";
+import Home from "./pages/Home"
+
 function App() {
 
   const location = useLocation();
@@ -77,8 +79,8 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpass" element={<ForgotPass />} />
         </Routes>
-          {/* <Routes>  */}
-            {/* <Route path="/" element={<Index />} /> */}
+          <Routes>  
+            <Route path="/" element={<Home/>} />
             {/* <Route path="/index2" element={<Index2 />} />
             <Route path="/index3" element={<Index3 />} />
             <Route path="/index4" element={<Index4 />} />
@@ -109,7 +111,7 @@ function App() {
             <Route path="/blog-listing-2" element={<BlogsList2 />} />
             <Route path="/blog-single" element={<BlogSingle />} />
             <Route path="/contact-us" element={<ContatctUs />} /> */}
-          {/* </Routes> */}
+          </Routes>
         <Footer />
 
         <BackToTop />

@@ -2,14 +2,18 @@
 import { combineReducers } from "redux";
 import { persistReducer, createTransform  } from "redux-persist";
 import registerReducer from "./registerSlice"
+import getProduct from "./productReducer"
 import authReducer  from "./authSlice"
+import selectedProduct  from "./selectedProduct"
 import storage from "redux-persist/lib/storage";
 
 
 // Dùng để gộp nhiều reducer thành một rootReducer
 const rootReducer = combineReducers({
     register: registerReducer,
-    auth: authReducer
+    auth: authReducer,
+    getProduct: getProduct,
+    selectProduct: selectedProduct 
 
 });
 
@@ -29,6 +33,7 @@ const persistConfig = {
   key: "root",
   storage,
   transforms: [authTransform],
+  // whitelist: ['auth'],
 };
 
 

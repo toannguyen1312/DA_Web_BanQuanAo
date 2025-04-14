@@ -12,14 +12,14 @@ export default function HeaderMiddle(props) {
           <div className="row align-items-center">
             <div className="col-md-6 d-none d-md-flex align-items-center">
               <Link className="navbar-brand logo d-none d-lg-block" to="/">
-                <img className="img-fluid" src="src\assets\image\image.png" alt="" />
+                <img className="img-fluid" src="src\assets\images\image.png" alt="" />
               </Link>
               <div className="media ml-lg-11">
                 <i className="las la-mobile-alt ic-2x bg-white rounded p-2 shadow-sm mr-2 text-primary"></i>
                 <div className="media-body">
-                  <span className="mb-0 d-block">Call Us</span>
+                  <span className="mb-0 d-block">Gọi cho chúng tôi</span>
                   <Link className="text-muted" to="tel:+912345678900">
-                    +91-234-567-8900
+                    +84-039-444-1312
                   </Link>
                 </div>
               </div>
@@ -38,7 +38,7 @@ export default function HeaderMiddle(props) {
                   <input
                     className="form-control border-0 border-left col"
                     type="search"
-                    placeholder="Enter Your Keyword"
+                    placeholder="Nhập từ khóa của bạn"
                     aria-label="Search"
                   />
                   <button
