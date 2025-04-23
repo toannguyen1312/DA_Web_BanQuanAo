@@ -86,8 +86,8 @@ export default function HeaderTop() {
                       ))}
                     </ul>
                   </div>
-                  <div className="option-size">Cách chọn Size</div>
-                  <div className="introduce">Giới thiệu</div>
+                  <Link to="/SelectSize" className="option-size">Cách chọn Size</Link>
+                  <Link to="/Introduce" className="option-size">Giới thiệu</Link>
                 </div>
               </div>
             </div>

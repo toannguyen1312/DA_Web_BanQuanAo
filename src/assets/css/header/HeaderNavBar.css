@@ -120,8 +120,9 @@
 
 /* Header top*/
 .option-size {
-  font-size: 14px;
-  margin: 0px 10px;
+  font-size: 14px !important;
+  margin: 0px 10px !important;
+  color: #ffffff !important;
 }
 
 
@@ -132,9 +133,13 @@
 .option-size:hover,
 .introduce:hover,
 .language:hover {
-  cursor: pointer;
-  color: #dc460b;
+  cursor: pointer !important;
+  color: #dc460b !important;
 
 }
+.small-text{
+  font-size: 14px;
+}
+
 
 

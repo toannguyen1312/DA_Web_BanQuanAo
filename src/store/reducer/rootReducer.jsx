@@ -4,7 +4,7 @@ import { persistReducer, createTransform  } from "redux-persist";
 import registerReducer from "./registerSlice"
 import getProduct from "./productReducer"
 import authReducer  from "./authSlice"
-import selectedProduct  from "./selectedProduct"
+import selectProduct  from "./selectedProduct"
 import storage from "redux-persist/lib/storage";
 
 
@@ -13,9 +13,12 @@ const rootReducer = combineReducers({
     register: registerReducer,
     auth: authReducer,
     getProduct: getProduct,
-    selectProduct: selectedProduct 
+    selectProduct: selectProduct 
 
 });
+
+
+
 
 const authTransform = createTransform(
   (inboundState, key) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Col, Input, Modal, ModalBody, Row } from 'reactstrap';
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -6,23 +6,63 @@ import "../../assets/css/product/productCart.css"
 import { setSelectedProduct } from "../../store/reducer/selectedProduct"
 
 
-
 function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, discountPercent, rating }) {
 
     const dispatch = useDispatch();
     const [modalOpen, setModalOpen] = useState(false);
     const [quantity, setQuantity] = useState(1);
+    const [selectProduct, setSelectProduct] = useState(null); // quản lý sản phẩm
+    const [selectedVariant, setVariant] = useState(null); // chứa tất cả các màu
+    const [selectedSize, setSelectedSize] = useState(null); // chọn size
+   
 
-    // const selectedProduct = useSelector((state) => state.selectProduct.selectedProduct)
+    const selectedProduct = useSelector((state) => state.selectProduct.selectedProduct)
 
-    // console.log(selectedProduct)
+
+    useEffect(() => {
+      if (selectedProduct !== null) {
+        const first = selectedProduct.result[0];
+        setSelectProduct(first);
+        setVariant(first);
+        setSelectedSize(first.sizes[0]);
+      }
+    }, [selectedProduct]);
+    
   
-    // const toggleModal = () => {
-    //   setModalOpen(!modalOpen);
-    // };
-  
+    const toggleModal = () => {
+        setModalOpen(!modalOpen);
+      };
+// size
+      const handleSizeChange = (event) => {
+        setSelectedSize(event.target.value);
+      };
+// color
+      const handleColorClick = (color) => {
+        const matched = selectedProduct.result.find(item => item.color === color);
+        if (matched) {
+          setSelectProduct(matched);
+          setVariant(matched); 
+        }
+      };
 
-
+      const renderSelectedRating = () => {
+        const stars = [];
+        if(selectProduct !== null) {
+          for (let i = 0; i < selectProduct.rating; i++) {
+            stars.push(<i key={i} className="las la-star"></i>);
+          }
+        }
+        return stars;
+      };
+    
+      // lấy ra stock hiện có theo size
+      const getStockBySize = () => {
+        if (!selectProduct || !selectedSize) return 0;
+        const index = selectProduct.sizes.indexOf(selectedSize);
+        return selectProduct.stock[index] || 0;
+      };
+      
+      
     return (
         <>
           <div className="card product-card">
@@ -45,9 +85,9 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
             </button>
 
             <Link className="card-img-hover d-block" to="/product-left-image" 
-            // onClick={() => {
-            //   dispatch(setSelectedProduct(id));
-            // }}
+            onClick={() => {
+              dispatch(setSelectedProduct(id));
+            }}
             >
               <img className="card-img-top card-img-back" src={imgBackSrc} alt="..." />
               <img className="card-img-top card-img-front" src={imgFrontSrc} alt="..." />
@@ -58,11 +98,10 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                 <div className="product-title">
                   <Link
                     to="/product-left-image"
-                    className="text-dark"
-                    // onClick={() => {
-                    //   dispatch(setSelectedProduct(id));
-                    // }}
-                    // className="mt-4 mb-2 d-block link-title h6"
+                    className="text-dark mt-4 mb-2 d-block link-title h6"
+                    onClick={() => {
+                      dispatch(setSelectedProduct(id));
+                    }}
                   >
                     {title}
                   </Link>
@@ -105,7 +144,7 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                     title="Quick View"
                     onClick={() => {
                       dispatch(setSelectedProduct(id))
-                    //   toggleModal()
+                      toggleModal()
                     }}
                   >
                     <span >
@@ -116,158 +155,183 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
               </div>
             </div>
           </div>
-          {
-        //   selectedProduct && 
-          <Modal className="" style={{ maxWidth: '50%' }} isOpen={modalOpen} 
-        //   toggle={toggleModal}
-          >
-                <div>
-                <Row>
-                    <Col xs={11} className="align-items-center">
-                    {" "}
-                    {/* <h5 className=" px-4">
-                    Your Wishlist ({wishListItems?.length})
-                    </h5> */}
-                    </Col>
-                    <Col xs={1} className="flex-end">
-                    {" "}
+          {selectedProduct && <Modal 
+          className="custom-modal"
+          style={{ maxWidth: '50%'}} 
+          isOpen={modalOpen} 
+          toggle={toggleModal}>
 
-                    <Button
-                        className="btn btn-primary btn-sm fs-1"
-                        // onClick={toggleModal}
-                    >
-                        <i className="las la-times"></i>
-                    </Button>
-                    </Col>
-                </Row>
+                <div className="overflow-hidden">
+                  <Row>
+                      <Col xs={11} className="align-items-center">
+                      {" "}
+                      {/* <h5 className=" px-4">
+                      Your Wishlist ({wishListItems?.length})
+                      </h5> */}
+                      </Col>
+                     
+                      <Button
+                          className="btn btn-primary btn-sm fs-1 ms-1 btn-latimes"
+                          onClick={toggleModal}
+                      >
+                          <i className="las la-times"></i>
+                      </Button>
+                   
+                  </Row>
                 </div>
                 <ModalBody>
-                <Row className="align-items-center">
-                    <Col lg="5" className="col-12">
-                    {/* <img className="img-fluid rounded" src={`assets/images/${selectedProduct.pictures[0]}`} alt="" /> */}
-                    </Col>
-                    <Col lg="7" className="col-12 mt-5 mt-lg-0">
-                    <div className="product-details">
-                        {/* <h3 className="mb-0">{selectedProduct.name}</h3> */}
-                        <div className="star-rating mb-4">
-                        {/* {renderSelectedRating()} */}
-                        </div>
-                        {/* <span className="product-price h4">${selectedProduct.salePrice} <del className="text-muted h6">${selectedProduct.price}</del></span> */}
-                        <ul className="list-unstyled my-4">
-                        {/* <li className="mb-2">Availibility: <span className="text-muted"> {selectedProduct.stock}</span>
-                        </li> */}
-                        {/* <li>Categories: <span className="text-muted">{selectedProduct.category}</span>
-                        </li> */}
-                        </ul>
-                        {/* <p className="mb-4">{selectedProduct.description}</p> */}
-                        <div className="d-sm-flex align-items-center mb-5">
-                        <div className="d-sm-flex align-items-center mr-sm-4">
-                            <div className="d-flex align-items-center mr-sm-4">
-                            {/* <Button
-                                className="btn-product btn-product-up"
-                                onClick={() => {
-                                if (quantity > 1) setQuantity(quantity - 1);
-                                }}
-                            >
-                                <i className="las la-minus"></i>
-                            </Button> */}
-                            <Input
-                                className="form-product"
-                                type="number"
-                                name="form-product"
-                                // value={quantity}
-                                // onChange={(e) => {
-                                // const newQuantity = parseInt(e.target.value);
-                                // if (
-                                //     newQuantity >= 1 &&
-                                //     newQuantity <= product.stock
-                                // ) {
-                                //     setQuantity(newQuantity);
-                                // }
-                                // }}
-                                // max={product.stock}
-                            />
-                            <Button
-                                className="btn-product btn-product-down"
-                                // onClick={() => {
-                                // if (quantity < product.stock)
-                                //     setQuantity(quantity + 1);
-                                // }}
-                            >
-                                <i className="las la-plus"></i>
-                            </Button>
-                            </div>
-                        </div>
-                        <Input
-                            type="select"
-                            className="custom-select mt-3 mt-sm-0"
-                            name="size"
-                            id="size"
-                            placeholder="Size"
-                            // onChange={handleSizeChange}
-                        >
-                            {/* <option disabled selected hidden>
-                            Size
-                            </option>
-                            {selectedProduct.size.map((size) => (
-                            <option key={size} value={size}>
-                                {size}
-                            </option>
-                            ))} */}
-                        </Input>
-                        <div className="d-flex  ml-sm-4 mt-3 mt-sm-0">
-                            {/* {selectedProduct.colors.map((col) => (
+                  <Row className="align-items-center">
+                      <Col lg="5" className="col-12">
+                      <div className="wrapper-price">
+                      {selectProduct && <span className="product-price h4">{selectProduct.price?.toLocaleString('vi-VN')} ₫<del className="text-muted h6 ml-2">{(selectProduct.price - (selectProduct.price * discountPercent / 100)).toLocaleString('vi-VN')} ₫</del></span>}
+                      </div>
+                      {selectProduct && (<img className="img-fluid rounded img-item" src={selectProduct.imageUrl} alt="" />)}                      </Col>
+                      <Col lg="7" className="col-12 mt-5 mt-lg-0">
+                      <div className="product-details">
+                         {selectProduct && (<h6 className="mb-0">{selectProduct.product.name}</h6>)} 
+                          <div className="star-rating mb-2">
+                          {renderSelectedRating()}
+                          </div>
+                          <ul className="list-unstyled my-1">
+                          {selectProduct && selectedSize && (
+                              <li className="mb-2">
+                                Có sẵn: <span className="text-muted">
+                                  {
+                                    selectProduct.sizes.map((size, index) => {
+                                      if (size === selectedSize) {
+                                        return selectProduct.stock[index];
+                                      }
+                                      return null;
+                                    })
+                                  }
+                                </span>
+                              </li>
+                            )}
 
-                            <div className="form-check pl-0" >
-                                <input type="checkbox" value={col} onChange={() => handleColorClick(col)} className="form-check-input" id={col} />
-                                <label className="form-check-label" style={{ background: col }} htmlFor={col} />
+                          {selectProduct && (<li>Thể loại: <span className="text-muted">{selectProduct.product.category.name}</span>
+                            </li>)}
+                          </ul>
+                          {selectProduct && (<p className="mb-2">{selectProduct.product.category.description}</p>)}
+                          <div className="d-sm-flex align-items-center">
+
+                            <div className="d-sm-flex align-items-center mb-4">
+                              <div className="d-flex align-items-center mr-sm-4 mb-3 mb-sm-0">
+                                <div className="quantity-selector d-flex align-items-center">
+                                  <Button className="btn-quantity" 
+                                  onClick={() => quantity > 1 && setQuantity(quantity - 1)}>
+                                    <i className="las la-minus"></i>
+                                  </Button>
+                                  <Input
+                                    type="number"
+                                    className="form-quantity text-center"
+                                    value={quantity}
+                                    onChange={(e) => {
+                                      const maxStock = getStockBySize();
+                                      const newQuantity = parseInt(e.target.value);
+                                      if (selectProduct && newQuantity >= 1 && newQuantity <= maxStock) {
+                                        setQuantity(newQuantity);
+                                      }
+                                    }}
+                                  />
+                                  <Button
+                                    className="btn-quantity"
+                                    onClick={() => {
+                                      if (selectProduct) {
+                                        const maxStock = getStockBySize();
+                                        quantity < maxStock && setQuantity(quantity + 1);
+                                      }
+                                    }}
+                                  >
+                                    <i className="las la-plus"></i>
+                                  </Button>
+                                </div>
+                              </div>
+
+                              {/* Size */}
+                              <Input
+                                type="select"
+                                className="custom-select"
+                                name="size"
+                                id="size"
+                                placeholder="Size"
+                                onChange={handleSizeChange}
+                              >
+                                
+                                {selectProduct && selectProduct.sizes.map((size) => (
+                                  <option key={size} value={size}>{size}</option>
+                                ))}
+                              </Input>
                             </div>
-                            ))} */}
+                          </div>
+
+                          {/* Chọn màu - Đưa xuống dưới */}
+                          <div className="mb-2">
+                            <label className="font-weight-bold mb-2">Chọn màu:</label>
+                            <div className="d-flex flex-wrap gap-2">
+                              {selectedProduct.result.map((item, idx) => (
+                                <div key={idx} className="ml-2">
+                                  <input
+                                    className="mr-1"
+                                    type="radio"
+                                    name="color"
+                                    id={`color-${idx}`}
+                                    checked={selectedVariant?.color === item.color}
+                                    onChange={() => handleColorClick(item.color)}
+                                  />
+                                  <label
+                                    htmlFor={`color-${idx}`}
+                                    className={`color-swatch ${selectedVariant?.color === item.color ? 'selected' : ''}`}
+                                    style={{ backgroundColor: item.color }}
+                                    title={item.color}
+                                  >{item.color}</label>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="product-link d-flex align-items-center mt-1">
+                              <Button
+                                className="btn btn-primary btn-animated mr-sm-1 mb-3 mb-sm-0 btn-addToCart"
+                                type="button"
+                              >
+                                <i className="las la-shopping-cart"></i>
+                                <span>Thêm vào giỏ hàng</span>
+                              </Button>
+                              <Button
+                                className="btn btn-dark btn-animated btn-addToCart"
+                                type="button"
+                              >
+                                <i className="lar la-heart"></i>
+                                <span>Yêu thích</span>
+                              </Button>
+                            </div>
+
+                            <div className="d-sm-flex align-items-center border-top pt-4 mt-4">
+                              <h6 className="mb-sm-0 mr-sm-4">Share It:</h6>
+                              <ul className="list-inline">
+                                  <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
+                                  className="la la-facebook"></i></Link>
+                                  </li>
+                                  <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
+                                  className="la la-dribbble"></i></Link>
+                                  </li>
+                                  <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
+                                  className="la la-instagram"></i></Link>
+                                  </li>
+                                  <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
+                                  className="la la-twitter"></i></Link>
+                                  </li>
+                                  <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
+                                  className="la la-linkedin"></i></Link>
+                                  </li>
+                              </ul>
+                            </div>
                         </div>
-                        </div>
-                        <div className="product-link d-flex align-items-center mt-4">
-                        <Button
-                            className="btn btn-primary btn-animated mr-sm-4 mb-3 mb-sm-0"
-                            type="button"
-                            // onClick={() => handleSelectedAddToCart(product)}
-                        >
-                            <i className="las la-shopping-cart mr-1"></i>Add To Cart
-                        </Button>
-                        <Button
-                            className="btn btn-dark btn-animated"
-                            type="button"
-                            // onClick={() => {
-                            // handleSelectedAddToWishList(product);
-                            // }}
-                        >
-                            <i className="lar la-heart mr-1"></i>Add To Wishlist
-                        </Button>
-                        </div>
-                        <div className="d-sm-flex align-items-center border-top pt-4 mt-5">
-                        <h6 className="mb-sm-0 mr-sm-4">Share It:</h6>
-                        <ul className="list-inline">
-                            <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
-                            className="la la-facebook"></i></Link>
-                            </li>
-                            <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
-                            className="la la-dribbble"></i></Link>
-                            </li>
-                            <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
-                            className="la la-instagram"></i></Link>
-                            </li>
-                            <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
-                            className="la la-twitter"></i></Link>
-                            </li>
-                            <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
-                            className="la la-linkedin"></i></Link>
-                            </li>
-                        </ul>
-                        </div>
-                    </div>
-                    </Col>
-                </Row>
+                      </Col>
+                  </Row>
                 </ModalBody>
-            </Modal >}
+
+          </Modal >}
         </>
     
       );

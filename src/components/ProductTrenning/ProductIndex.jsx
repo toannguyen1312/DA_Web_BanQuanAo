@@ -8,23 +8,16 @@ function ProductIndex() {
   const [hasFetched, setHasFetched] = useState(false);
   const newProducts = useSelector((state) => state.getProduct.GetProduct);
 
+  // Cắt 2 phần tử đầu tiên
+// const slicedObj = Object.fromEntries(
+//   Object.entries(obj).slice(0, 2)
+// );
+
+
   // 👉 Fetch sản phẩm khi component mount
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, []);
-
-  // useEffect(() => {
-  //   if (newProducts?.result?.length) {
-  //     console.log("✅ Product list:", newProducts.result);
-  //     newProducts.result.forEach((product, index) => {
-  //       console.log(`🔹 Product ${index + 1}:`, product);
-  //       product.colors.forEach((color, i) => {
-  //         console.log(` 🔸 Color ${i + 1}:`, color);
-  //       });
-  //     });
-  //   }
-  // }, [newProducts]);
-  
 
   
   return (

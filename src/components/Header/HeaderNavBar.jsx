@@ -92,17 +92,18 @@ export default function HeaderNavBar() {
                       <li className="nav-item dropdown">
                         ÁO NAM
                         <div className="dropdown-content">
-                          <a href="#">Áo thun</a>
-                          <a href="#">Áo sơ mi</a>
-                          <a href="#">Áo khoác</a>
+
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Áo Sơ Mi", categoryID: "2" }}>Áo Sơ Mi</Link>
+                          {/* <a href="#">Áo thun</a> */}
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Áo Khoác",  categoryID: "3" }}>Áo Khoác</Link>
                         </div>
                       </li>
 
                       <li className="nav-item dropdown">
                           QUẦN NAM
                           <div className="dropdown-content">
-                            <a href="#">Quần jeans</a>
-                            <a href="#">Quần short</a>
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Quần Jeans",  categoryID: "4" }}>Quần Jeans</Link>
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Quần Short",  categoryID: "5" }}>Quần Short</Link>
                             <a href="#">Quần tây</a>
                           </div>
                         </li>
