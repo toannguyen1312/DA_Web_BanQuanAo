@@ -1,0 +1,9 @@
+.login-admin {
+    background-image: url("../../image/imgAdmin/home-bg.jpg"); 
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: cover;
+    height: 100vh; 
+    width: 100%; 
+}
