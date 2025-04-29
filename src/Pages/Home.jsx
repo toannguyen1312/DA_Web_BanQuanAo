@@ -3,10 +3,28 @@ import BannerSliderIndex from "../components/Hero Banner/BannerSliderIndex"
 import FeatureIndex from "../components/Feature/FeatureIndex"
 import ProductIndex from "../components/ProductTrenning/ProductIndex"
 import { useState, useEffect } from "react";
-
+import { useDispatch, useSelector } from "react-redux";
+import {fetchWishList} from "../store/reducer/selectedWishList"
+import { jwtDecode } from "jwt-decode"; 
+import { getProduct, getUser } from "../service/productService"
 export default function Home() {
 
-  
+    const dispatch = useDispatch()
+
+
+     const token = useSelector(state =>state.auth.token)
+        let decoded = null;
+         try {
+            if (token) {
+              decoded = jwtDecode(token);
+            } else {
+              decoded = null;
+            }
+          } catch (error) {
+            console.error("Invalid token:", error);
+            decoded = null;
+          }
+     
     const feature = [
       {
         icon: "las la-truck ic-2x text-primary",
@@ -30,6 +48,21 @@ export default function Home() {
       },
     ];
 
+    useEffect(() => {
+      async function fetchData() {
+      let user = null;
+            if (decoded.sub !== null) {
+              user = await getUser(decoded.sub); // gọi đúng hàm getUser
+            }
+        dispatch(fetchWishList(user.userId))
+          }
+      fetchData()
+    })
+    
+
+     useEffect(() => {
+            window.scrollTo(0, 0); // ✅ Thêm cái này
+        }, []);
 
     return (
         <div className="page-wrapper">

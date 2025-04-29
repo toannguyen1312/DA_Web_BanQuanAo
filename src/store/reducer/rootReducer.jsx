@@ -6,6 +6,8 @@ import getProduct from "./productReducer"
 import authReducer  from "./authSlice"
 import selectProduct  from "./selectedProduct"
 import storage from "redux-persist/lib/storage";
+import wishlist from "./wishlistReducer"
+import SelectedWishList from "./selectedWishList"
 
 
 // Dùng để gộp nhiều reducer thành một rootReducer
@@ -13,11 +15,11 @@ const rootReducer = combineReducers({
     register: registerReducer,
     auth: authReducer,
     getProduct: getProduct,
-    selectProduct: selectProduct 
+    selectProduct: selectProduct,
+    wishlist: wishlist,
+    fetchWishListSlice: SelectedWishList
 
 });
-
-
 
 
 const authTransform = createTransform(

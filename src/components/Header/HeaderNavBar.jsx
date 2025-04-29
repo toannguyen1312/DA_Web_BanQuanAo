@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode"; 
 import "../../assets/css/header/HeaderNavBar.css"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { logout } from "../../store/reducer/authSlice"; 
+import { getProductVariant } from "../../service/productService"
+import {removeWishListItem} from "../../store/reducer/selectedWishList"
+import { getUser } from "../../service/productService";
 import {
   Button,
   Col,
@@ -22,23 +25,61 @@ export default function HeaderNavBar() {
 
   const dispatch = useDispatch();
   const token = useSelector(state =>state.auth.token)
-  let decoded = null;
+  const wishList = useSelector(state => state.fetchWishListSlice.SelectedWishList)
+  
   const [wishListOpen, setWishListOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const togglewWishList = () => setWishListOpen(!wishListOpen);
   const toggleCartList = () => setCartOpen(!cartOpen);
+  const [wishListProduct, setWishListProduct] = useState([]);
 
-  try {
-    if (token) {
-      decoded = jwtDecode(token);
-    } else {
-      decoded = null;
-    }
-  } catch (error) {
-    console.error("Invalid token:", error);
-    decoded = null;
-  }
+  useEffect(() => {
+    async function fetchProduct() {
+      if (wishList.result) {
+        const productMap = {};
   
+        for (const item of wishList.result) {
+          const productId = item.product.productId;
+          const variants = await getProductVariant(productId);
+  
+          productMap[productId] = variants; // gán theo từng ID
+        }
+  
+        setWishListProduct(productMap); // object có key là productId
+      }
+    }
+  
+    fetchProduct();
+  }, [wishList]);
+  
+  
+  const [decoded, setDecoded] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          setDecoded(decodedToken);
+
+          if (decodedToken.sub !== null) {
+            const userData = await getUser(decodedToken.sub);
+            setUser(userData);
+          }
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        setDecoded(null);
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, [token]);
+
+
+
   const handleLogout = () => {
     dispatch(logout({token: token})); 
   };
@@ -51,7 +92,9 @@ export default function HeaderNavBar() {
   //     return total + itemTotal;
   //   }, 0);
   // };
- 
+
+
+
   return (
     <div>
       <header className="site-header">
@@ -152,7 +195,7 @@ export default function HeaderNavBar() {
                     >
                       <div className="icon-with-badge">
                         <i className="lar la-heart"></i>
-                        <span className="badge">0</span>
+                        <span className="badge">{wishList?.result?.length || 0}</span>
                       </div>
                     </Link>
 
@@ -286,7 +329,7 @@ export default function HeaderNavBar() {
             <Col xs={9} className="py-4 align-items-center">
               {" "}
               <h5 className=" px-4">
-                Sản Phẩm Yêu Thích (0)
+                Sản Phẩm Yêu Thích ({wishList.result.length})
               </h5>
             </Col>
             <Col xs={3} className="align-items-center">
@@ -301,11 +344,15 @@ export default function HeaderNavBar() {
             </Col>
           </Row>
         </div>
+
+
+
         <ModalBody className="">
-          {/* {wishListItems.map((product) => { */}
-            {/* if (product) { */}
-              {/* return ( */}
-                <div>
+          {Object.entries(wishListProduct).map(([productId, variants]) => {
+           if (variants.length > 0) {
+            const firstVariant = variants[0]; // Lấy 1 biến thể làm đại diện
+              return (
+                <div key={productId}>
                   <Row className="align-items-center my-4">
                     <Col xs={5} className="d-flex align-items-center">
 
@@ -313,33 +360,46 @@ export default function HeaderNavBar() {
                         <Button
                           type="submit"
                           className="btn btn-primary btn-sm"
-                          // onClick={() => {
-                          //   dispatch(removeWishListItem(product.id));
-                          // }}
+                          onClick={() => {
+
+                            dispatch(removeWishListItem({
+                              userId: user.userId, 
+                              productId: firstVariant.product.productId
+                            }));
+                          }}
                         >
-                          {/* <AiOutlineCloseCircle /> */}
                           <i className="las la-times"></i>
                         </Button>
                       </div>
                       <div>
                         <img
                           className="img-fluid"
-                          // src={`assets/images/${product.pictures[0]}`}
+                          src={firstVariant.imageUrl}
                           alt="..."
                         />
                       </div>
                     </Col>
                     <Col xs={5}>
-                      <h6>
-                        <div className="link-title">
-                          {/* {product.name}{" "} */}
-                        </div>
-                      </h6>
+                    <h6>
+                      <div
+                        className="link-title"
+                        style={{
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                      >
+                        {firstVariant.product.name}
+                      </div>
+                    </h6>
+
                       <div className="product-meta">
                         <span className="mx-2 text-primary">
-                          {/* ${product.salePrice.toFixed(2)} */}
+                          {firstVariant.price.toLocaleString('vi-VN')} ₫
                         </span>
-                        {/* <span className="text-muted">x {product.quantity}</span> */}
+                        <span className="text-muted">x 1</span>
                       </div>
                       <div className="product-meta"></div>
                     </Col>
@@ -348,22 +408,22 @@ export default function HeaderNavBar() {
                         // onClick={() => handleAddToCart(product)}
                         className="mx-2 btn text-white fs-1 ms-auto "
                       >
-                        {/* <BsFillCartCheckFill /> */}
+                     
                         <i className="las la-shopping-cart"></i>
 
                       </span>
                     </Col>
                   </Row>
                 </div>
-              {/* ); */}
-            {/* } */}
+              );
+            }
 
-            {/* return null; */}
-          {/* })} */}
-          <hr className="my-5" />
+             return null; 
+           })} 
+          {/* <hr className="my-5" />
           <div className="d-flex justify-content-between align-items-center mb-8">
             <span className="text-muted">Subtotal:</span>
-            {/* <span className="text-white">${subtotal.toFixed(2)}</span> */}
+            <span className="text-white">${subtotal.toFixed(2)}</span>
           </div>
           <div className="d-flex justify-content-between align-items-center">
             <Link
@@ -375,7 +435,7 @@ export default function HeaderNavBar() {
             <Link to="/product-checkout" className="btn btn-dark">
               <i className="las la-money-check mr-1"></i>Continue To Checkout
             </Link>
-          </div>
+          </div> */}
         </ModalBody>
       </Modal>
      

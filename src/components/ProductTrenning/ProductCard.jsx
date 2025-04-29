@@ -4,7 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import "../../assets/css/product/productCart.css"
 import { setSelectedProduct } from "../../store/reducer/selectedProduct"
-
+import { getProduct, getUser } from "../../service/productService"
+import { jwtDecode } from "jwt-decode"; 
+import {createWishList} from "../../store/reducer/wishlistReducer"
+import {fetchWishList} from "../../store/reducer/selectedWishList"
+import { toast } from "react-toastify";
 
 function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, discountPercent, rating }) {
 
@@ -17,7 +21,21 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
    
 
     const selectedProduct = useSelector((state) => state.selectProduct.selectedProduct)
+    const wishList = useSelector(state => state.fetchWishListSlice.SelectedWishList);
+    const token = useSelector(state =>state.auth.token)
+    let decoded = null;
 
+
+     try {
+        if (token) {
+          decoded = jwtDecode(token);
+        } else {
+          decoded = null;
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        decoded = null;
+      }
 
     useEffect(() => {
       if (selectedProduct !== null) {
@@ -61,8 +79,72 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
         const index = selectProduct.sizes.indexOf(selectedSize);
         return selectProduct.stock[index] || 0;
       };
-      
-      
+
+        // sửa lý khi thêm vào sản phẩm yêu thích
+        const handleAddToWishList = async (id) => {
+          try {
+            let user = null;
+            const product = await getProduct(id);
+            
+            if (decoded.sub !== null) {
+              user = await getUser(decoded.sub); // gọi đúng hàm getUser
+            }
+        
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+        
+            if (product && user) {
+              const wishlistData = {
+                userId: user.userId,
+                productId: product.productId,
+                wishlistDate: formattedDate,
+              };
+
+              const exists = wishList?.result?.some(item => item.product?.productId === id);
+
+              if (exists) {
+
+                toast("Sản phẩm đã có trong yêu thích", {
+                  position: "top-right",
+                  autoClose: 2000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  theme: "light",
+                });
+                return; // không thêm nữa
+              }else {
+
+                 // Gọi API createWishList để thêm dữ liệu vào database
+              const res = await dispatch(createWishList(wishlistData));
+
+              // Sau khi thêm thành công thì FETCH lại danh sách wishlist
+               if (res.meta.requestStatus === "fulfilled") {
+                 dispatch(fetchWishList(user.userId));
+               }
+               toast("Sản phẩm đã được thêm vào yêu thích", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              });
+              }
+            }
+          } catch (error) {
+            console.error("Lỗi trong handleAddToWishList:", error);
+          }
+        };
+        
+
+
+       
+
     return (
         <>
           <div className="card product-card">
@@ -124,16 +206,16 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                     data-placement="top"
                     title="WishList"
                     type="button"
-                    // onClick={() => { handleAddToWishList(product) }}
+                    onClick={() => { handleAddToWishList(id) }}
                   >
                     <i className="lar la-heart"></i>
                   </button>
                   <button
                     className="btn-cart btn btn-primary btn-animated mx-3"
                     type="button"
-                    // onClick={() => {
-                    //   handleAddToCart(product)
-                    // }}
+                    onClick={() => {
+                      handleAddToCart(id)
+                    }}
                   >
                     <i className="las la-shopping-cart mr-1"></i>
                   </button>
@@ -165,12 +247,12 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                   <Row>
                       <Col xs={11} className="align-items-center">
                       {" "}
-                      {/* <h5 className=" px-4">
-                      Your Wishlist ({wishListItems?.length})
-                      </h5> */}
+                      <h5 className=" px-4">
+                      Your Wishlist
+                      </h5>
                       </Col>
                      
-                      <Button
+                        <Button
                           className="btn btn-primary btn-sm fs-1 ms-1 btn-latimes"
                           onClick={toggleModal}
                       >
@@ -293,6 +375,7 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                               <Button
                                 className="btn btn-primary btn-animated mr-sm-1 mb-3 mb-sm-0 btn-addToCart"
                                 type="button"
+                                onClick={() => {handleAddToCart()}}
                               >
                                 <i className="las la-shopping-cart"></i>
                                 <span>Thêm vào giỏ hàng</span>
@@ -300,6 +383,7 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                               <Button
                                 className="btn btn-dark btn-animated btn-addToCart"
                                 type="button"
+                                onClick={() => { handleAddToWishList(id) }}
                               >
                                 <i className="lar la-heart"></i>
                                 <span>Yêu thích</span>
@@ -307,7 +391,7 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                             </div>
 
                             <div className="d-sm-flex align-items-center border-top pt-4 mt-4">
-                              <h6 className="mb-sm-0 mr-sm-4">Share It:</h6>
+                              <h6 className="mb-sm-0 mr-sm-4">Chia sẽ:</h6>
                               <ul className="list-inline">
                                   <li className="list-inline-item"><Link className="bg-white shadow-sm rounded p-2" to="#"><i
                                   className="la la-facebook"></i></Link>

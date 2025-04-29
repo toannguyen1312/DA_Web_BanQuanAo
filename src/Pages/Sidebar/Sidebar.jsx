@@ -12,9 +12,10 @@ function SideBar({onchangeFilterBar}) {
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [categoryProducts, setCategoryProducts] = useState([]);
+
 
   const handleCategoryClick = async (categoryId) => {
-
   const updatedCategories = selectedCategories.includes(categoryId)
   ? selectedCategories.filter(id => id !== categoryId)
   : [...selectedCategories, categoryId];
@@ -26,15 +27,18 @@ function SideBar({onchangeFilterBar}) {
     const products = await getProductByCategory(id);
     allProducts = [...allProducts, ...products];
   }
+  
 // xóa sản phẩm đã trùng
   const uniqueProducts = Array.from(
     new Map(allProducts.map(item => [item.productId, item])).values()
   );
-  setSelectedProducts(uniqueProducts);
-  onchangeFilterBar(uniqueProducts)
+  setCategoryProducts(uniqueProducts); // lưu tất cả sản phẩm từ category
+  applyFilters(uniqueProducts, selectedColor, selectedSize);
   };
 
-  
+
+
+  // hiển thị giao diện category color size
   useEffect(() => {
     const fetchCategory = async () => {
       const data = await getCategory(); 
@@ -47,48 +51,53 @@ function SideBar({onchangeFilterBar}) {
     fetchCategory();
   }, []);
 
+  
   const handleColorClick = (color) => {
     const newColor = selectedColor === color ? "" : color;
     setSelectedColor(newColor);
-  
-    if (newColor === "") {
-      return; // nếu bỏ chọn thì không cần lọc
-    }
-  
-    const filtered = selectedProducts.filter(product =>
-      product.colors?.some(c => c.color === newColor)
-    );
-  
-    // Nếu bạn muốn cập nhật lại danh sách hiển thị
-    setSelectedProducts(filtered);
-    onchangeFilterBar(filtered)
+    applyFilters(categoryProducts, newColor, selectedSize);
   };
   
 
-  // set Size
   const handleSizeClick = (size) => {
     const newSize = selectedSize === size ? "" : size;
     setSelectedSize(newSize);
-  
-    if (newSize === "") {
-      return; // Không lọc nếu bỏ chọn size
-    }
-    // Lọc sản phẩm sao cho ít nhất một màu có size đó
-  const filtered = selectedProducts.filter(product =>
-    product.colors?.some(color => color.sizes?.includes(newSize))
-  );
-
-  setSelectedProducts(filtered); // Nếu bạn muốn lọc trực tiếp
-  onchangeFilterBar(filtered)
+    applyFilters(categoryProducts, selectedColor, newSize);
   };
 
+
+  const applyFilters = (products, color, size) => {
+    let filtered = products;
+  
+    if (color) {
+      filtered = filtered.filter(product =>
+        product.colors?.some(c => c.color === color)
+      );
+    }
+  
+    if (size) {
+      filtered = filtered.filter(product =>
+        product.colors?.some(c => c.sizes?.includes(size))
+      );
+    }
+  
+    setSelectedProducts(filtered);
+    onchangeFilterBar(filtered);
+  };
+  
+  
+
+
+  // làm mới khi chọn
   const handleReset = () => {
-    setSelectedProducts([])
-    onchangeFilterBar([])
-    setSelectedColor("")
-    setSelectedSize("")
-    setSelectedCategories([])
-  }
+    setSelectedProducts([]);
+    setSelectedColor("");
+    setSelectedSize("");
+    setSelectedCategories([]);
+    // Gọi lại filter với tất cả sản phẩm từ các category
+    applyFilters(categoryProducts, "", ""); // Thêm filter mặc định
+  };
+  
 
   
     return (
@@ -123,8 +132,9 @@ function SideBar({onchangeFilterBar}) {
                         className="form-check-input"
                         style={{ opacity: 1, background: 'none', pointerEvents: 'auto' }}
                         value={category.categoryId}
-                        checked={selectedCategories.includes(category.categoryId)} 
-                        onClick={() => handleCategoryClick(category.categoryId)}
+                        checked={selectedCategories.includes(category.categoryId )} 
+                        onChange={() => handleCategoryClick(category.categoryId)}
+                        
                       />
                       <label
                         className="form-check-label"

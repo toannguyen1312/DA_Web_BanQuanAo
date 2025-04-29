@@ -8,6 +8,11 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 import PageHeading from '../../Components/PageHeading/PageHeading'
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; 
+import {createWishList} from "../../store/reducer/wishlistReducer"
+import {fetchWishList} from "../../store/reducer/selectedWishList"
+import { getUser, getProduct } from '../../service/productService';
+import { toast } from "react-toastify";
 import {
     Button,
     Col,
@@ -32,6 +37,9 @@ function Detail() {
     const [selectProduct, setSelectProduct] = useState(null); // quản lý sản phẩm
     const [selectedVariant, setVariant] = useState(null); // chứa tất cả các màu
     const [selectedSize, setSelectedSize] = useState(null);
+    const wishList = useSelector(state => state.fetchWishListSlice.SelectedWishList);
+    const selectedProduct = useSelector((state) => state.selectProduct.selectedProduct)
+    const token = useSelector(state =>state.auth.token)
 
     // size
     const handleSizeChange = (event) => {
@@ -69,7 +77,7 @@ function Detail() {
         link: "/product-left-image",
         active: true,
     };
-    const selectedProduct = useSelector((state) => state.selectProduct.selectedProduct)
+
     useEffect(() => {
         if (selectedProduct !== null) {
         const first = selectedProduct.result[0];
@@ -78,7 +86,81 @@ function Detail() {
         setSelectedSize(first.sizes[0]);
         }
     }, [selectedProduct]);
+    useEffect(() => {
+        window.scrollTo(0, 0); // ✅ Thêm cái này
+    }, []);
 
+
+    let decoded = null;
+
+     try {
+        if (token) {
+          decoded = jwtDecode(token);
+        } else {
+          decoded = null;
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        decoded = null;
+      }
+
+      const handleAddToWishList = async (id) => {
+            console.log(id)
+              try {
+                let user = null;
+                const product = await getProduct(id);
+                
+                if (decoded.sub !== null) {
+                  user = await getUser(decoded.sub); // gọi đúng hàm getUser
+                }
+            
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+            
+                if (product && user) {
+                  const wishlistData = {
+                    userId: user.userId,
+                    productId: product.productId,
+                    wishlistDate: formattedDate,
+                  };
+    
+                  const exists = wishList?.result?.some(item => item.product?.productId === id);
+    
+                  if (exists) {
+                    toast("Sản phẩm đã có trong yêu thích", {
+                      position: "top-right",
+                      autoClose: 2000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "light",
+                    });
+                    return; // không thêm nữa
+                  }else {
+                     // Gọi API createWishList để thêm dữ liệu vào database
+                  const res = await dispatch(createWishList(wishlistData));
+                  // Sau khi thêm thành công thì FETCH lại danh sách wishlist
+                   if (res.meta.requestStatus === "fulfilled") {
+                     dispatch(fetchWishList(user.userId));
+                   }
+                   toast("Sản phẩm đã được thêm vào yêu thích", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                  });
+                  }
+                }
+              } catch (error) {
+                console.error("Lỗi trong handleAddToWishList:", error);
+              }
+            };
 
     return (
         <div className="page-wrapper">
@@ -105,6 +187,7 @@ function Detail() {
                                         showFullscreenButton={false}
                                         showPlayButton={false}
                                         swipe={true}
+                                        disableScroll={true}
                                     />
                                     )}
 
@@ -239,11 +322,11 @@ function Detail() {
                                             <Button
                                                 className="btn btn-dark btn-animated    "
                                                 type="button"
-                                                // onClick={() => {
-                                                //     handleAddToWishList(product);
-                                                // }}
+                                                onClick={() => {
+                                                    handleAddToWishList(selectProduct.product.productId);
+                                                }}
                                             >
-                                                <i className="lar la-heart mr-1"></i>Yêu thích
+                                                <i className="lar la-heart mr-1"></i>Yêu thích 
                                             </Button>
                                         </div>
                                     </div>
