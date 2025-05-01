@@ -1,4 +1,5 @@
-import { useState } from 'react'
+// import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import { Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
@@ -12,9 +13,19 @@ import BackToTop from "./components/BackToTop/backToTop";
 import LeftSidebar from "./pages/Categories/leftSidebar"
 import Detail from "./pages/Detail/Detail"
 import Home from "./pages/Home"
-
 import SelectSize from './Pages/SelectSize';
 import Introduce from './Pages/Introduce';
+import ManagerAdmin from './Pages/Admin/ManagerAdmin';
+import LoginAdmin from './Pages/Admin/LoginAdmin';
+import ProtectedRoute from './Pages/Admin/ProtectedRoute';
+import AdminLayout from './layouts/AdminLayout';
+import About from "./Pages/About";
+import Blog from "./Pages/Blog";
+import ContactUs from "./Pages/contact/ContactUs";
+import Faq from './Pages/faq';
+
+import loaderGif from './assets/images/loader.gif';
+
 
 function App() {
 
@@ -43,13 +54,59 @@ function App() {
   // }, [location.pathname]);
 
   
+
   
+
+ 
+
+
+      
+
+  const [showModal, setShowModal] = useState(false);
+  const [showGif, setShowGif] = useState(true);
+
+
+  useEffect(() => {
+    // Hiển thị GIF trong 5 giây, sau đó hiển thị modal
+    const timeout = setTimeout(() => {
+      setShowGif(false);
+      setShowModal(true);
+    }, 2000);
+
+    return () => clearTimeout(timeout); // Dọn dẹp timeout khi component unmount
+  }, []);
+
+
+  useEffect(() => {
+    // Hiển thị modal khi trang được làm mới hoặc thay đổi
+    setShowModal(true);
+  
+    return () => {
+      // Ẩn modal khi component bị unmount
+      setShowModal(false);
+    };
+  }, [location.pathname]);
+
+  // ẩn thanh cuộn css
+  const scrollbarStyle = `
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
 
   return (
     <>
+    <style>{scrollbarStyle}</style>
+      {showGif && (
+        <div id="ht-preloader">
+          <div className="loader clear-loader">
+          <img className="img-fluid" src={loaderGif} alt="" />
+          </div>
+        </div>
+      )}
 
 
-      <ToastContainer
+<ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -61,17 +118,34 @@ function App() {
         pauseOnHover
         theme="light"
       />
+
+
+
     <div className="page-wrapper"> 
-         <Header />
+      {!location.pathname.startsWith("/admin") && <Header />}
+
          <Routes>
          <Route path="/" element={<Home/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpass" element={<ForgotPass />} />
           <Route path="/selectsize" element={<SelectSize />} />
+          <Route path="/about-us" element={<About />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/faq" element={<Faq />} />
           <Route path="/introduce" element={<Introduce />} />
+
           <Route path="/shop-grid-left-sidebar" element={<LeftSidebar/>} />
           <Route path="/product-left-image" element={<Detail/>} />
+
+        
+
+          <Route path="/admin/login" element={<LoginAdmin />} />
+          <Route path="/admin" element={<AdminLayout><ProtectedRoute><ManagerAdmin /></ProtectedRoute></AdminLayout>} />
+
+
+
         </Routes>
           {/* <Routes>   */}
            
@@ -105,7 +179,9 @@ function App() {
             <Route path="/blog-single" element={<BlogSingle />} />
             <Route path="/contact-us" element={<ContatctUs />} />  */}
           {/* </Routes> */}
-        <Footer />
+
+        {!location.pathname.startsWith("/admin") && <Footer />}
+
 
         <BackToTop />
       </div>
