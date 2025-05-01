@@ -41,9 +41,9 @@ function SignUp() {
     // }, [user])
 
       
-    const firstBreadcrumb = { label: "Pages" };
+    const firstBreadcrumb = { label: "Trang" };
     const secondBreadcrumb = {
-        label: "Sign Up",
+        label: "Đăng Ký",
         active: true,
     };
 
@@ -139,7 +139,7 @@ const handleChange = async (e) => {
     return (
         <div className='page-wrapper'>
             <PageHeading
-                title="Sign Up"
+                title="Đăng Ký"
                 firstBreadcrumb={firstBreadcrumb}
                 secondBreadcrumb={secondBreadcrumb}
             />
@@ -150,11 +150,9 @@ const handleChange = async (e) => {
                             <div className="col-lg-8 col-md-12">
                                 <div className="mb-6">
                                     <h6 className="text-primary mb-1">
-                                        — Sign Up
+                                        — Đăng Ký
                                     </h6>
-                                    <h2>Simple And Easy To Sign Up</h2>
-                                    <p className="lead">We use the latest technologies it voluptatem accusantium doloremque laudantium, totam
-                                        rem aperiam.</p>
+                                    <h3>Đăng ký tài khoảng đơn giản và dễ dàng</h3>
                                 </div>
                             </div>
                         </div>
@@ -340,17 +338,16 @@ const handleChange = async (e) => {
                                                     <div className="remember-checkbox clearfix mb-5">
                                                         <div className="custom-control custom-checkbox">
                                                             <input type="checkbox" className="custom-control-input" id="customCheck1" />
-                                                            <label className="custom-control-label" for="customCheck1">I agree to the term of use and privacy
-                                                                policy</label>
+                                                            <label className="custom-control-label" for="customCheck1">Tôi đồng ý với điều khoản sử dụng và chính sách bảo mật</label>
                                                         </div>
                                                     </div>
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col md={12}>
-                                                    <Button type="submit" color="primary">Create Account</Button>
+                                                    <Button type="submit" color="primary">Tạo Tài Khoảng</Button>
                                                     <span className="mt-4 d-block">
-                                                        Have an Account? <Link to="/login"><i>Sign In!</i></Link>
+                                                        Có tài khoảng? <Link to="/login"><i>Đăng nhập!</i></Link>
                                                     </span>
                                                 </Col>
                                             </Row>

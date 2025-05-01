@@ -8,8 +8,11 @@ import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
 import Login from "./Pages/Login";
 import SignUp from "./Pages/SignUp";
-import ForgotPass from './Pages/ForgotPass';
+import ForgotPass from './pages/ForgotPass';
 import BackToTop from "./components/BackToTop/backToTop";
+import LeftSidebar from "./pages/Categories/leftSidebar"
+import Detail from "./pages/Detail/Detail"
+import Home from "./pages/Home"
 import SelectSize from './Pages/SelectSize';
 import Introduce from './Pages/Introduce';
 import ManagerAdmin from './Pages/Admin/ManagerAdmin';
@@ -21,7 +24,8 @@ import Blog from "./Pages/Blog";
 import ContactUs from "./Pages/contact/ContactUs";
 import Faq from './Pages/faq';
 
-import loaderGif from './assets/image/loader.gif';
+import loaderGif from './assets/images/loader.gif';
+
 
 function App() {
 
@@ -50,6 +54,14 @@ function App() {
   // }, [location.pathname]);
 
   
+
+  
+
+ 
+
+
+      
+
   const [showModal, setShowModal] = useState(false);
   const [showGif, setShowGif] = useState(true);
 
@@ -94,10 +106,26 @@ function App() {
       )}
 
 
+<ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
+
+
     <div className="page-wrapper"> 
       {!location.pathname.startsWith("/admin") && <Header />}
 
          <Routes>
+         <Route path="/" element={<Home/>} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpass" element={<ForgotPass />} />
@@ -107,30 +135,34 @@ function App() {
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/introduce" element={<Introduce />} />
+
+          <Route path="/shop-grid-left-sidebar" element={<LeftSidebar/>} />
+          <Route path="/product-left-image" element={<Detail/>} />
+
         
 
-            <Route path="/admin/login" element={<LoginAdmin />} />
-            <Route path="/admin" element={<AdminLayout><ProtectedRoute><ManagerAdmin /></ProtectedRoute></AdminLayout>} />
+          <Route path="/admin/login" element={<LoginAdmin />} />
+          <Route path="/admin" element={<AdminLayout><ProtectedRoute><ManagerAdmin /></ProtectedRoute></AdminLayout>} />
+
 
 
         </Routes>
-          {/* <Routes>  */}
-            {/* <Route path="/" element={<Index />} /> */}
+          {/* <Routes>   */}
+           
             {/* <Route path="/index2" element={<Index2 />} />
             <Route path="/index3" element={<Index3 />} />
             <Route path="/index4" element={<Index4 />} />
             <Route path="/index5" element={<Index5 />} />
-            <Route path="/index6" element={<Index6 />} />
-            <Route path="/shop-grid-left-sidebar" element={<PGLS />} />
-            <Route path="/shop-grid-right-sidebar" element={<PGRS />} />
+            <Route path="/index6" element={<Index6 />} /> */}
+            {/* <Route path="/shop-grid-right-sidebar" element={<PGRS />} />
             <Route path="/shop-grid-no-sidebar" element={<PGNS />} />
             <Route path="/shop-grid-fullwidth" element={<PGFW />} />
             <Route path="/shop-list-left-sidebar" element={<PLLS />} />
             <Route path="/shop-list-right-sidebar" element={<PLRS />} />
             <Route path="/shop-list-no-sidebar" element={<PLNS />} />
-            <Route path="/shop-list-fullwidth" element={<PLFW />} />
-            <Route path="/product-left-image" element={<PLI />} />
-            <Route path="/product-right-image" element={<PRI />} />
+            <Route path="/shop-list-fullwidth" element={<PLFW />} /> */}
+           
+            {/* <Route path="/product-right-image" element={<PRI />} /> 
             <Route path="/product-cart" element={<ProductCart />} />
             <Route path="/product-checkout" element={<CheckOut />} />
             <Route path="/order-complete" element={<OrderComplete />} />
@@ -145,7 +177,7 @@ function App() {
             <Route path="/blog-listing" element={<BlogsList1 />} />
             <Route path="/blog-listing-2" element={<BlogsList2 />} />
             <Route path="/blog-single" element={<BlogSingle />} />
-            <Route path="/contact-us" element={<ContatctUs />} /> */}
+            <Route path="/contact-us" element={<ContatctUs />} />  */}
           {/* </Routes> */}
 
         {!location.pathname.startsWith("/admin") && <Footer />}

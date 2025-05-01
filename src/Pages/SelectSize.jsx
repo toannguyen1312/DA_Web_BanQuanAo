@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { Button, Col, Container, Form, FormGroup, Input, Row } from 'reactstrap';
 import PageHeading from '../Components/PageHeading/PageHeading';
 
+import selectsize1 from "../assets/images/opptionSize/selectsize1.jpg"
+import selectsize2 from "../assets/images/opptionSize/selectsize2.jpg"
+import selectsize3  from "../assets/images/opptionSize/selectsize3.jpg"
+
 
 
 function SelectSize() {
@@ -29,9 +33,9 @@ function SelectSize() {
             {/* Form chiếm 2/3 */}
             <Col lg={9} md={12}>
             <h6 className="pd-5">Nếu bạn băn khoăn không biết chọn size nào cho phù hợp với cân nặng và chiều cao của mình, đừng lo lắng! Hãy xem bảng hướng dẫn chọn size bên dưới mà chúng tôi tư vấn riêng dành cho bạn</h6>
-            <img className="img-fluid" src="src\assets\image\selectsize1.png" alt="" />
-            <img className="img-fluid" src="src\assets\image\selectsize2.png" alt="" />
-            <img  className="img-fluid d-block mx-auto" src="src\assets\image\selectsize3.jpg" alt="" />
+            <img className="img-fluid" src={selectsize1} alt="" />
+            <img className="img-fluid" src={selectsize2} alt="" />
+            <img  className="img-fluid d-block mx-auto" src={selectsize3} alt="" />
             <h6 className="pd-5">Bảng hướng dẫn chọn size trên là bảng hướng dẫn dựa trên kinh nghiệm nhiều năm của chúng tôi theo khảo sát nhu cầu sở thích của khách hàng, tất nhiên sẽ không tuyệt đối, sẽ có những trường hợp ngoại lệ phụ thuộc theo vóc dáng, sở thích của từng người. Ví dụ có người thích mặc ôm, có người thích mặc rộng...</h6>
             <h6 className="pd-5">Nếu bạn vẫn còn có những mắc thắc và băn khoăn cần được giải đáp? Hãy liên hệ ngay với Bộ phận Chăm sóc khách hàng của chúng tôi qua Hotline 0999 999 999 để được hỗ trợ thêm.</h6>
             </Col>

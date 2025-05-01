@@ -3,8 +3,13 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode"; 
 import "../../assets/css/header/HeaderNavBar.css"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { logout } from "../../store/reducer/authSlice"; 
+import { getProductVariant } from "../../service/productService"
+import {removeWishListItem} from "../../store/reducer/selectedWishList"
+import { getUser } from "../../service/productService";
+import { toggleCart } from "../../store/reducer/cartOpen";
+import {removeCartItem} from "../../store/reducer/selectedCartItem"
 import {
   Button,
   Col,
@@ -13,7 +18,7 @@ import {
   ModalBody,
   Row
 } from "reactstrap";
-// import "../../assets/css/bootstrap.min.css"
+import "../../assets/css/bootstrap.min.css"
 import CatalogDropDown from "./CatalogDropDown";
 import ShopDropdown from "./DropDownMenuBarTable";
 import DropdownMenuNavBar from "./DropDownMenuNavBar";
@@ -22,27 +27,74 @@ export default function HeaderNavBar() {
 
   const dispatch = useDispatch();
   const token = useSelector(state =>state.auth.token)
-  let decoded = null;
-  const [wishListOpen, setWishListOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
-  const togglewWishList = () => setWishListOpen(!wishListOpen);
-  const toggleCartList = () => setCartOpen(!cartOpen);
+  const wishList = useSelector(state => state.fetchWishListSlice.SelectedWishList)
+  const cartItem = useSelector(state => state.fetchCartItemSlice.SelectedCartItem)
 
-  try {
-    if (token) {
-      decoded = jwtDecode(token);
-    } else {
-      decoded = null;
-    }
-  } catch (error) {
-    console.error("Invalid token:", error);
-    decoded = null;
-  }
+  const [wishListOpen, setWishListOpen] = useState(false);
+  const cartOpen = useSelector((state) => state.cartUi.isCartOpen);
+  const togglewWishList = () => setWishListOpen(!wishListOpen);
+  // const toggleCartList = () => setCartOpen(!cartOpen);
+  const toggleCartList = () => dispatch(toggleCart());
+  const [wishListProduct, setWishListProduct] = useState([]);
+  const [cartItemProduct, setCartItemProduct] = useState([]);
+
+  useEffect(() => {
+    async function fetchProduct() {
+      if (wishList.result) {
+        const productMap = {};
+        for (const item of wishList.result) {
+          const productId = item.product.productId;
+          const variants = await getProductVariant(productId);
   
+          productMap[productId] = variants; // gán theo từng ID
+        }
+        setWishListProduct(productMap); // object có key là productId
+      }
+
+      if(cartItem.result) {
+        const productMap = {};
+        for(const item of cartItem.result) {
+          const cartItemId = item.cartItemId;
+          productMap[cartItemId] = item; 
+      
+        }
+        setCartItemProduct(productMap)
+      }
+    }
+  
+    fetchProduct();
+  }, [wishList, cartItem]);
+  
+  const [decoded, setDecoded] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          setDecoded(decodedToken);
+
+          if (decodedToken.sub !== null) {
+            const userData = await getUser(decodedToken.sub);
+            setUser(userData);
+          }
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        setDecoded(null);
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, [token]);
+
+
+
   const handleLogout = () => {
     dispatch(logout({token: token})); 
   };
-
 
   // const cartItems1 = useSelector((state) => state.products.cart);
   // const calculateTotal = () => {
@@ -51,7 +103,7 @@ export default function HeaderNavBar() {
   //     return total + itemTotal;
   //   }, 0);
   // };
- 
+
   return (
     <div>
       <header className="site-header">
@@ -92,17 +144,18 @@ export default function HeaderNavBar() {
                       <li className="nav-item dropdown">
                         ÁO NAM
                         <div className="dropdown-content">
-                          <a href="#">Áo thun</a>
-                          <a href="#">Áo sơ mi</a>
-                          <a href="#">Áo khoác</a>
+
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Áo Sơ Mi", categoryID: "2" }}>Áo Sơ Mi</Link>
+                          {/* <a href="#">Áo thun</a> */}
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Áo Khoác",  categoryID: "3" }}>Áo Khoác</Link>
                         </div>
                       </li>
 
                       <li className="nav-item dropdown">
                           QUẦN NAM
                           <div className="dropdown-content">
-                            <a href="#">Quần jeans</a>
-                            <a href="#">Quần short</a>
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Quần Jeans",  categoryID: "4" }}>Quần Jeans</Link>
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Quần Short",  categoryID: "5" }}>Quần Short</Link>
                             <a href="#">Quần tây</a>
                           </div>
                         </li>
@@ -151,7 +204,7 @@ export default function HeaderNavBar() {
                     >
                       <div className="icon-with-badge">
                         <i className="lar la-heart"></i>
-                        <span className="badge">0</span>
+                        <span className="badge">{wishList?.result?.length || 0}</span>
                       </div>
                     </Link>
 
@@ -161,7 +214,7 @@ export default function HeaderNavBar() {
                       <span className="bg-white px-2 py-1 rounded">
                         <div className="icon-with-badge">
                           <i className="las la-shopping-cart"  style={{fontSize: "27px"}}></i>
-                          <span className="badge">0</span>
+                          <span className="badge">{cartItem?.result?.length || 0}</span>
                           </div>
                       </span>
                     
@@ -169,8 +222,8 @@ export default function HeaderNavBar() {
 
                     <div>
                       <div className="ml-4 d-none d-md-block"> 
-                        <small className="d-block text-muted">My Cart</small>
-                        <span className="text-dark">0 Items - $0.00</span>
+                        <small className="d-block text-muted">Giỏ hàng</small>
+                        <span className="text-dark">0 sản phẩm - $0.00</span>
                       </div>
                     </div>
                   </div>              
@@ -188,11 +241,10 @@ export default function HeaderNavBar() {
       >
         <div>
           <Row>
-           
             <Col xs={9} className="py-4 align-item-center">
               {" "}
               <h5 className=" px-4">
-                    Giỏ Hàng (0)
+                    Giỏ Hàng ({cartItem.result.length})
               </h5>
             </Col>
             <Col xs={2} className=" align-items-center justify-content-end ">
@@ -208,51 +260,63 @@ export default function HeaderNavBar() {
           </Row>
         </div>
         <ModalBody>
-          {/* {cartItems.map((product) => { */}
-            {/* if (product) { */}
-              {/* return ( */}
-                <div>
+          {Object.entries(cartItemProduct).map(([productId, variants]) => {
+            //  if (variants.length > 0) {
+               return ( 
+                <div key={productId}>
                   <Row className="align-items-center my-5">
                     <Col xs="5" className="d-flex align-items-center">
                       <div className="mr-4">
-                        {/* <Button
+                        <Button
                           type="submit"
                           className="btn btn-primary btn-sm"
                           onClick={() => {
-                            dispatch(removeCartItem(product.id));
+                            dispatch(removeCartItem({
+                              cartID: variants.cart.cartId,
+                              CartItemID: variants.cartItemId}));
+                            console.log("aloalo ",variants.cartItemId )
+                            console.log("olaol ", variants.cart.cartId)
                           }}
-                        > */}
-                          {/* <i className="las la-times"></i> */}
-                        {/* </Button> */}
+                        >
+                          <i className="las la-times"></i>
+                        </Button>
                       </div>
                       <Link>
-                        {/* <img
+                        <img
                           className="img-fluid"
-                          src={`assets/images/${product.pictures[0]}`}
+                          src={`http://localhost:8080/images/${variants.productVariants.imageUrl}`}
                           alt="..."
-                        /> */}
+                        />
                       </Link>
                     </Col>
                     <Col xs="5">
                       <h6>
-                        <div className="link-title">
-                          {/* {product.name} */}
+                        <div className="link-title"
+                         style={{
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                        >
+                          {variants.productVariants.product.name}
                         </div>
                       </h6>
                       <div className="product-meta">
                         <span className="mr-2 text-primary">
-                          {/* ${product.salePrice.toFixed(2)} */}
+                          {variants.productVariants.price.toLocaleString('vi-VN')} ₫
                         </span>
-                        {/* <span className="text-muted">x {product.quantity}</span> */}
+                        <span className="text-muted">x {variants.quantity}</span>
                       </div>
                     </Col>
                   </Row>
                 </div>
-              {/* ); */}
-            {/* } */}
+               ); 
+            // } 
 
-            {/* return null; */}
-          {/* })} */}
+             return null; 
+         })}
           <hr className="my-5" />
           <div className="d-flex justify-content-between align-items-center mb-8">
             <span className="text-muted">Subtotal:</span>
@@ -285,7 +349,7 @@ export default function HeaderNavBar() {
             <Col xs={9} className="py-4 align-items-center">
               {" "}
               <h5 className=" px-4">
-                Sản Phẩm Yêu Thích (0)
+                Sản Phẩm Yêu Thích ({wishList.result.length})
               </h5>
             </Col>
             <Col xs={3} className="align-items-center">
@@ -300,11 +364,16 @@ export default function HeaderNavBar() {
             </Col>
           </Row>
         </div>
+
+
+
         <ModalBody className="">
-          {/* {wishListItems.map((product) => { */}
-            {/* if (product) { */}
-              {/* return ( */}
-                <div>
+          {Object.entries(wishListProduct).map(([productId, variants]) => {
+           if (variants.length > 0) {
+            console.log("variants: ", variants)
+            const firstVariant = variants[0]; // Lấy 1 biến thể làm đại diện
+              return (
+                <div key={productId}>
                   <Row className="align-items-center my-4">
                     <Col xs={5} className="d-flex align-items-center">
 
@@ -312,33 +381,46 @@ export default function HeaderNavBar() {
                         <Button
                           type="submit"
                           className="btn btn-primary btn-sm"
-                          // onClick={() => {
-                          //   dispatch(removeWishListItem(product.id));
-                          // }}
+                          onClick={() => {
+
+                            dispatch(removeWishListItem({
+                              userId: user.userId, 
+                              productId: firstVariant.product.productId
+                            }));
+                          }}
                         >
-                          {/* <AiOutlineCloseCircle /> */}
                           <i className="las la-times"></i>
                         </Button>
                       </div>
                       <div>
                         <img
                           className="img-fluid"
-                          // src={`assets/images/${product.pictures[0]}`}
+                          src={firstVariant.imageUrl}
                           alt="..."
                         />
                       </div>
                     </Col>
                     <Col xs={5}>
-                      <h6>
-                        <div className="link-title">
-                          {/* {product.name}{" "} */}
-                        </div>
-                      </h6>
+                    <h6>
+                      <div
+                        className="link-title"
+                        style={{
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                      >
+                        {firstVariant.product.name}
+                      </div>
+                    </h6>
+
                       <div className="product-meta">
                         <span className="mx-2 text-primary">
-                          {/* ${product.salePrice.toFixed(2)} */}
+                          {firstVariant.price.toLocaleString('vi-VN')} ₫
                         </span>
-                        {/* <span className="text-muted">x {product.quantity}</span> */}
+                        <span className="text-muted">x 1</span>
                       </div>
                       <div className="product-meta"></div>
                     </Col>
@@ -347,22 +429,22 @@ export default function HeaderNavBar() {
                         // onClick={() => handleAddToCart(product)}
                         className="mx-2 btn text-white fs-1 ms-auto "
                       >
-                        {/* <BsFillCartCheckFill /> */}
+                     
                         <i className="las la-shopping-cart"></i>
 
                       </span>
                     </Col>
                   </Row>
                 </div>
-              {/* ); */}
-            {/* } */}
+              );
+            }
 
-            {/* return null; */}
-          {/* })} */}
-          <hr className="my-5" />
+             return null; 
+           })} 
+          {/* <hr className="my-5" />
           <div className="d-flex justify-content-between align-items-center mb-8">
             <span className="text-muted">Subtotal:</span>
-            {/* <span className="text-white">${subtotal.toFixed(2)}</span> */}
+            <span className="text-white">${subtotal.toFixed(2)}</span>
           </div>
           <div className="d-flex justify-content-between align-items-center">
             <Link
@@ -374,7 +456,7 @@ export default function HeaderNavBar() {
             <Link to="/product-checkout" className="btn btn-dark">
               <i className="las la-money-check mr-1"></i>Continue To Checkout
             </Link>
-          </div>
+          </div> */}
         </ModalBody>
       </Modal>
      

@@ -7,7 +7,7 @@ const PageHeading = ({
   secondBreadcrumb,
 }) => {
   return (
-    <section className="bg-light">
+    <section className="pb-8 pt-8" style={{backgroundColor: "#EEEEEE"}}>
   <div className="container">
     <div className="row align-items-center">
       <div className="col-md-6">
@@ -18,7 +18,7 @@ const PageHeading = ({
           <ol className="breadcrumb justify-content-md-end bg-transparent p-0 m-0">
             <li className="breadcrumb-item">
               <Link className="text-dark" to="/">
-                <i className="las la-home mr-1"></i>Home
+                <i className="las la-home mr-1"></i>Trang Chủ
               </Link>
             </li>
             <li className="breadcrumb-item">{firstBreadcrumb.label}</li>
