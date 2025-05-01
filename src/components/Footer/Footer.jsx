@@ -6,13 +6,14 @@ import '../../assets/css/bootstrap.min.css'
 import '../../assets/css/spacing.css'
 import '../../assets/css/theme-plugin.css'
 import '../../assets/css/theme.min.css'
+import '../../assets/css/footer.css'
 
 
 
 export default function Footer() {
   return (
     <>
-      <footer className="py-11 bg-dark">
+      <footer className="py-11 bg-dark cusfooter">
         <div className="container">
           <div className="row">
             <div className="col-12 col-lg-3">
@@ -57,32 +58,32 @@ export default function Footer() {
                   <h5 className="mb-4 text-white">Mục lục</h5>
                   <ul className="navbar-nav list-unstyled mb-0">
                     <li className="mb-3 nav-item">
-                      <Link className="nav-link" to="/">
+                      <Link className="/#" to="/">
                         Trang chủ
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
-                      <Link className="nav-link" to="about-us">
+                      <Link className="/about-us" to="about-us">
                         Về chúng tôi
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
-                      <Link className="nav-link" to="shop-grid-left-sidebar">
+                      <Link className="/shop" to="shop-grid-left-sidebar">
                         Cửa hàng
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
-                      <Link className="nav-link" to="faq">
+                      <Link className="faq" to="faq">
                         Câu hỏi và giải đáp
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
-                      <Link className="nav-link" to="blog-card">
+                      <Link className="blog" to="blog-card">
                         Blogs
                       </Link>
                     </li>
                     <li className="nav-item">
-                      <Link className="nav-link" to="contact-us">
+                      <Link className="contact-us" to="contact-us">
                         Liên hệ 
                       </Link>
                     </li>
