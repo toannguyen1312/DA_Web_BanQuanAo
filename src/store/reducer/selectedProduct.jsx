@@ -4,7 +4,6 @@ import axios from "axios";
 export const setSelectedProduct = createAsyncThunk("selectedProducts/fetchAll", async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(`http://localhost:8080/productVariant/getByProductId/${id}`);
-      console.log(response.data)
       return response.data; 
     } catch (error) {
       return rejectWithValue(error.response?.data || "Lỗi không xác định");

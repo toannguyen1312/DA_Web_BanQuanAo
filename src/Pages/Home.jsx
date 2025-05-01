@@ -5,8 +5,11 @@ import ProductIndex from "../components/ProductTrenning/ProductIndex"
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {fetchWishList} from "../store/reducer/selectedWishList"
+import {fetchCartItem} from "../store/reducer/selectedCartItem"
 import { jwtDecode } from "jwt-decode"; 
-import { getProduct, getUser } from "../service/productService"
+import {  getUser } from "../service/productService"
+import { getCart, createCart } from "../service/cartService";
+
 export default function Home() {
 
     const dispatch = useDispatch()
@@ -51,14 +54,31 @@ export default function Home() {
     useEffect(() => {
       async function fetchData() {
       let user = null;
-            if (decoded.sub !== null) {
-              user = await getUser(decoded.sub); // gọi đúng hàm getUser
-            }
+      let cart = null;
+        if (decoded.sub !== null) {
+          user = await getUser(decoded.sub); 
+          cart = await getCart(user.userId)
+
+          if (cart == null) {
+            const newCartData = {
+              userId: user.userId,
+              status: `Giỏ hàng ${decoded.sub}`,
+              date: new Date().toISOString().split("T")[0], 
+            };
+    
+            cart = await createCart(newCartData);
+          }
+        }
+          
         dispatch(fetchWishList(user.userId))
+        dispatch(fetchCartItem(cart.cartId))
+
           }
       fetchData()
-    })
-    
+    }, [])
+
+
+   
 
      useEffect(() => {
             window.scrollTo(0, 0); // ✅ Thêm cái này

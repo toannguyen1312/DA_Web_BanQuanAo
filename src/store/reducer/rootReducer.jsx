@@ -8,7 +8,10 @@ import selectProduct  from "./selectedProduct"
 import storage from "redux-persist/lib/storage";
 import wishlist from "./wishlistReducer"
 import SelectedWishList from "./selectedWishList"
+import cartUiReducer from "./cartOpen"; 
+import cartItems  from "./cartItem"
 
+import SelectedCartItem from "./selectedCartItem"
 
 // Dùng để gộp nhiều reducer thành một rootReducer
 const rootReducer = combineReducers({
@@ -16,8 +19,13 @@ const rootReducer = combineReducers({
     auth: authReducer,
     getProduct: getProduct,
     selectProduct: selectProduct,
+    // wishList
     wishlist: wishlist,
-    fetchWishListSlice: SelectedWishList
+    fetchWishListSlice: SelectedWishList,
+    cartUi: cartUiReducer,
+    //cartItem
+    cartItem: cartItems,
+    fetchCartItemSlice: SelectedCartItem
 
 });
 

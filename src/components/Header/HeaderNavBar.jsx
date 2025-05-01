@@ -8,6 +8,8 @@ import { logout } from "../../store/reducer/authSlice";
 import { getProductVariant } from "../../service/productService"
 import {removeWishListItem} from "../../store/reducer/selectedWishList"
 import { getUser } from "../../service/productService";
+import { toggleCart } from "../../store/reducer/cartOpen";
+import {removeCartItem} from "../../store/reducer/selectedCartItem"
 import {
   Button,
   Col,
@@ -26,32 +28,42 @@ export default function HeaderNavBar() {
   const dispatch = useDispatch();
   const token = useSelector(state =>state.auth.token)
   const wishList = useSelector(state => state.fetchWishListSlice.SelectedWishList)
-  
+  const cartItem = useSelector(state => state.fetchCartItemSlice.SelectedCartItem)
+
   const [wishListOpen, setWishListOpen] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
+  const cartOpen = useSelector((state) => state.cartUi.isCartOpen);
   const togglewWishList = () => setWishListOpen(!wishListOpen);
-  const toggleCartList = () => setCartOpen(!cartOpen);
+  // const toggleCartList = () => setCartOpen(!cartOpen);
+  const toggleCartList = () => dispatch(toggleCart());
   const [wishListProduct, setWishListProduct] = useState([]);
+  const [cartItemProduct, setCartItemProduct] = useState([]);
 
   useEffect(() => {
     async function fetchProduct() {
       if (wishList.result) {
         const productMap = {};
-  
         for (const item of wishList.result) {
           const productId = item.product.productId;
           const variants = await getProductVariant(productId);
   
           productMap[productId] = variants; // gán theo từng ID
         }
-  
         setWishListProduct(productMap); // object có key là productId
+      }
+
+      if(cartItem.result) {
+        const productMap = {};
+        for(const item of cartItem.result) {
+          const cartItemId = item.cartItemId;
+          productMap[cartItemId] = item; 
+      
+        }
+        setCartItemProduct(productMap)
       }
     }
   
     fetchProduct();
-  }, [wishList]);
-  
+  }, [wishList, cartItem]);
   
   const [decoded, setDecoded] = useState(null);
   const [user, setUser] = useState(null);
@@ -84,7 +96,6 @@ export default function HeaderNavBar() {
     dispatch(logout({token: token})); 
   };
 
-
   // const cartItems1 = useSelector((state) => state.products.cart);
   // const calculateTotal = () => {
   //   return cartItems1.reduce((total, item) => {
@@ -92,8 +103,6 @@ export default function HeaderNavBar() {
   //     return total + itemTotal;
   //   }, 0);
   // };
-
-
 
   return (
     <div>
@@ -205,7 +214,7 @@ export default function HeaderNavBar() {
                       <span className="bg-white px-2 py-1 rounded">
                         <div className="icon-with-badge">
                           <i className="las la-shopping-cart"  style={{fontSize: "27px"}}></i>
-                          <span className="badge">0</span>
+                          <span className="badge">{cartItem?.result?.length || 0}</span>
                           </div>
                       </span>
                     
@@ -232,11 +241,10 @@ export default function HeaderNavBar() {
       >
         <div>
           <Row>
-           
             <Col xs={9} className="py-4 align-item-center">
               {" "}
               <h5 className=" px-4">
-                    Giỏ Hàng (0)
+                    Giỏ Hàng ({cartItem.result.length})
               </h5>
             </Col>
             <Col xs={2} className=" align-items-center justify-content-end ">
@@ -252,51 +260,63 @@ export default function HeaderNavBar() {
           </Row>
         </div>
         <ModalBody>
-          {/* {cartItems.map((product) => { */}
-            {/* if (product) { */}
-              {/* return ( */}
-                <div>
+          {Object.entries(cartItemProduct).map(([productId, variants]) => {
+            //  if (variants.length > 0) {
+               return ( 
+                <div key={productId}>
                   <Row className="align-items-center my-5">
                     <Col xs="5" className="d-flex align-items-center">
                       <div className="mr-4">
-                        {/* <Button
+                        <Button
                           type="submit"
                           className="btn btn-primary btn-sm"
                           onClick={() => {
-                            dispatch(removeCartItem(product.id));
+                            dispatch(removeCartItem({
+                              cartID: variants.cart.cartId,
+                              CartItemID: variants.cartItemId}));
+                            console.log("aloalo ",variants.cartItemId )
+                            console.log("olaol ", variants.cart.cartId)
                           }}
-                        > */}
-                          {/* <i className="las la-times"></i> */}
-                        {/* </Button> */}
+                        >
+                          <i className="las la-times"></i>
+                        </Button>
                       </div>
                       <Link>
-                        {/* <img
+                        <img
                           className="img-fluid"
-                          src={`assets/images/${product.pictures[0]}`}
+                          src={`http://localhost:8080/images/${variants.productVariants.imageUrl}`}
                           alt="..."
-                        /> */}
+                        />
                       </Link>
                     </Col>
                     <Col xs="5">
                       <h6>
-                        <div className="link-title">
-                          {/* {product.name} */}
+                        <div className="link-title"
+                         style={{
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                        >
+                          {variants.productVariants.product.name}
                         </div>
                       </h6>
                       <div className="product-meta">
                         <span className="mr-2 text-primary">
-                          {/* ${product.salePrice.toFixed(2)} */}
+                          {variants.productVariants.price.toLocaleString('vi-VN')} ₫
                         </span>
-                        {/* <span className="text-muted">x {product.quantity}</span> */}
+                        <span className="text-muted">x {variants.quantity}</span>
                       </div>
                     </Col>
                   </Row>
                 </div>
-              {/* ); */}
-            {/* } */}
+               ); 
+            // } 
 
-            {/* return null; */}
-          {/* })} */}
+             return null; 
+         })}
           <hr className="my-5" />
           <div className="d-flex justify-content-between align-items-center mb-8">
             <span className="text-muted">Subtotal:</span>
@@ -350,6 +370,7 @@ export default function HeaderNavBar() {
         <ModalBody className="">
           {Object.entries(wishListProduct).map(([productId, variants]) => {
            if (variants.length > 0) {
+            console.log("variants: ", variants)
             const firstVariant = variants[0]; // Lấy 1 biến thể làm đại diện
               return (
                 <div key={productId}>

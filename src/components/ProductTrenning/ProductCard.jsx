@@ -9,7 +9,10 @@ import { jwtDecode } from "jwt-decode";
 import {createWishList} from "../../store/reducer/wishlistReducer"
 import {fetchWishList} from "../../store/reducer/selectedWishList"
 import { toast } from "react-toastify";
-
+import { getCart, getVariantProduct } from "../../service/cartService";
+import { toggleCart, openCart } from "../../store/reducer/cartOpen";
+import { createCartIem } from "../../store/reducer/cartItem"
+import { fetchCartItem } from "../../store/reducer/selectedCartItem";
 function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, discountPercent, rating }) {
 
     const dispatch = useDispatch();
@@ -18,13 +21,13 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
     const [selectProduct, setSelectProduct] = useState(null); // quản lý sản phẩm
     const [selectedVariant, setVariant] = useState(null); // chứa tất cả các màu
     const [selectedSize, setSelectedSize] = useState(null); // chọn size
-   
+
+  
 
     const selectedProduct = useSelector((state) => state.selectProduct.selectedProduct)
     const wishList = useSelector(state => state.fetchWishListSlice.SelectedWishList);
     const token = useSelector(state =>state.auth.token)
     let decoded = null;
-
 
      try {
         if (token) {
@@ -103,7 +106,6 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
               const exists = wishList?.result?.some(item => item.product?.productId === id);
 
               if (exists) {
-
                 toast("Sản phẩm đã có trong yêu thích", {
                   position: "top-right",
                   autoClose: 2000,
@@ -141,14 +143,63 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
           }
         };
         
+        const handleAddToCart = async (id) => {
+          try {
+            let user = null;
+            const product = await getProduct(id);
+            let cart = null;
+            if (decoded.sub !== null) {
+              user = await getUser(decoded.sub); 
+              cart = await getCart(user.userId) 
+            }
+            
+            if (user && selectProduct && selectedSize && cart) {
+             
+              const variantProduct = await getVariantProduct(selectProduct.product.productId, selectedSize, selectedVariant?.color)
+              if(variantProduct != null) {
 
+                const cartIem = {
+                  cartId: cart.cartId,
+                  productVariants: variantProduct.productVariantId,
+                  quantity: quantity
+                }
+                const createCartItem = await  dispatch(createCartIem(cartIem)) 
+                
 
-       
+                if (createCartItem.message == "Item quantity updated") {
+                  toast("Sản phẩm đã được cập nhật", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                  });
+                  dispatch(fetchCartItem(cart.cartId));
+                }else {
+                  toast("Sản phẩm đã được thêm vào giỏ hàng", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                  });dispatch(fetchCartItem(cart.cartId));
+                 }
+              }
+              }
+          } catch (error) {
+            console.error("Lỗi trong handleAddToWishList:", error);
+          }
+        };
 
     return (
         <>
           <div className="card product-card">
-
             {discountPercent && (
                 <span className="discount-badge">
                 -{discountPercent}%
@@ -161,7 +212,7 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
               data-toggle="tooltip"
               data-placement="left"
               title="Add to wishlist"
-            //   onClick={() => { handleAddToWishList(product) }}
+              onClick={() => { handleAddToWishList(id) }}
             >
               <i className="lar la-heart"></i>
             </button>
@@ -210,15 +261,15 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                   >
                     <i className="lar la-heart"></i>
                   </button>
-                  <button
-                    className="btn-cart btn btn-primary btn-animated mx-3"
-                    type="button"
-                    onClick={() => {
-                      handleAddToCart(id)
-                    }}
-                  >
-                    <i className="las la-shopping-cart mr-1"></i>
-                  </button>
+                    <button
+                      className="btn-cart btn btn-primary btn-animated mx-3"
+                      type="button"
+                      onClick={() => {
+                        dispatch(openCart())
+                      }}
+                    >
+                      <i className="las la-shopping-cart mr-1"></i>
+                    </button>
                   <button
                     className="btn btn-view"
                     data-toggle="tooltip"
@@ -375,7 +426,7 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
                               <Button
                                 className="btn btn-primary btn-animated mr-sm-1 mb-3 mb-sm-0 btn-addToCart"
                                 type="button"
-                                onClick={() => {handleAddToCart()}}
+                                onClick={() => {handleAddToCart(selectProduct.product.productId)}}
                               >
                                 <i className="las la-shopping-cart"></i>
                                 <span>Thêm vào giỏ hàng</span>
