@@ -31,14 +31,24 @@
   padding: 20px 10px;
 }
 
+.iconr{
+  margin-right: 0px !important  ;
+}
+
 .nav-item {
   margin-bottom: 15px;
 }
 
 .nav-link {
-  padding: 10px 15px;
+  padding: 10px 10px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+li.pl-2.sub.nav-item .nav-link {
+  padding: 10px 5px;
+  display: flex;
+  justify-content:flex-start;
   align-items: center;
 }
 

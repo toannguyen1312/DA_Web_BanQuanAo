@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import "react-toastify/dist/ReactToastify.css";
+import 'react-quill/dist/quill.snow.css';
 import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
 import Login from "./Pages/Login";
