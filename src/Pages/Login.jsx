@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { login } from '../store/reducer/authSlice'
 import { store } from "../store/store";
 import { useNavigate } from 'react-router-dom'
+import { fetchWishList } from '../store/reducer/selectedWishList';
+import { fetchCartItem } from '../store/reducer/selectedCartItem';
 function Login() {
 
     const dispatch = useDispatch();

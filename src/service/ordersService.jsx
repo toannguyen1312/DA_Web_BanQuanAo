@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const getCart = async (userID) => {
+export const createOrders = async (order) => {
     try {
-      const res = await axios.get(`http://localhost:8080/carts/checkCartByUser/${userID}`);
+      const res = await axios.post(`http://localhost:8080/orders/createOrders`, order);
       return res.data.result;
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -16,9 +16,41 @@ export const getCart = async (userID) => {
   };
 
 
-  export const createCart = async (cart) => {
+  export const createOrderDetails = async (orderDetails) => {
+
     try {
-      const res = await axios.post(`http://localhost:8080/carts/createCart`, cart);
+      const result = await axios.post(`http://localhost:8080/orderDetail/createOrderDetails`, orderDetails);
+      return result.data.result;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.warn("Không tìm thấy giỏ hàng của user này");
+        return null; // hoặc return {}; hoặc return [];
+      } else {
+        console.error("Lỗi không xác định:", error);
+        return null;
+      }
+    }
+  };
+
+  export const deleteCartItem = async (cart) => {
+
+    try {
+      const result = await axios.delete(`http://localhost:8080/cartItems/deleteCartItemsByCartId/${cart}`);
+      return result.data.result;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.warn("Không tìm thấy giỏ hàng của user này");
+        return null; // hoặc return {}; hoặc return [];
+      } else {
+        console.error("Lỗi không xác định:", error);
+        return null;
+      }
+    }
+  };
+
+   export const getOrderDetailsByOrderId = async (orderid) => {
+    try {
+      const res = await axios.get(`http://localhost:8080/orderDetail/getByOrderDetailId/${orderid}`);
       return res.data.result;
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -32,55 +64,9 @@ export const getCart = async (userID) => {
   };
 
 
-  export const getVariantProduct = async (productID, size, color) => {
+  export const updateOrders = async (order) => {
     try {
-      const res = await axios.get(`http://localhost:8080/productVariant/getColorSize/${productID}/${size}/${color}`);
-      return res.data.result;
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.warn("Không tìm thấy giỏ hàng của user này");
-        return null; // hoặc return {}; hoặc return [];
-      } else {
-        console.error("Lỗi không xác định:", error);
-        return null;
-      }
-    }
-  };
-
-  export const createCartIem = async (cartItem) => {
-    try {
-      const res = await axios.post(`http://localhost:8080/cartItems/createCartItem`, cartItem);
-      return res.data.result;
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.warn("Không tìm thấy giỏ hàng của user này");
-        return null; // hoặc return {}; hoặc return [];
-      } else {
-        console.error("Lỗi không xác định:", error);
-        return null;
-      }
-    }
-  };
-
-  
-  export const increaseCartIemQuantity = async (cartID, productVariantsID) => {
-    try {
-      const res = await axios.put(`http://localhost:8080/cartItems/increaseQuantity/${cartID}/${productVariantsID}`);
-      return res.data.result;
-    } catch (error) {
-      if (error.response && error.response.status === 404) {
-        console.warn("Không tìm thấy giỏ hàng của user này");
-        return null; // hoặc return {}; hoặc return [];
-      } else {
-        console.error("Lỗi không xác định:", error);
-        return null;
-      }
-    }
-  };
-
-  export const decreaseCartIemQuantity = async (cartID, productVariantsID) => {
-    try {
-      const res = await axios.put(`http://localhost:8080/cartItems/decreaseQuantity/${cartID}/${productVariantsID}`);
+      const res = await axios.put(`http://localhost:8080/orders/updateOrders`, order);
       return res.data.result;
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -94,11 +80,42 @@ export const getCart = async (userID) => {
   };
 
 
+export const updateProductVariantsStock = async (variantList) => {
+  try {
+    const res = await axios.post(
+      "http://localhost:8080/productVariant/updateStock",
+      variantList
+    );
+    return res.data.result;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật tồn kho:", error);
+    return null;
+  }
+};
 
 
- 
+export const createPayment = async (payment) => {
+  try {
+    const res = await axios.post("http://localhost:8080/payments/createPayments", payment);
+    return res.data.result;
+  } catch (error) {
+    console.error("Lỗi khi tạo payment:", error);
+    return null;
+  }
+};
 
 
- 
-  
-  
+export const getPayments = async (userId) => {
+    try {
+      const res = await axios.get(`http://localhost:8080/payments/byUserId/${userId}`);
+      return res.data.result;
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.warn("Không tìm thấy giỏ hàng của user này");
+        return null; // hoặc return {}; hoặc return [];
+      } else {
+        console.error("Lỗi không xác định:", error);
+        return null;
+      }
+    }
+  };

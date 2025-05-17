@@ -15,7 +15,7 @@ export const removeWishListItem = createAsyncThunk(
   "wishlist/removeWishListItem",
   async ({ userId, productId }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.delete(`http://localhost:8080/wishlist/deleteByProduct/${productId}`);
+      const res = await axios.delete(`http://localhost:8080/wishlist/deleteByProduct/${productId}/${userId}`);
       // Gọi lại fetch để cập nhật danh sách
       dispatch(fetchWishList(userId));
     } catch (error) {
@@ -32,7 +32,16 @@ const fetchWishListSlice = createSlice({
         isLoading: false,
         iserror: false,
       },
-     
+      
+      reducers: {
+        // 👉 Action để reset state
+        resetWishListState: (state) => {
+          state.SelectedWishList = [];
+          state.isLoading = false;
+          state.iserror = false;
+        },
+      },
+      
       extraReducers: (builder) => {
         builder
           .addCase(fetchWishList.pending, (state) => {
@@ -67,7 +76,7 @@ const fetchWishListSlice = createSlice({
          
       },
     });
-  
+    export const { resetWishListState } = fetchWishListSlice.actions;
     export default fetchWishListSlice.reducer;
 
 

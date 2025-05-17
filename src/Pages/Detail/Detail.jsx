@@ -105,7 +105,6 @@ function Detail() {
       }
 
       const handleAddToWishList = async (id) => {
-            console.log(id)
               try {
                 let user = null;
                 const product = await getProduct(id);
@@ -161,6 +160,36 @@ function Detail() {
                 console.error("Lỗi trong handleAddToWishList:", error);
               }
             };
+
+    const handleAddToCart = async () => {
+        if (!selectProduct || !selectedSize) return;
+        const maxStock = getStockBySize();
+        if (quantity > maxStock) {
+            toast("Số lượng sản phẩm trong kho không đủ!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+            return;
+        }
+        // TODO: Thực hiện logic thêm vào giỏ hàng ở đây
+        // Ví dụ: gọi API hoặc dispatch action
+        toast("Đã thêm vào giỏ hàng!", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+    };
 
     return (
         <div className="page-wrapper">
@@ -315,7 +344,7 @@ function Detail() {
                                             <Button
                                                 className="btn btn-primary btn-animated mr-sm-4 mb-3 mb-sm-0"
                                                 type="button"
-                                                // onClick={() => handleAddToCart(product)}
+                                                onClick={handleAddToCart}
                                             >
                                                 <i className="las la-shopping-cart mr-1"></i>Thêm vào giỏ hàng
                                             </Button>

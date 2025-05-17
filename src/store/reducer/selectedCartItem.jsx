@@ -32,6 +32,14 @@ const fetchCartItemSlice = createSlice({
         isLoading: false,
         iserror: false,
       },
+
+      reducers: {
+        resetCartItemState: (state) => {
+          state.SelectedCartItem = [];
+          state.isLoading = false;
+          state.iserror = false;
+        },
+      },
      
       extraReducers: (builder) => {
         builder
@@ -67,7 +75,7 @@ const fetchCartItemSlice = createSlice({
          
       },
     });
-  
+    export const { resetCartItemState } = fetchCartItemSlice.actions;
     export default fetchCartItemSlice.reducer;
 
 

@@ -1,0 +1,104 @@
+.purchase-container {
+    display: flex;
+    background: #fafafa;
+    min-height: 100vh;
+  }
+  .purchase-sidebar {
+    width: 260px;
+    background: #fff;
+    border-right: 1px solid #eee;
+    padding: 32px 0 0 0;
+  }
+  .profile {
+    display: flex;
+    align-items: center;
+    padding: 0 24px 24px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 16px;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+    background: #eee;
+    border-radius: 50%;
+    margin-right: 16px;
+  }
+  .username {
+    font-weight: 600;
+  }
+  .edit-profile {
+    font-size: 13px;
+    color: #ee4d2d;
+    cursor: pointer;
+  }
+  .sidebar-menu {
+    list-style: none;
+    padding: 0 24px;
+  }
+  .sidebar-menu li {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    color: #222;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .sidebar-menu li.active,
+  .sidebar-menu li:hover {
+    color: #ee4d2d;
+  }
+  .sidebar-menu .badge {
+    background: #ee4d2d;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 11px;
+    padding: 2px 6px;
+    margin-left: 8px;
+  }
+  .purchase-main {
+    flex: 1;
+    padding: 32px 48px;
+  }
+  .purchase-tabs {
+    display: flex;
+    border-bottom: 1.5px solid #f0f0f0;
+    margin-bottom: 16px;
+  }
+  .purchase-tab {
+    padding: 12px 28px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #555;
+    border-bottom: 2px solid transparent;
+    transition: 0.2s;
+  }
+  .purchase-tab.active {
+    color: #ee4d2d;
+    border-bottom: 2px solid #ee4d2d;
+    background: #fff;
+  }
+  .purchase-search {
+    margin: 16px 0 32px 0;
+  }
+  .purchase-search input {
+    width: 100%;
+    padding: 10px 16px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    font-size: 15px;
+    background: #fafafa;
+  }
+  .purchase-content {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .empty-order {
+    text-align: center;
+    color: #888;
+  }
+  .empty-order img {
+    width: 120px;
+    margin-bottom: 16px;
+  }

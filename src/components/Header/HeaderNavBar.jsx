@@ -10,6 +10,10 @@ import {removeWishListItem} from "../../store/reducer/selectedWishList"
 import { getUser } from "../../service/productService";
 import { toggleCart } from "../../store/reducer/cartOpen";
 import {removeCartItem} from "../../store/reducer/selectedCartItem"
+import { resetCartItemState  } from "../../store/reducer/selectedCartItem";
+import { resetWishListState  } from "../../store/reducer/selectedWishList";
+import { increaseCartIemQuantity, decreaseCartIemQuantity } from "../../service/cartService";
+import { fetchCartItem } from "../../store/reducer/selectedCartItem";
 import {
   Button,
   Col,
@@ -33,11 +37,10 @@ export default function HeaderNavBar() {
   const [wishListOpen, setWishListOpen] = useState(false);
   const cartOpen = useSelector((state) => state.cartUi.isCartOpen);
   const togglewWishList = () => setWishListOpen(!wishListOpen);
-  // const toggleCartList = () => setCartOpen(!cartOpen);
   const toggleCartList = () => dispatch(toggleCart());
   const [wishListProduct, setWishListProduct] = useState([]);
   const [cartItemProduct, setCartItemProduct] = useState([]);
-
+  
   useEffect(() => {
     async function fetchProduct() {
       if (wishList.result) {
@@ -92,8 +95,14 @@ export default function HeaderNavBar() {
 
 
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    dispatch(resetCartItemState());
+    dispatch(resetWishListState());
+    setWishListProduct([])
+    setCartItemProduct([])
     dispatch(logout({token: token})); 
+    setUser(null);    
+    setDecoded(null);   
   };
 
   // const cartItems1 = useSelector((state) => state.products.cart);
@@ -103,6 +112,51 @@ export default function HeaderNavBar() {
   //     return total + itemTotal;
   //   }, 0);
   // };
+
+  const handleUpdateQuantity = async (variants) => {
+    try {
+      const currentQuantity = variants.quantity;
+      const availableStock = variants.productVariants.stock;
+  
+      if (currentQuantity >= availableStock) {
+        alert("Sản phẩm đã đạt số lượng tối đa trong kho.");
+        return;
+      }
+  
+      const result = await increaseCartIemQuantity(
+        variants.cart.cartId,
+        variants.productVariants.productVariantId
+      );
+  
+      if (result) {
+        dispatch(fetchCartItem(variants.cart.cartId));
+      } else {
+        alert("Không thể tăng số lượng sản phẩm. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      console.error("Lỗi khi tăng số lượng sản phẩm:", error);
+      alert("Đã xảy ra lỗi. Vui lòng thử lại sau.");
+    }
+  };
+  
+
+  const handleDecreaseQuantity = async (variants) => {
+    const result = await decreaseCartIemQuantity(
+      variants.cart.cartId,
+      variants.productVariants.productVariantId
+    );
+    if (result) {
+      dispatch(fetchCartItem(variants.cart.cartId));
+
+    }
+  }
+
+
+  const total = Object.values(cartItemProduct).reduce(
+  (sum, item) => sum + item.productVariants.price * item.quantity,
+  0
+);
+
 
   return (
     <div>
@@ -183,7 +237,7 @@ export default function HeaderNavBar() {
                             <div>{decoded?.sub}</div>
                             <div className="dropdown-content">
                               <a href="#">Tài Khoản Của Tôi</a>
-                              <a href="#">Đơn Mua</a>
+                              <Link to="my-purchase">Đơn Mua</Link>
                               <a href="#"onClick={handleLogout}>Đăng Xuất</a>
                             </div>
                         </div>
@@ -223,7 +277,7 @@ export default function HeaderNavBar() {
                     <div>
                       <div className="ml-4 d-none d-md-block"> 
                         <small className="d-block text-muted">Giỏ hàng</small>
-                        <span className="text-dark">0 sản phẩm - $0.00</span>
+                        <span className="text-dark">{cartItem?.result?.length || 0} sản phẩm - <span className="text-primary"  style={{fontSize: "14px"}}>{total.toLocaleString("vi-VN")} ₫</span></span>
                       </div>
                     </div>
                   </div>              
@@ -244,7 +298,7 @@ export default function HeaderNavBar() {
             <Col xs={9} className="py-4 align-item-center">
               {" "}
               <h5 className=" px-4">
-                    Giỏ Hàng ({cartItem.result.length})
+                    Giỏ Hàng ({cartItem?.result?.length || 0})
               </h5>
             </Col>
             <Col xs={2} className=" align-items-center justify-content-end ">
@@ -260,74 +314,98 @@ export default function HeaderNavBar() {
           </Row>
         </div>
         <ModalBody>
-          {Object.entries(cartItemProduct).map(([productId, variants]) => {
-            //  if (variants.length > 0) {
-               return ( 
-                <div key={productId}>
-                  <Row className="align-items-center my-5">
-                    <Col xs="5" className="d-flex align-items-center">
-                      <div className="mr-4">
-                        <Button
-                          type="submit"
-                          className="btn btn-primary btn-sm"
-                          onClick={() => {
-                            dispatch(removeCartItem({
-                              cartID: variants.cart.cartId,
-                              CartItemID: variants.cartItemId}));
-                            console.log("aloalo ",variants.cartItemId )
-                            console.log("olaol ", variants.cart.cartId)
-                          }}
-                        >
-                          <i className="las la-times"></i>
-                        </Button>
-                      </div>
-                      <Link>
-                        <img
-                          className="img-fluid"
-                          src={`http://localhost:8080/images/${variants.productVariants.imageUrl}`}
-                          alt="..."
-                        />
-                      </Link>
-                    </Col>
-                    <Col xs="5">
-                      <h6>
-                        <div className="link-title"
-                         style={{
-                          display: "-webkit-box",
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis"
-                        }}
-                        >
-                          {variants.productVariants.product.name}
-                        </div>
-                      </h6>
-                      <div className="product-meta">
-                        <span className="mr-2 text-primary">
-                          {variants.productVariants.price.toLocaleString('vi-VN')} ₫
-                        </span>
-                        <span className="text-muted">x {variants.quantity}</span>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-               ); 
-            // } 
+        {Object.entries(cartItemProduct).map(([productId, variants]) => (
+          
+            <div key={productId}>
+              <Row className="align-items-center mb-5">
+                {/* Image + Remove Button */}
+                <Col xs="4" className="d-flex align-items-center">
+                  <Button
+                    type="button"
+                    color="danger"
+                    size="sm"
+                    className="mr-3"
+                    onClick={() =>
+                      dispatch(removeCartItem({
+                        cartID: variants.cart.cartId,
+                        CartItemID: variants.cartItemId
+                      }))
+                    }
+                  >
+                    <i className="las la-times"></i>
+                  </Button>
+                  <Link>
+                    <img
+                      className="img-fluid rounded"
+                      src={`http://localhost:8080/images/${variants.productVariants.imageUrl}`}
+                      alt="..."
+                      style={{ width: "80px", height: "80px", objectFit: "cover" }}
+                    />
+                  </Link>
+                </Col>
 
-             return null; 
-         })}
+                {/* Product Info */}
+                <Col xs="8">
+                  <h6 className="mb-2">
+                    <div
+                      className="link-title"
+                      style={{
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
+                      }}
+                    >
+                      {variants.productVariants.product.name}
+                    </div>
+                  </h6>
+                  
+                  <div className="d-flex justify-content-between align-items-center">
+                    {/* Price */}
+                    <span className="text-primary font-weight-bold">
+                      {variants.productVariants.price.toLocaleString("vi-VN")} ₫
+                    </span>
+
+                    {/* Quantity controls */}
+                    <div className="d-flex align-items-center">
+                      <Button
+                        size="sm"
+                        color="light"
+                        className="px-2"
+                        onClick={() =>
+                          handleDecreaseQuantity(variants)
+                        }
+                      >
+                        <i className="las la-minus"></i>
+                      </Button>
+                      <span className="mx-2">{variants.quantity}</span>
+                      <Button
+                        size="sm"
+                        color="light"
+                        className="px-2"
+                        onClick={() => handleUpdateQuantity(variants)}
+                      >
+                        <i className="las la-plus"></i>
+                      </Button>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          ))}
+
           <hr className="my-5" />
           <div className="d-flex justify-content-between align-items-center mb-8">
-            <span className="text-muted">Subtotal:</span>
-            <span className="text-dark">$0.00</span>
+            <span className="text-muted">Tổng Tiền:</span>
+            <span className="text-dark text-primary">{total.toLocaleString("vi-VN")} ₫</span>
           </div>
           <div  className="d-flex justify-content-between align-items-center">
           <Link
-            to="/product-cart"
+            to="/view-cart"
             className="btn btn-primary btn-animated mr-2"
           >
-            <i className="las la-shopping-cart mr-1"></i>View Cart
+            <i className="las la-shopping-cart mr-1"></i>Xem Giỏ Hàng
           </Link>
           <Link to="/product-checkout" className="btn btn-dark">
             <i className="las la-money-check mr-1"></i>Continue To Checkout
@@ -349,7 +427,7 @@ export default function HeaderNavBar() {
             <Col xs={9} className="py-4 align-items-center">
               {" "}
               <h5 className=" px-4">
-                Sản Phẩm Yêu Thích ({wishList.result.length})
+                Sản Phẩm Yêu Thích ({wishList?.result?.length || 0})
               </h5>
             </Col>
             <Col xs={3} className="align-items-center">
@@ -370,7 +448,6 @@ export default function HeaderNavBar() {
         <ModalBody className="">
           {Object.entries(wishListProduct).map(([productId, variants]) => {
            if (variants.length > 0) {
-            console.log("variants: ", variants)
             const firstVariant = variants[0]; // Lấy 1 biến thể làm đại diện
               return (
                 <div key={productId}>
@@ -383,10 +460,18 @@ export default function HeaderNavBar() {
                           className="btn btn-primary btn-sm"
                           onClick={() => {
 
-                            dispatch(removeWishListItem({
+                            if (!user || !token) {
+                              alert("Bạn cần đăng nhập để sử dụng chức năng yêu thích.");
+                              return;
+                            }
+
+                            dispatch(
+                              removeWishListItem({
+                              productId: firstVariant.product.productId,
                               userId: user.userId, 
-                              productId: firstVariant.product.productId
-                            }));
+                              
+                            })
+                          );
                           }}
                         >
                           <i className="las la-times"></i>
@@ -429,9 +514,7 @@ export default function HeaderNavBar() {
                         // onClick={() => handleAddToCart(product)}
                         className="mx-2 btn text-white fs-1 ms-auto "
                       >
-                     
                         <i className="las la-shopping-cart"></i>
-
                       </span>
                     </Col>
                   </Row>

@@ -23,7 +23,7 @@ export const login = createAsyncThunk("auth/login", async (userData, { rejectWit
 // });
 
 export const logout = createAsyncThunk("auth/logout", async (logoutToken, { rejectWithValue }) => {
-  console.log(logoutToken)
+  // console.log(logoutToken)
   try {
     const response = await axios.post("http://localhost:8080/Authentication/logout", logoutToken);
     return response.data;

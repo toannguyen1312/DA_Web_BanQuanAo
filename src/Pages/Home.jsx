@@ -55,7 +55,7 @@ export default function Home() {
       async function fetchData() {
       let user = null;
       let cart = null;
-        if (decoded.sub !== null) {
+        if (decoded && decoded.sub) {
           user = await getUser(decoded.sub); 
           cart = await getCart(user.userId)
 
@@ -69,11 +69,14 @@ export default function Home() {
             cart = await createCart(newCartData);
           }
         }
-          
-        dispatch(fetchWishList(user.userId))
-        dispatch(fetchCartItem(cart.cartId))
-
-          }
+        
+        if(cart?.cartId) {
+          dispatch(fetchCartItem(cart.cartId))
+        }
+        if(user?.userId) {
+          dispatch(fetchWishList(user.userId))
+        }
+        }
       fetchData()
     }, [])
 
