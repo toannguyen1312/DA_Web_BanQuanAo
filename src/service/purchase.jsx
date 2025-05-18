@@ -45,29 +45,26 @@ export const updatePaymentStatus = async (orderId, status) => {
   }
 };
 
-export const addReview = async ({ orderId, productId, rating, comment, images, isAnonymous }) => {
+export const addReview = async (formData) => {
   try {
-    const formData = new FormData();
-    formData.append("orderId", orderId);
-    formData.append("productId", productId);
-    formData.append("rating", rating);
-    formData.append("comment", comment);
-    formData.append("isAnonymous", isAnonymous);
-    if (images && images.length > 0) {
-      Array.from(images).forEach((file, idx) => {
-        formData.append("images", file);
-      });
-    }
-    const res = await axios.post("http://localhost:8080/reviews/add", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const res = await axios.post(`http://localhost:8080/reviews/createReview`, formData);
     return res.data;
   } catch (error) {
     console.error("Lỗi khi gửi đánh giá:", error);
     throw error;
   }
 };
+
+export const getReviewUser = async (userId) => {
+  try {
+    const res = await axios.get(`http://localhost:8080/reviews/getReviewUser/${userId}`);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi gửi đánh giá:", error);
+    throw error;
+  }
+};
+
+
 
 

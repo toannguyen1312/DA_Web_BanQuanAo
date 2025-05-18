@@ -5,7 +5,7 @@ import { getUser } from "../../service/productService";
 import { jwtDecode } from "jwt-decode"; 
 import { getOrderDetailsByOrderId, getPayments } from "../../service/ordersService";
 import imgEmpty from "../../assets/images/empty.png";
-import { updateStatus, updatePaymentStatus } from "../../service/purchase";
+import { updateStatus, updatePaymentStatus, addReview, getReviewUser } from "../../service/purchase";
 
 const tabs = [
   "Tất cả",
@@ -226,6 +226,8 @@ const getFilteredPayments =  () => {
     setReviewImages([...e.target.files]);
   };
 
+  const[checkReview, setCheckReview] = useState(false);
+
   // Hàm gửi đánh giá (chỉ demo, bạn cần gọi API thực tế nếu có)
 const handleSubmitReview = async (e) => {
   e.preventDefault();
@@ -235,41 +237,43 @@ const handleSubmitReview = async (e) => {
   if (!products || products.length === 0) return;
 
   try {
-    // Tạo danh sách các productId duy nhất
     const uniqueProductIds = [
       ...new Set(products.map(p => p.productVariant.product.productId))
     ];
 
-    // Gửi đánh giá cho từng productId
     for (let productId of uniqueProductIds) {
       const formData = new FormData();
-      formData.append("userId", user.userId);
-      formData.append("product", productId);
-      formData.append("content", reviewText);
-      formData.append("rating", reviewRating);
 
-      // Gắn ảnh (nếu có)
-      reviewImages.forEach(file => {
-        formData.append("images", file);
-      });
+      formData.append("user", user.userId); 
+      formData.append("product", productId);  
+      formData.append("comment", reviewText);
+      formData.append("rating", reviewRating); 
+      formData.append("reviewDate", new Date().toISOString().split("T")[0]); 
 
-      // Gửi API (bỏ comment nếu có function submitReview)
-      // await submitReview(formData);
-
-      // Log kiểm tra
-      console.log("Gửi đánh giá cho productId:", productId);
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ':', pair[1]);
+      if (reviewImages.length > 0) {
+        formData.append("image", reviewImages[0]); 
+      } else {
+        alert("Bạn cần chọn ít nhất 1 ảnh để gửi đánh giá.");
+        return;
       }
+      const result =await addReview(formData);
+      const data = await getReviewUser(user.userId)
+      if(data) {
+        setCheckReview(true);
+      }
+
+      console.log("dữ liệu: ", data)
+
     }
 
-    alert("Đã gửi đánh giá cho tất cả sản phẩm!");
+    alert("Đã gửi đánh giá thành công!");
     handleCloseReviewModal();
   } catch (err) {
     console.error("Lỗi khi gửi đánh giá:", err);
     alert("Gửi đánh giá thất bại!");
   }
 };
+
 
 
 
@@ -352,6 +356,15 @@ const handleSubmitReview = async (e) => {
                 <div className="order-footer">
                   <span>Thành tiền: <span className="order-total">{orderTotal.toLocaleString()}₫</span></span>
                   {item.payment.order.status === "Hoàn thành" ? (
+                    checkReview ?
+
+                     <button
+                      className="order-action-btn"
+                     disabled
+                    >
+                      Đã đánh giá
+                    </button>
+                    :
                     <button
                       className="order-action-btn"
                       onClick={() => handleOpenReviewModal(item)}
