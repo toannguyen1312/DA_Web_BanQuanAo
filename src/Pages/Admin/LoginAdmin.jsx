@@ -7,24 +7,32 @@ import '../../assets/css/Admin/LoginAd.css';
 
 function LoginAdmin() {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ username: '', password: '' });
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const [formData, setFormData] = useState({
+        username: '',
+        password: '',
+    })
+
+
+     const handleChange = (e) => {
+        const {name, value} = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const { username, password } = formData;
-
-        if (username === 'admin' && password === '123') {
-            localStorage.setItem('isAdminLoggedIn', 'true'); // Lưu trạng thái
-            navigate('/admin');
-        } else {
-            setErrorMessage('Thông tin đăng nhập không đúng!');
-        }
+        dispatch(login(formData)).then((res) => {
+            if (res.meta.requestStatus === "fulfilled") {
+                // navigate('/admin')
+                setErrorMessage(''); 
+            // console.log("✅ Login thành công, payload:", store.getState().auth.token); // 👈 log ở đây
+            } else {
+                const err = res.payload?.message || "Đăng nhập thất bại. Vui lòng thử lại!";
+                setErrorMessage(err);
+            }
+          });
+          
     };
 
     return (
@@ -39,7 +47,7 @@ function LoginAdmin() {
                                 
                             </div>
                                 <div className="shadow p-4 bg-white rounded">
-                                    <h3 className="text-center mb-4">Admin Login</h3>
+                                    <h3 className="text-center mb-4">Admin Đăng Nhập</h3>
                                     {errorMessage && (
                                         <div className="alert alert-danger text-center">{errorMessage}</div>
                                     )}
@@ -64,7 +72,7 @@ function LoginAdmin() {
                                                 required
                                             />
                                         </FormGroup>
-                                        <Button type="submit" color="primary" block>Login</Button>
+                                        <Button type="submit" color="primary" block>Đăng Nhập</Button>
                                     </Form>
                                 </div>
                             </Col>

@@ -1,0 +1,60 @@
+/* Table style */
+.cart-table {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+.cart-table th, .cart-table td {
+  vertical-align: middle !important;
+}
+.cart-img-hover {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cart-img-hover:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+}
+.btn-product {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: #f5f5f5;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-product:hover {
+  background: #007bff;
+  color: #fff;
+}
+.cart-totals-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  background: #f8f9fa;
+  padding: 32px 18px;
+}
+.cart-totals-card h4 {
+  font-weight: 700;
+}
+.cart-totals-card .btn {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.form-product {
+  font-size: 1.1rem;
+  padding: 6px 0;
+}
+/* Coupon input and button */
+#coupon.form-control {
+  min-width: 140px;
+}
+.btn-animated {
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.btn-animated:hover {
+  box-shadow: 0 2px 8px rgba(0,123,255,0.15);
+  transform: translateY(-2px) scale(1.03);
+} 

@@ -17,15 +17,17 @@ import Home from "./pages/Home"
 import SelectSize from './Pages/SelectSize';
 import Introduce from './Pages/Introduce';
 import ManagerAdmin from './Pages/Admin/ManagerAdmin';
-import LoginAdmin from './Pages/Admin/LoginAdmin';
+import LoginAdmin from './pages/Admin/LoginAdmin';
 import ProtectedRoute from './Pages/Admin/ProtectedRoute';
 import AdminLayout from './layouts/AdminLayout';
 import About from "./Pages/About";
 import Blog from "./Pages/Blog";
 import ContactUs from "./Pages/contact/ContactUs";
 import Faq from './Pages/faq';
-
+import ViewCart from './pages/ViewCart/viewCart';
+import Purchase from './pages/Purchase/Purchase';
 import loaderGif from './assets/images/loader.gif';
+import CheckOut from './pages/checkOut/ChekOut';
 
 
 function App() {
@@ -136,12 +138,11 @@ function App() {
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/introduce" element={<Introduce />} />
-
           <Route path="/shop-grid-left-sidebar" element={<LeftSidebar/>} />
           <Route path="/product-left-image" element={<Detail/>} />
-
-        
-
+          <Route path="/view-cart" element={<ViewCart/>}/>
+          <Route path="/my-purchase" element={<Purchase/>} />
+          <Route path="/checkout" element={<CheckOut/>} />
           <Route path="/admin/login" element={<LoginAdmin />} />
           <Route path="/admin" element={<AdminLayout><ProtectedRoute><ManagerAdmin /></ProtectedRoute></AdminLayout>} />
 

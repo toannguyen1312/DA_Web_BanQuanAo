@@ -125,10 +125,9 @@ function leftSidebar() {
                             /> */}
                             </Row>
                         </Col>
-                        <div className="col-lg-3 col-md-12 sidebar mt-8 mt-lg-0">
+                        <div className="col-lg-3 col-md-12  mt-8 mt-lg-0">
                             <SideBar 
                             onchangeFilterBar= {handleFilterChange}
-                           
                             />
                         </div>
                         </Row>

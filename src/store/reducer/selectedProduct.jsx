@@ -25,7 +25,6 @@ export const setSelectedProduct = createAsyncThunk("selectedProducts/fetchAll", 
           })
           .addCase(setSelectedProduct.fulfilled, (state, action) => {
 
-               console.log(action.payload) 
               state.selectedProduct = action.payload;
               state.isLoading = false;
               state.isError = false;

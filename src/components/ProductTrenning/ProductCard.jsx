@@ -154,18 +154,28 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
             }
             
             if (user && selectProduct && selectedSize && cart) {
-             
               const variantProduct = await getVariantProduct(selectProduct.product.productId, selectedSize, selectedVariant?.color)
               if(variantProduct != null) {
-
+                // Kiểm tra tồn kho trước khi thêm vào giỏ hàng
+                if (quantity > variantProduct.stock) {
+                  toast("Số lượng sản phẩm trong kho không đủ!", {
+                    position: "top-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                  });
+                  return;
+                }
                 const cartIem = {
                   cartId: cart.cartId,
                   productVariants: variantProduct.productVariantId,
                   quantity: quantity
                 }
                 const createCartItem = await  dispatch(createCartIem(cartIem)) 
-                
-
                 if (createCartItem.message == "Item quantity updated") {
                   toast("Sản phẩm đã được cập nhật", {
                     position: "top-right",

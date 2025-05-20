@@ -13,6 +13,7 @@ import {createWishList} from "../../store/reducer/wishlistReducer"
 import {fetchWishList} from "../../store/reducer/selectedWishList"
 import { getUser, getProduct } from '../../service/productService';
 import { toast } from "react-toastify";
+import { getReviewProductID } from '../../service/detail';
 import {
     Button,
     Col,
@@ -105,7 +106,6 @@ function Detail() {
       }
 
       const handleAddToWishList = async (id) => {
-            console.log(id)
               try {
                 let user = null;
                 const product = await getProduct(id);
@@ -161,6 +161,127 @@ function Detail() {
                 console.error("Lỗi trong handleAddToWishList:", error);
               }
             };
+
+    const handleAddToCart = async () => {
+        if (!selectProduct || !selectedSize) return;
+        const maxStock = getStockBySize();
+        if (quantity > maxStock) {
+            toast("Số lượng sản phẩm trong kho không đủ!", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+            return;
+        }
+        // TODO: Thực hiện logic thêm vào giỏ hàng ở đây
+        // Ví dụ: gọi API hoặc dispatch action
+        toast("Đã thêm vào giỏ hàng!", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        });
+    };
+
+
+
+
+
+
+// review
+
+
+ const [activeTab, setActiveTab] = useState("1");
+    const toggle = (tab) => {
+        if (activeTab !== tab) {
+            setActiveTab(tab);
+            if(tab === "1") {
+                console.log("result: ", tab)
+                console.log("dữ liệu: ", selectProduct.imageUrl)
+            }
+        }
+    };
+
+    const[reviews, setReviews] = useState([])
+    useEffect(() => {
+        const fetchRating = async () => {
+            const data = await getReviewProductID(selectProduct?.product.productId)
+            setReviews(data)
+        }
+
+        if (selectProduct?.product?.productId) {
+            fetchRating()
+        }
+    }, [selectProduct])
+
+
+    console.log("result: ", reviews)
+
+
+   const ReviewItem = ({ image, name, description, rating, reviewDate }) => {
+    // Chuyển đổi và định dạng ngày
+    const formattedDate = new Date(reviewDate).toLocaleDateString('vi-VN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    });
+
+    return (
+        <div className="media-holder mt-5">
+            <div className="media d-block d-md-flex">
+                <img
+                    className="img-fluid align-self-center rounded mr-md-3 mb-3 mb-md-0"
+                    alt="image"
+                    src={image}
+                    style={{ width: '100px', height: '100px' }}
+                />
+                <div className="media-body">
+                    <div className="d-flex align-items-center">
+                        <h6 className="mb-0">{name}</h6>
+                        <small className="mx-3 text-muted">{formattedDate}</small>
+                        <div className="star-rating">
+                            {[...Array(rating)].map((_, i) => (
+                                <i key={i} className="las la-star"></i>
+                            ))}
+                        </div>
+                    </div>
+                    <p className="mb-0 mt-3">{description}</p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const totalReviews = reviews.length;
+
+const starRatings = [5, 4, 3, 2, 1].map((stars) => {
+  const count = reviews.filter((r) => r.rating === stars).length;
+  const percentage = totalReviews ? Math.round((count / totalReviews) * 100) : 0;
+  const color = "#ffc107"; // màu vàng cho sao
+
+  return { stars, percentage, color };
+});
+
+
+    const RatingBar = ({ stars, percentage, color }) => (
+    <div className="d-flex align-items-center mb-2">
+        <div className="text-nowrap me-3 mr-2">{stars} Sao</div>
+        <div className="w-100">
+        <Progress value={percentage} color={color} style={{ height: "5px" }} />
+        </div>
+        <span className="text-muted ms-3">{percentage}%</span>
+    </div>
+    );
+
 
     return (
         <div className="page-wrapper">
@@ -315,7 +436,7 @@ function Detail() {
                                             <Button
                                                 className="btn btn-primary btn-animated mr-sm-4 mb-3 mb-sm-0"
                                                 type="button"
-                                                // onClick={() => handleAddToCart(product)}
+                                                onClick={handleAddToCart}
                                             >
                                                 <i className="las la-shopping-cart mr-1"></i>Thêm vào giỏ hàng
                                             </Button>
@@ -340,89 +461,109 @@ function Detail() {
                                 <Nav tabs>
                                     <NavItem>
                                         <NavLink
-                                            // className={
-                                            //     activeTab === "1"
-                                            //         ? "text-dark active ms-0"
-                                            //         : "text-dark ms-0"
-                                            // }
-                                            // onClick={() => {
-                                            //     toggle("1");
-                                            // }}
+                                            className={
+                                                activeTab === "1"
+                                                    ? "text-dark active ms-0"
+                                                    : "text-dark ms-0"
+                                            }
+                                            onClick={() => {
+                                                toggle("1");
+                                            }}
                                         >
-                                            Description
+                                            Giới thiệu
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink
-                                            // className={
-                                            //     activeTab === "2" ? "text-dark active" : "text-dark"
-                                            // }
-                                            // onClick={() => {
-                                            //     toggle("2");
-                                            // }}
+                                            className={
+                                                activeTab === "2" ? "text-dark active" : "text-dark"
+                                            }
+                                            onClick={() => {
+                                                toggle("2");
+                                            }}
                                         >
-                                            Additional Information
+                                            Thông tin chi tiết
                                         </NavLink>
                                     </NavItem>
                                     <NavItem>
                                         <NavLink
-                                            // className={
-                                            //     activeTab === "3" ? "active text-dark" : "text-dark"
-                                            // }
-                                            // onClick={() => {
-                                            //     toggle("3");
-                                            // }}
+                                            className={
+                                                activeTab === "3" ? "active text-dark" : "text-dark"
+                                            }
+                                            onClick={() => {
+                                                toggle("3");
+                                            }}
                                         >
-                                            Reviews (3)
+                                            Đánh giá sản phẩm
                                         </NavLink>
                                     </NavItem>
                                 </Nav>
-                                <TabContent  className="pt-5">
+                                <TabContent activeTab={activeTab}  className="pt-5" >
                                     <TabPane tabId="1">
-
                                         <div className="row align-items-center">
                                             <div className="col-md-5">
-                                                {/* <img className="img-fluid w-100" src={`assets/images/${product.pictures[0]}`} alt="" /> */}
+                                                <img className="img-fluid w-80" style={{width: "80%"}} src={selectProduct?.imageUrl || ''} alt={selectProduct?.name || ''} />
                                             </div>
                                             <div className="col-md-7 mt-5 mt-lg-0">
-                                                {/* <h3 className="mb-3">{product.name}</h3> */}
-                                                {/* <p>{product.description}</p>  */}
+                                                <h3 className="mb-3">{selectProduct?.product.name}</h3>
+                                                <p>{selectProduct?.product.category.description}</p> 
                                                 <Link className="btn btn-primary btn-animated" to="#"><i
-                                                    className="las la-long-arrow-alt-right mr-1"></i>Read More</Link>
+                                                    className="las la-long-arrow-alt-right mr-1"></i>Đọc thêm</Link>
                                             </div>
-                                        </div></TabPane>
+                                        </div>
+                                    </TabPane>
                                     <TabPane tabId="2">
-                                        <h5 className="mb-3">Additional information</h5>
+                                        <h5 className="mb-3">Thông tin chi tiết</h5>
                                         <Table bordered className="mb-0">
                                             <tbody>
                                                 <tr>
-                                                    <td>Size</td>
-                                                    {/* <td>{product.size.join(" ")}</td> */}
+                                                <td>Kích cỡ</td>
+                                                    <td>
+                                                        {selectProduct &&
+                                                        selectProduct.sizes.map((size, index) => (
+                                                            <span key={size}>
+                                                            {size}
+                                                            {index !== selectProduct.sizes.length - 1 && ', '}
+                                                            </span>
+                                                        ))}
+                                                    </td>
+                                                </tr>
+
+                                               <tr>
+                                                <td>Màu</td>
+                                                <td>
+                                                    {selectedProduct.result.map((item, idx) => (
+                                                    <span key={idx}>
+                                                        {item.color}
+                                                        {idx !== selectedProduct.result.length - 1 && ', '}
+                                                    </span>
+                                                    ))}
+                                                </td>
+                                                </tr>
+
+
+                                                <tr>
+                                                    <td>Giá</td>
+                                                    <td>{selectProduct?.price.toLocaleString('vi-VN')} ₫</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Color</td>
-                                                    {/* <td>{product.colors.join(" ")}</td> */}
+                                                    <td>Giảm giá</td>
+                                                    <td>{selectProduct?.discount} %</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Chest</td>
-                                                    <td>38 inches</td>
+                                                    <td>Sẳn có</td>
+                                                    <td><span className="text-muted">
+                                                    {
+                                                        selectProduct?.sizes.map((size, index) => {
+                                                        if (size === selectedSize) {
+                                                            return selectProduct.stock[index];
+                                                        }
+                                                        return null;
+                                                        })
+                                                    }
+                                                    </span></td>
                                                 </tr>
-                                                <tr>
-                                                    <td>Waist</td>
-                                                    <td>20 cm</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Length</td>
-                                                    <td>35 cm</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Fabric</td>
-                                                    <td>Cotton, Silk &amp; Synthetic</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Warranty</td>
-                                                    <td>6 Months</td>
-                                                </tr>
+                                               
                                             </tbody>
                                         </Table>
                                     </TabPane>
@@ -430,124 +571,38 @@ function Detail() {
                                         <Row className="total-rating align-items-center">
                                             <Col md="6">
                                                 <div className="bg-dark shadow-sm rounded text-center p-5">
-                                                    <h5 className="text-white">Overall</h5>
+                                                    <h5 className="text-white">Tổng thể</h5>
                                                     {/* <h4 className="text-white">{product.rating}</h4> */}
-                                                    <h6 className="text-white">(03 Reviews)</h6>
+                                                    <h6 className="text-white">( {reviews.length} Đánh giá )</h6>
                                                 </div>
                                             </Col>
-                                            <Col md="6" className="mt-3 mt-lg-0">
+                                           <Col md="6" className="mt-3 mt-lg-0">
                                                 <div className="rating-list">
-                                                    {/* {starRatings.map(
-                                                        ({ stars, percentage, color }) => (
-                                                            <RatingBar
-                                                                stars={stars}
-                                                                percentage={percentage}
-                                                                color={color}
-                                                            />
-                                                        )
-                                                    )} */}
+                                                    {starRatings.map(({ stars, percentage, color }) => (
+                                                    <RatingBar
+                                                        key={stars}
+                                                        stars={stars}
+                                                        percentage={percentage}
+                                                        color={color}
+                                                    />
+                                                    ))}
                                                 </div>
                                             </Col>
                                         </Row>
                                         <Row className="mt-7">
 
-                                            {/* {items.map(
-                                                ({ image, name, description, rating }, i) => (
-                                                    <ReviewItem
+                                            {reviews.map(
+                                                (item, i) => (
+                                                      <ReviewItem
                                                         key={i}
-                                                        image={image}
-                                                        name={name}
-                                                        description={description}
-                                                        rating={rating}
+                                                        image={item.imageURL}
+                                                        name={item.user.username}
+                                                        description={item.comment}
+                                                        rating={item.rating}
+                                                        reviewDate={item.reviewDate}
                                                     />
                                                 )
-                                            )} */}
-                                            <div className="mt-8 shadow p-5">
-                                                <h4 className="mb-4">Add Review</h4>
-                                                <Form id="contact-form" className="row" >
-                                                    <FormGroup className="col-sm-6">
-                                                        <Input
-                                                            type="text"
-                                                            name="name"
-                                                            placeholder="Name"
-                                                            required
-                                                            className="form-control"
-                                                            // value={name}
-                                                            // onChange={(event) =>
-                                                            //     setName(event.target.value)
-                                                            // }
-                                                        />
-                                                    </FormGroup>
-                                                    <FormGroup className="col-sm-6">
-                                                        <Input
-                                                            type="email"
-                                                            name="email"
-                                                            className="form-control"
-                                                            placeholder="Email Address"
-                                                            required
-                                                            // value={email}
-                                                            // onChange={(event) =>
-                                                            //     setEmail(event.target.value)
-                                                            // }
-                                                        />
-                                                    </FormGroup>
-                                                    <FormGroup className="col-12 clearfix">
-                                                        <label >Rating</label>
-                                                        <Input
-                                                            type="select"
-                                                            name="rating"
-                                                            id="ratingSelect"
-                                                            // value={rating}
-                                                            className="form-control custom-select"
-                                                            // onChange={(event) =>
-                                                            //     setRating(event.target.value)
-                                                            // }
-                                                        >
-                                                            {/* <select defaultValue="">
-                                                                    <option value="" disabled hidden>-- Select --</option>
-                                                                    <option value="1">1</option>
-                                                                    <option value="2">2</option>
-                                                                    <option value="3">3</option>
-                                                                    <option value="4">4</option>
-                                                                    <option value="5">5</option>
-                                                                    </select> */}
-
-                                                        </Input>
-                                                    </FormGroup>
-                                                    <FormGroup className="col-12">
-                                                        <Input
-                                                            type="text"
-                                                            name="phone"
-                                                            className="form-control"
-                                                            placeholder="Phone Number"
-                                                            required
-                                                            // value={phone}
-                                                            // onChange={(event) =>
-                                                            //     setPhone(event.target.value)
-                                                            // }
-                                                        />
-                                                    </FormGroup>
-                                                    <FormGroup className="col-12">
-                                                        <Input
-                                                            type="textarea"
-                                                            name="comment"
-                                                            className="form-control rounded-4 h-auto"
-                                                            placeholder="Type Comment"
-                                                            rows="4"
-                                                            required
-                                                            // value={comment}
-                                                            // onChange={(event) =>
-                                                            //     setComment(event.target.value)
-                                                            // }
-                                                        />
-                                                    </FormGroup>
-                                                    <div className="col-12">
-                                                        <Button color="primary" className="mt-3 btn btn-primary btn-animated">
-                                                            Post Review
-                                                        </Button>
-                                                    </div>
-                                                </Form>
-                                            </div>
+                                            )}
                                         </Row>
                                     </TabPane>
                                 </TabContent>
