@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'line-awesome/dist/line-awesome/css/line-awesome.min.css';
 import "react-toastify/dist/ReactToastify.css";
+import 'react-quill/dist/quill.snow.css';
 import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
 import Login from "./Pages/Login";
@@ -16,7 +17,7 @@ import Home from "./pages/Home"
 import SelectSize from './Pages/SelectSize';
 import Introduce from './Pages/Introduce';
 import ManagerAdmin from './Pages/Admin/ManagerAdmin';
-import LoginAdmin from './Pages/Admin/LoginAdmin';
+import LoginAdmin from './pages/Admin/LoginAdmin';
 import ProtectedRoute from './Pages/Admin/ProtectedRoute';
 import AdminLayout from './layouts/AdminLayout';
 import About from "./Pages/About";
@@ -139,9 +140,7 @@ function App() {
           <Route path="/introduce" element={<Introduce />} />
           <Route path="/shop-grid-left-sidebar" element={<LeftSidebar/>} />
           <Route path="/product-left-image" element={<Detail/>} />
-
           <Route path="/view-cart" element={<ViewCart/>}/>
-
           <Route path="/my-purchase" element={<Purchase/>} />
           <Route path="/checkout" element={<CheckOut/>} />
           <Route path="/admin/login" element={<LoginAdmin />} />

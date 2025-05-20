@@ -93,6 +93,8 @@ export default function HeaderNavBar() {
     fetchUser();
   }, [token]);
 
+  console.log(token)
+
 
 
   const handleLogout = async () => {
@@ -183,7 +185,7 @@ export default function HeaderNavBar() {
                   <div className="collapse navbar-collapse" id="navbarNav" style={{cursor: "pointer"}}>
                     <ul className="navbar-nav" >
                       <div className="position-relative">
-                      <li className="nav-item">HÀNG MỚI VỀ</li>
+                        <Link className="nav-item" to="/" style={{color: "black"}}>HÀNG MỚI VỀ</Link>
                         <span className="hot-badge">Hot</span>
                       </div>
                       <li className="nav-item dropdown">
@@ -292,8 +294,9 @@ export default function HeaderNavBar() {
         isOpen={cartOpen}
         toggle={toggleCartList}
         className="cart-modal"
+       
       >
-        <div>
+        <div style={{width: "none"}}>
           <Row>
             <Col xs={9} className="py-4 align-item-center">
               {" "}

@@ -257,15 +257,7 @@ const handleSubmitReview = async (e) => {
         return;
       }
       const result =await addReview(formData);
-      const data = await getReviewUser(user.userId)
-      if(data) {
-        setCheckReview(true);
-      }
-
-      console.log("dữ liệu: ", data)
-
     }
-
     alert("Đã gửi đánh giá thành công!");
     handleCloseReviewModal();
   } catch (err) {
@@ -273,6 +265,21 @@ const handleSubmitReview = async (e) => {
     alert("Gửi đánh giá thất bại!");
   }
 };
+
+
+useEffect(() => {
+  const fetchReviews = async () => {
+    try {
+      const data = await getReviewUser(user?.userId)
+      if(data){
+      setCheckReview(true);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy thanh toán và sản phẩm:", error);
+    }
+  };
+  fetchReviews();
+}, []);
 
 
 
@@ -398,7 +405,7 @@ const handleSubmitReview = async (e) => {
       {/* Modal đánh giá sản phẩm */}
       {showReviewModal && reviewProduct && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content_1">
             <button className="modal-close-btn" onClick={handleCloseReviewModal}>&times;</button>
             <h2>Viết đánh giá</h2>
             <div className="modal-product-info">
