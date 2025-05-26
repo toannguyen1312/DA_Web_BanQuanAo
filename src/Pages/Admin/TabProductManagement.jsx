@@ -4,26 +4,16 @@ import { FaSearch, FaFileExcel, FaPlus, FaEdit, FaTrashAlt } from 'react-icons/f
 import * as XLSX from 'xlsx';
 import ReactPaginate from 'react-paginate';
 import '../../assets/css/Admin/Tabproduct.css';
+import { getAllCategorys, getAllProductVariant} from '../../service/admin';
 
-const initialProducts = [
-  {
-    id: 1,
-    image: 'https://th.bing.com/th/id/OIP.0pgO5J6_e6e2e-R02re6SwHaJ6?rs=1&pid=ImgDetMain',
-    name: 'áo da',
-    category: 'áo nam',
-    price: 100000,
-    p_discount: 10,
-    size: 'M',
-    color: 'Red',
-    stock: 50
-  },
-];
+
 
 function TabProductManagement() {
-  const [products, setProducts] = useState(initialProducts);
-  const [search, setSearch] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState(products);
+   const [search, setSearch] = useState('');
+  const [productVariant, setProductVariant] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [modal, setModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
     image: '',
     name: '',
@@ -34,17 +24,29 @@ function TabProductManagement() {
     color: '',
     stock: ''
   });
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 5;
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 10;
+
+  // Fetch data from API
   useEffect(() => {
-    const searchResults = products.filter(product =>
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.category.toLowerCase().includes(search.toLowerCase())
+    const fetchProducts = async () => {
+      const data = await getAllProductVariant();
+      setProductVariant(data);
+      setFilteredProducts(data); // initialize
+    };
+    fetchProducts();
+  }, []);
+
+  // Handle search
+  useEffect(() => {
+    const results = productVariant.filter((product) =>
+      product.product.name.toLowerCase().includes(search.toLowerCase()) ||
+      product.product.category.name.toLowerCase().includes(search.toLowerCase())
     );
-    setFilteredProducts(searchResults);
-  }, [search, products]);
+    setFilteredProducts(results);
+    setCurrentPage(0); // reset to first page on new search
+  }, [search, productVariant]);
 
   const offset = currentPage * itemsPerPage;
   const paginatedProducts = filteredProducts.slice(offset, offset + itemsPerPage);
@@ -55,53 +57,18 @@ function TabProductManagement() {
 
   const exportToExcel = () => {
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(filteredProducts);
+    const ws = XLSX.utils.json_to_sheet(filteredProducts.map((p) => ({
+      ID: p.product.productId,
+      Name: p.product.name,
+      Category: p.product.category.name,
+      Price: p.price,
+      Discount: p.discount,
+      Size: p.size,
+      Color: p.color,
+      Stock: p.stock[0],
+    })));
     XLSX.utils.book_append_sheet(wb, ws, 'Danh sách sản phẩm');
     XLSX.writeFile(wb, 'DanhSachSanPham.xlsx');
-  };
-
-  const handleAddProduct = () => {
-    if (selectedProduct) {
-      const updated = products.map(product =>
-        product.id === selectedProduct.id ? newProduct : product
-      );
-      setProducts(updated);
-    } else {
-      setProducts([...products, { ...newProduct, id: products.length + 1 }]);
-    }
-    setModal(false);
-    setSelectedProduct(null);
-    setNewProduct({
-      image: '',
-      name: '',
-      category: '',
-      price: '',
-      p_discount: '',
-      size: '',
-      color: '',
-      stock: ''
-    });
-  };
-
-  const handleDeleteProduct = (id) => {
-    if (window.confirm('Bạn có chắc muốn xóa sản phẩm này không?')) {
-      setProducts(products.filter(product => product.id !== id));
-    }
-  };
-
-  const toggleModal = (product = null) => {
-    setSelectedProduct(product);
-    setNewProduct(product || {
-      image: '',
-      name: '',
-      category: '',
-      price: '',
-      p_discount: '',
-      size: '',
-      color: '',
-      stock: ''
-    });
-    setModal(true);
   };
 
   return (
@@ -132,30 +99,32 @@ function TabProductManagement() {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>ID sản phẩm</th>
             <th>Hình ảnh</th>
-            <th>Tên</th>
-            <th>Loại</th>
+            <th>Tên sản phẩm</th>
+            <th>Thể loại</th>
             <th>Giá</th>
             <th>Giảm giá (%)</th>
-            <th>Kích thước</th>
+            <th>Ngày thêm</th>
+            <th>Size</th>
             <th>Màu sắc</th>
             <th>Tồn kho</th>
             <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
-          {paginatedProducts.map(product => (
-            <tr key={product.id}>
-              <td>{product.id}</td>
-              <td><img src={product.image} alt={product.name} style={{ width: '50px' }} /></td>
-              <td>{product.name}</td>
-              <td>{product.category}</td>
+          {paginatedProducts.map((product, index) => (
+            <tr key={offset + index}>
+              <td>{offset + index + 1}</td>
+              <td><img src={product.imageUrl} alt={product.product.name} style={{ width: '50px' }} /></td>
+              <td>{product.product.name.length > 10 ? product.product.name.substring(0, 10) + '...' : product.product.name}</td>
+              <td>{product.product.category.categoryId}</td>
               <td>{product.price.toLocaleString()}</td>
-              <td>{product.p_discount}%</td>
-              <td>{product.size}</td>
+              <td>{product.discount}%</td>
+               <td>{product.product.date}</td>
+              <td>{product.sizes}</td>
               <td>{product.color}</td>
-              <td>{product.stock}</td>
+              <td>{product.stock[0]}</td>
               <td className="d-flex gap-2">
                 <Button color="warning" size="sm" onClick={() => toggleModal(product)}>
                   <FaEdit />
@@ -169,23 +138,27 @@ function TabProductManagement() {
         </tbody>
       </Table>
 
-      <ReactPaginate
-        previousLabel={'<<'}
-        nextLabel={'>>'}
-        breakLabel={'...'}
-        pageCount={Math.ceil(filteredProducts.length / itemsPerPage)}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        onPageChange={handlePageChange}
-        containerClassName={'pagination'}
-        activeClassName={'active'}
-        pageClassName={'page-item'}
-        pageLinkClassName={'page-link'}
-        previousClassName={'page-item'}
-        previousLinkClassName={'page-link'}
-        nextClassName={'page-item'}
-        nextLinkClassName={'page-link'}
-      />
+    <ReactPaginate
+  previousLabel={'<<'}
+  nextLabel={'>>'}
+  breakLabel={'...'}
+  pageCount={Math.ceil(filteredProducts.length / itemsPerPage)}
+  marginPagesDisplayed={1}
+  pageRangeDisplayed={3}
+  onPageChange={(page) => setCurrentPage(page.selected)}
+  forcePage={currentPage}
+  containerClassName={'pagination'}
+  activeClassName={'active'}
+  pageClassName={'page-item'}
+  pageLinkClassName={'page-link'}
+  previousClassName={'page-item'}
+  previousLinkClassName={'page-link'}
+  nextClassName={'page-item'}
+  nextLinkClassName={'page-link'}
+/>
+
+
+
 
       <Modal isOpen={modal} toggle={() => setModal(false)}>
         <ModalHeader toggle={() => setModal(false)}>{selectedProduct ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm'}</ModalHeader>
@@ -227,9 +200,9 @@ function TabProductManagement() {
         </ModalBody>
         <ModalFooter>
           <Button color="secondary" onClick={() => setModal(false)}>Hủy</Button>
-          <Button color="primary" onClick={handleAddProduct}>
+          {/* <Button color="primary" onClick={handleAddProduct}>
             {selectedProduct ? 'Cập nhật sản phẩm' : 'Thêm sản phẩm'}
-          </Button>
+          </Button> */}
         </ModalFooter>
       </Modal>
     </div>

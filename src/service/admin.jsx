@@ -137,6 +137,25 @@ export const updateCategorys = async (categoryId, newCategory) => {
   }
 };
 
+// productVariant
+
+
+export const getAllProductVariant = async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/productVariant/getAllProductVariant`);
+    console.log("Dữ liệu thêm mới: ", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("Không tìm thấy API");
+      return null;
+    } else {
+      console.error("Lỗi không xác định:", error);
+      return null;
+    }
+  }
+};
+
 
 
   
