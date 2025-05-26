@@ -1,0 +1,317 @@
+.order-management-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  width: fit-content; /* Use 100% width for flexibility */
+  box-sizing: border-box; /* Include padding and border in element's total width */
+}
+
+.page-title {
+  font-size: 2rem;
+  color: #2d3748;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.search-bar {
+  position: relative;
+  width: 60%; /* Adjust width as needed */
+}
+
+.search-bar input {
+  border-radius: 24px;
+  padding-left: 40px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  transition: border 0.2s;
+}
+
+.search-bar input:focus {
+  border: 1.5px solid #3182ce;
+  outline: none;
+}
+
+.search-bar svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0aec0;
+}
+
+.add-order-btn {
+  border-radius: 24px;
+  font-weight: 500;
+  /* background: #48bb78; /* Green color for add */
+  /* border: none; */
+  color: #fff;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.add-order-btn svg {
+    margin-right: 8px;
+}
+
+/* Assuming reactstrap Button color="info" is blue, keep original if preferred */
+/* Or uncomment the above for a specific green color */
+
+
+.export-btn {
+  border-radius: 24px;
+  font-weight: 500;
+  background: #38b2ac; /* Teal color */
+  border: none;
+  color: #fff;
+  transition: background 0.2s;
+   display: flex;
+  align-items: center;
+   margin-left: 10px; /* Space between add and export buttons */
+}
+.export-btn svg {
+    margin-right: 8px;
+}
+
+.table {
+  border-radius: 12px;
+  overflow: hidden; /* Ensures rounded corners clip content */
+  margin-top: 16px;
+  width: 100%;
+  table-layout: auto; /* Let table determine column widths */
+}
+
+.table th, .table td {
+  vertical-align: middle !important;
+  text-align: center;
+  word-break: break-word; /* Break long words */
+  padding: 12px 8px; /* Adjust padding as needed */
+}
+
+.table th {
+  background: #f7fafc;
+  color: #2d3748;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0; /* Add a stronger line under headers */
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background: #f8f9fa; /* Light gray for odd rows */
+}
+
+.table tbody tr:hover {
+    background-color: #ebf8ff; /* Light blue on hover */
+}
+
+.table img {
+    border-radius: 8px; /* Rounded corners for images */
+}
+
+
+/* Pagination styles (assuming react-paginate) */
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+    margin-top: 24px;
+}
+
+.page-item:first-child .page-link {
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.page-item:last-child .page-link {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.page-item.active .page-link {
+  background: #3182ce; /* Blue color for active page */
+  border-color: #3182ce;
+  color: #fff;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #3182ce; /* Blue color for page links */
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.page-link:hover {
+  z-index: 2;
+  color: #0056b3; /* Darker blue on hover */
+  text-decoration: none;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+
+.d-flex.gap-2 > * {
+  margin-right: 8px; /* Space between action buttons */
+}
+
+.d-flex.gap-2 > *:last-child {
+  margin-right: 0;
+}
+
+
+/* Modal styles (assuming reactstrap Modal with custom-modal class) */
+.custom-modal .modal-content {
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  border: none; /* Remove default modal border */
+}
+
+.custom-modal .modal-header {
+  background: #f7fafc; /* Light background for header */
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  padding: 1.5rem; /* Add padding to header */
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.custom-modal .modal-header .close {
+    padding: 1.5rem; /* Keep padding for close button area */
+    margin: -1.5rem -1.5rem -1.5rem auto; /* Adjust close button position */
+}
+
+
+.custom-modal .modal-body {
+    padding: 1.5rem; /* Add padding to body */
+}
+
+/* Styles specifically for the form elements inside the custom modal body */
+.custom-modal .modal-body .form-group {
+  margin-bottom: 1.5rem; /* Khoảng cách giữa các nhóm form */
+}
+
+.custom-modal .modal-body label {
+  font-weight: 600; /* Chữ label đậm hơn */
+  color: #4a5568; /* Màu label hơi xám */
+  display: block; /* Đảm bảo label nằm trên input */
+  margin-bottom: 0.5rem; /* Khoảng cách giữa label và input */
+}
+
+.custom-modal .modal-body .form-control { /* .form-control là class của reactstrap input */
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem; /* Padding bên trong input */
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da; /* Border mặc định */
+  border-radius: 0.25rem; /* Bo góc nhẹ */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.custom-modal .modal-body .form-control:focus {
+  border-color: #80bdff; /* Màu border khi focus */
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Hiệu ứng bóng khi focus */
+}
+
+.custom-modal .modal-body .form-control:disabled {
+  background-color: #e9ecef; /* Màu nền khi bị disabled */
+  opacity: 1; /* Giữ độ mờ */
+  cursor: not-allowed;
+}
+
+
+.custom-modal .modal-footer {
+  border-top: none; /* Remove border top */
+  background: #f7fafc; /* Light background for footer */
+  border-radius: 0 0 16px 16px;
+  padding: 1rem 1.5rem; /* Add padding to footer */
+  justify-content: flex-end; /* Align buttons to the right */
+}
+
+.custom-modal .modal-footer button {
+    margin-left: 0.75rem; /* Space between footer buttons */
+}
+.custom-modal .modal-footer button:first-child {
+    margin-left: 0; /* No left margin for the first button */
+}
+
+/* Optional: Style for image column if needed */
+.table td img {
+    display: block;
+    margin: 0 auto; /* Center images in cell */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .top-controls {
+        flex-direction: column; /* Stack items on small screens */
+        align-items: stretch;
+    }
+    .search-bar {
+        width: 100%; /* Full width search bar */
+        margin-bottom: 16px;
+    }
+    .add-order-btn,
+    .export-btn {
+        width: 100%; /* Full width buttons */
+        margin-left: 0; /* Remove left margin */
+        margin-bottom: 8px; /* Space between stacked buttons */
+        justify-content: center; /* Center button content */
+    }
+     .table th, .table td {
+        padding: 8px 4px; /* Reduce padding in table cells */
+        font-size: 0.9em;
+     }
+     .table img {
+         width: 40px !important; /* Smaller images on small screens */
+     }
+}
+
+.payment-status-select {
+  padding: 5px 25px 5px 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  appearance: none; /* Remove default browser styles */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20256%20448%22%20enable-background%3D%22new%200%200%20256%20448%22%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E.arrow%7Bfill%3A%23454545%3B%7D%3C%2Fstyle%3E%3Cpath%20class%3D%22arrow%22%20d%3D%22M255.9%2C168c0%2C-10.2-4-19.9-11.6-27.2L136.6%2C29.5c-14.8-14.8-38.8-14.8-53.6%2C0l-107%2C111.3c-7.6%2C7.3-11.6%2C17-11.6%2C27.2c0%2C21.1%2C17.1%2C38.2%2C38.2%2C38.2h180.5C238.8%2C206.2%2C255.9%2C189.1%2C255.9%2C168z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 10px auto;
+  display: inline-block; /* Ensure it behaves as a block for alignment */
+  vertical-align: middle; /* Align vertically in the middle */
+}
+
+.payment-status-select:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.payment-status-select option[value="đã hủy"] {
+  color: red;
+}
+
+.payment-status-select option[value="đã thanh toán"] {
+  color: green;
+}
+
+.payment-status-select option[value="chưa thanh toán"] {
+  color: orange;
+}

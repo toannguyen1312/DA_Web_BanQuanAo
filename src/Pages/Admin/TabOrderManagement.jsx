@@ -3,53 +3,92 @@ import { Button, Input, Table, Modal, ModalHeader, ModalBody, ModalFooter, Form,
 import { FaSearch, FaFileExcel, FaPlus, FaEdit, FaTrashAlt } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
 import ReactPaginate from 'react-paginate';
-import '../../assets/css/Admin/Tabproduct.css';
+// import '../../assets/css/Admin/Tabproduct.css';
+import '../../assets/css/Admin/TabOrderManagement.css';
+import { jwtDecode } from "jwt-decode"; 
+import { useDispatch, useSelector } from "react-redux";
+import { getOrderDetailsByOrderId, getPayments, getAllPayments, deleteOrder } from "../../service/ordersService";
+import { updateStatus, updatePaymentStatus, addReview, getReviewUser } from "../../service/purchase";
+import { getUser } from "../../service/productService";
 
-const initialProducts = [
-  {
-    id: 1,
-    image: 'https://th.bing.com/th/id/OIP.0pgO5J6_e6e2e-R02re6SwHaJ6?rs=1&pid=ImgDetMain',
-    name: 'Áo da',
-    category: 'Áo nam',
-    price: 100000,
-    p_discount: 10,
-    size: 'M',
-    color: 'Red',
-    customer: 'Nguyễn Văn A',
-    quantity: 2
-  },
-];
 
 function TabOrderManagement() {
-  const [products, setProducts] = useState(initialProducts);
   const [search, setSearch] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [filteredPayments, setFilteredPayments] = useState([]);
   const [modal, setModal] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    image: '',
-    name: '',
-    category: '',
-    price: '',
-    p_discount: '',
-    size: '',
-    color: '',
-    customer: '',
-    quantity: ''
-  });
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
 
+  const token = useSelector(state =>state.auth.token)
+  const [decoded, setDecoded] = useState(null);
+  const [user, setUser] = useState(null);
+  const [earliestPayments, setEarliestPayments] = useState([]);
+
   useEffect(() => {
-    const searchResults = products.filter(product =>
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.category.toLowerCase().includes(search.toLowerCase())
+    const fetchUser = async () => {
+      try {
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          setDecoded(decodedToken);
+          if (decodedToken.sub !== null) {
+            const userData = await getUser(decodedToken.sub);
+            setUser(userData);
+          }
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        setDecoded(null);
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, [token]);
+
+ useEffect(() => {
+   const fetchPaymentsAndDetails = async () => {
+     try {
+
+         const payments = await getAllPayments();
+         const sortedPayments = payments
+           .filter(p => p.paymentDate)
+           .sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate))
+           .slice(0, 5);
+
+         const detailPromises = sortedPayments.map(payment =>
+           getOrderDetailsByOrderId(payment.order.orderId)
+         );
+
+         const orderDetailsList = await Promise.all(detailPromises);
+
+         const combined = sortedPayments.map((payment, index) => ({
+           payment,
+           products: orderDetailsList[index],
+         }));
+         setEarliestPayments(combined);
+         setFilteredPayments(combined);
+     } catch (error) {
+       console.error("Lỗi khi lấy thanh toán và sản phẩm:", error);
+     }
+   };
+
+   fetchPaymentsAndDetails();
+ }, [user]);
+
+  useEffect(() => {
+    const searchResults = earliestPayments.filter(paymentItem =>
+      paymentItem.products.some(product =>
+        product.productVariant.product.name.toLowerCase().includes(search.toLowerCase())
+      )
     );
-    setFilteredProducts(searchResults);
-  }, [search, products]);
+    setFilteredPayments(searchResults);
+    // Reset pagination to the first page when search results change
+    setCurrentPage(0);
+  }, [search, earliestPayments]);
 
   const offset = currentPage * itemsPerPage;
-  const paginatedProducts = filteredProducts.slice(offset, offset + itemsPerPage);
+  const paginatedPayments = filteredPayments.slice(offset, offset + itemsPerPage);
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);
@@ -57,38 +96,110 @@ function TabOrderManagement() {
 
   const exportToExcel = () => {
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(filteredProducts);
+    const ws = XLSX.utils.json_to_sheet(filteredPayments);
     XLSX.utils.book_append_sheet(wb, ws, 'Danh sách đơn hàng');
     XLSX.writeFile(wb, 'DanhSachDonHang.xlsx');
   };
 
-  const handleAddProduct = () => {
-    if (selectedProduct) {
-      const updated = products.map(product =>
-        product.id === selectedProduct.id ? newProduct : product
+  // This function seems to be for adding/editing initialProducts, might not be needed anymore
+  // const handleAddProduct = () => {
+  //   if (selectedProduct) {
+  //     const updated = products.map(product =>
+  //       product.id === selectedProduct.id ? newProduct : product
+  //     );
+  //     setProducts(updated);
+  //   } else {
+  //     setProducts([...products, { ...newProduct, id: products.length + 1 }]);
+  //   }
+  //   setModal(false);
+  //   setSelectedProduct(null);
+  //   setNewProduct({
+  //     image: '',
+  //     name: '',
+  //     category: '',
+  //     price: '',
+  //     p_discount: '',
+  //     size: '',
+  //     color: '',
+  //     customer: '',
+  //     quantity: ''
+  //   });
+  // };
+
+  const handleChangePaymentStatus = async (orderId, newStatus) => {
+    try {
+      // Call the API to update the payment status
+      await updatePaymentStatus(orderId, newStatus);
+      // Update the local state to reflect the change immediately
+      setEarliestPayments(prevPayments =>
+        prevPayments.map(paymentItem => {
+          // Find the payment item that contains the order with the matching orderId
+          // Note: The structure is earliestPayments -> payment -> order -> orderId
+          // We need to update the paymentStatus within the payment object for this order.
+          // This assumes there's only one payment object per order in your earliestPayments structure.
+          // If an order can have multiple payments listed separately, this logic might need adjustment.
+          if (paymentItem.payment.order.orderId === orderId) {
+            return {
+              ...paymentItem,
+              payment: {
+                ...paymentItem.payment,
+                paymentStatus: newStatus,
+              },
+            };
+          }
+          return paymentItem;
+        })
       );
-      setProducts(updated);
-    } else {
-      setProducts([...products, { ...newProduct, id: products.length + 1 }]);
+      console.log(`Payment status for Order ID ${orderId} updated to ${newStatus}`);
+    } catch (error) {
+      console.error(`Error updating payment status for Order ID ${orderId}:`, error);
+      // Handle errors, e.g., show a notification to the user
     }
-    setModal(false);
-    setSelectedProduct(null);
-    setNewProduct({
-      image: '',
-      name: '',
-      category: '',
-      price: '',
-      p_discount: '',
-      size: '',
-      color: '',
-      customer: '',
-      quantity: ''
-    });
   };
 
-  const handleDeleteProduct = (id) => {
+  const handleChangeOrderStatus = async (orderId, newStatus) => {
+    try {
+      // Call the API to update the order status
+      await updateStatus(orderId, newStatus);
+      // Update the local state to reflect the change immediately
+      setEarliestPayments(prevPayments =>
+        prevPayments.map(paymentItem => ({
+          ...paymentItem,
+          products: paymentItem.products.map(product => {
+            if (product.order.orderId === orderId) {
+              return {
+                ...product,
+                order: {
+                  ...product.order,
+                  status: newStatus,
+                },
+              };
+            }
+            return product;
+          }),
+        }))
+      );
+      console.log(`Order status for Order ID ${orderId} updated to ${newStatus}`);
+    } catch (error) {
+      console.error(`Error updating order status for Order ID ${orderId}:`, error);
+      // Handle errors
+    }
+  };
+
+  const handleDeleteProduct = async (orderId) => {
     if (window.confirm('Bạn có chắc muốn xóa đơn hàng này không?')) {
-      setProducts(products.filter(product => product.id !== id));
+      try {
+        // Call the API to delete the order
+        await deleteOrder(orderId);
+        // Update the local state by removing the deleted order
+        setEarliestPayments(prevPayments =>
+          prevPayments.filter(paymentItem => paymentItem.payment.order.orderId !== orderId)
+        );
+        console.log(`Order with ID ${orderId} deleted successfully`);
+      } catch (error) {
+        console.error(`Error deleting order with ID ${orderId}:`, error);
+        // Handle errors
+      }
     }
   };
 
@@ -108,35 +219,55 @@ function TabOrderManagement() {
     setModal(true);
   };
 
+  const paymentStatusOptions = [
+    { value: 'Đã thanh toán', label: 'Đã thanh toán' },
+    { value: 'Chưa thanh toán', label: 'Chưa thanh toán' },
+    { value: 'Đã huỷ', label: 'Đã huỷ' }
+  ];
+
+  const orderStatusOptions = [
+    {
+      value: 'Đã huỷ', label: 'Đã huỷ'
+    },
+
+    {
+      value: 'Đang chuẩn bị', label: 'Đang chuẩn bị'
+    },
+
+    {
+      value: 'Đang vận chuyển', label: 'Đang vận chuyển'
+    },
+
+    {
+      value: 'Chờ giao hàng', label: 'Chờ giao hàng'
+    },
+
+    {
+      value: 'Hoàn thành', label: 'Hoàn thành'
+    },
+  ]
+
   return (
-    <div>
+    <div className="order-management-container">
       <div className="text-center">
-        <h3 className="page-title" style={{ color: 'black', fontWeight: 'bold', marginBottom: '30px' }}>Quản lý đơn hàng</h3>
+        <h3 className="page-title">Quản lý đơn hàng</h3>
       </div>
 
-      <div className="mb-4 d-flex justify-content-between">
-        <Button color="success" onClick={() => toggleModal()}>
+      <div className="top-controls">
+        {/* Removed Add order button as add/edit modal is commented out */}
+        {/* <Button color="success" onClick={() => toggleModal()} className="add-order-btn">
           <FaPlus /> Thêm đơn hàng
-        </Button>
-        <div style={{ position: 'relative', width: '60%' }}>
+        </Button> */}
+        <div className="search-bar">
           <Input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Tìm kiếm theo tên hoặc loại sản phẩm"
-            style={{ paddingLeft: '30px' }}
           />
-          <FaSearch
-            style={{
-              position: 'absolute',
-              left: '10px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#888'
-            }}
-          />
+          <FaSearch />
         </div>
-        <Button color="info" onClick={exportToExcel}>
+        <Button color="info" onClick={exportToExcel} className="export-btn">
           <FaFileExcel /> Xuất file
         </Button>
       </div>
@@ -144,50 +275,82 @@ function TabOrderManagement() {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Hình ảnh</th>
-            <th>Tên</th>
-            <th>Loại</th>
-            <th>Giá</th>
-            <th>Giảm giá (%)</th>
-            <th>Kích thước</th>
-            <th>Màu sắc</th>
-            <th>Khách hàng</th>
-            <th>Số lượng</th>
+            <th>OrderId</th>
+            <th>Sản phẩm</th>
+            <th>Tên sản phẩm</th>
+            <th>Ngày mua</th>
+            <th>Người dùng</th>
+            <th>Tổng giá</th>
+            <th>Trạng thái thanh toán</th>
+            <th>Trang thái giao hạng</th>
             <th>Thao tác</th>
           </tr>
         </thead>
         <tbody>
-          {paginatedProducts.map(product => (
-            <tr key={product.id}>
-              <td>{product.id}</td>
-              <td><img src={product.image} alt={product.name} style={{ width: '50px' }} /></td>
-              <td>{product.name}</td>
-              <td>{product.category}</td>
-              <td>{product.price.toLocaleString()}</td>
-              <td>{product.p_discount}%</td>
-              <td>{product.size}</td>
-              <td>{product.color}</td>
-              <td>{product.customer}</td>
-              <td>{product.quantity}</td>
-              <td className="d-flex gap-2">
-                <Button color="warning" size="sm" onClick={() => toggleModal(product)}>
-                  <FaEdit />
-                </Button>
-                <Button color="danger" size="sm" onClick={() => handleDeleteProduct(product.id)}>
-                  <FaTrashAlt />
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
+            {/* Use paginatedPayments for rendering */}
+            {paginatedPayments.map((paymentItem, index) =>
+              paymentItem.products.map((product, idx) => (
+                <tr key={product.productVariant.product.productId || `${index}-${idx}`}>
+                  <td>{product.order.orderId}</td>
+                  <td>
+                    <img src={"http://localhost:8080/images/" + product.productVariant.imageUrl || "https://via.placeholder.com/100"}  alt={product.productVariant.productName} className="order-product-img" style={{ width: '50px' }} />
+                  </td>
+                  <td>{product.productVariant.product.name.length > 10 ? product.productVariant.product.name.substring(0, 10) + '...' : product.productVariant.product.name}</td>
+                  <td>{product.order.orderDate}</td>
+                  <td>{product.order.user.username}</td>
+                  <td>{product.order.totalAmount.toLocaleString()}</td>
+                      <td>
+                        <select
+                          value={paymentItem.payment.paymentStatus} 
+                          onChange={(e) =>
+                            handleChangePaymentStatus(product.order.orderId, e.target.value)
+                          }
+                          className="payment-status-select"
+                        >
+                          {paymentStatusOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                  <td>
+                    <select
+                    value={product.order.status}
+                    className="payment-status-select"
+                    onChange={(e) =>
+                           handleChangeOrderStatus(product.order.orderId, e.target.value)
+                         }
+                    >
+                      {orderStatusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    </td>
+                
+                  <td >
+                    <Button color="warning" size="sm" onClick={() => toggleModal(product)}>
+                      <FaEdit />
+                    </Button>
+                    <Button color="danger" size="sm" onClick={() => handleDeleteProduct(product.order.orderId)} style={{marginLeft: '10px'}}>
+                      <FaTrashAlt />
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+
       </Table>
 
       <ReactPaginate
         previousLabel={'<<'}
         nextLabel={'>>'}
         breakLabel={'...'}
-        pageCount={Math.ceil(filteredProducts.length / itemsPerPage)}
+        // Use filteredPayments.length for page count calculation
+        pageCount={Math.ceil(filteredPayments.length / itemsPerPage)}
         marginPagesDisplayed={2}
         pageRangeDisplayed={5}
         onPageChange={handlePageChange}
@@ -201,7 +364,7 @@ function TabOrderManagement() {
         nextLinkClassName={'page-link'}
       />
 
-      <Modal isOpen={modal} toggle={() => setModal(false)}>
+      {/* <Modal isOpen={modal} toggle={() => setModal(false)} className="custom-modal">
         <ModalHeader toggle={() => setModal(false)}>{selectedProduct ? 'Chỉnh sửa đơn hàng' : 'Thêm đơn hàng'}</ModalHeader>
         <ModalBody>
           <Form>
@@ -312,7 +475,7 @@ function TabOrderManagement() {
             {selectedProduct ? 'Cập nhật đơn hàng' : 'Thêm đơn hàng'}
           </Button>
         </ModalFooter>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }

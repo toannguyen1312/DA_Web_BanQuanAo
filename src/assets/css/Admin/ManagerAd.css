@@ -46,7 +46,7 @@
   align-items: center;
 }
 li.pl-2.sub.nav-item .nav-link {
-  padding: 10px 5px;
+  padding: 5px 0px 0px 20px;
   display: flex;
   justify-content:flex-start;
   align-items: center;
@@ -169,6 +169,12 @@ li.pl-2.sub.nav-item .nav-link {
     padding: 20px;
     flex-grow: 1;
     overflow: auto; 
+    transition: margin-left 0.3s, width 0.3s;
+}
+.content-full {
+    margin-left: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
 }
 .sidebar .search-container{
   display: none;

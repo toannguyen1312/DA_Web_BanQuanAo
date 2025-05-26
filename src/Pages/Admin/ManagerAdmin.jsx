@@ -14,18 +14,22 @@ import TabCategoryManagement from './TabCategoryManagement';
 import TabPostManagement from './TabPostManagement';
 import TabShipManagement from './TabShipManagement';
 import TabVoucherManagement from './TabVoucherManagement';
-
-
-
+import { useDispatch, useSelector } from "react-redux";
 import '../../assets/css/Admin/ManagerAd.css';
+import { logout } from "../../store/reducer/authSlice"; 
+import { getAllUser, OrderUsers } from '../../service/admin';
+
 
 function ManagerAdmin() {
+    const dispatch = useDispatch();
     const dropdownRef = useRef(null);
     const [activeTab, setActiveTab] = useState('1');  
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); 
     const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
     const [isSidebarVisible, setIsSidebarVisible] = useState(true); 
-
+    const token = useSelector(state =>state.auth.token)
+    const [users, setUsers] = useState([]);
+    const [orders, setOrders] = useState([]);
     // Xử lý nhấn bên ngoài dropdown
     useEffect(() => {
         function handleClickOutside(event) {
@@ -50,9 +54,40 @@ function ManagerAdmin() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem('isAdminLoggedIn'); // Xoá trạng thái đăng nhập
+        dispatch(logout({token: token}));  
         navigate('/admin/login');
     };
+
+   useEffect(() => {
+    if (activeTab === '2' && token) {
+        console.log("🔥 token trong useEffect:", token);
+        getAllUser(token)
+            .then(data => {
+                console.log("data: ", data)
+                setUsers(data);
+                console.log("📦 users từ API:", data);
+            })
+            .catch(err => {
+                setUsers([]);
+                console.error("❌ Lỗi lấy user:", err);
+            });
+    }
+
+    if(activeTab == 3) {
+        OrderUsers().then(data => {
+            console.log("order từ API: ", data)
+            setOrders(data);
+        })
+        .catch(error =>{
+            setOrders([])
+            console.log("lỗi lấy order: ", error)
+        })
+    }
+}, [activeTab, token]);
+
+
+
+   
 
     return (
         <div className="d-flex">
@@ -84,14 +119,9 @@ function ManagerAdmin() {
                     
                     <Collapse isOpen={isSubMenuOpen}>
                         <NavItem className="pl-2 sub">
-                            <NavLink onClick={() => setActiveTab('2')}><FaUserAlt className="icon" />Quản lý Khách Hàng</NavLink>
+                            <NavLink onClick={() => toggleTab('2')}><FaUserAlt className="icon" />Quản lý Khách Hàng</NavLink>
                         </NavItem>
-                        <NavItem className="pl-2 sub">
-                            <NavLink onClick={() => setActiveTab('9')}><FaUsersCog className="icon" />Quản Lý Nhân Viên</NavLink>
-                        </NavItem>
-                        {/* <NavItem className="pl-2 sub">
-                            <NavLink onClick={() => setActiveTab('10')}><FaHistory className="icon" />Lịch Sử Hoạt Động</NavLink>
-                        </NavItem> */}
+                        
                     </Collapse>
                     <NavItem className="d-flex justify-content-between align-items-center">
                         <NavLink className={classnames({ active: activeTab === '3' })} onClick={() => toggleTab('3')}>
@@ -108,7 +138,7 @@ function ManagerAdmin() {
                     {/* Các mục quản lý khác */}
                     <NavItem className="d-flex justify-content-between align-items-center">
                         <NavLink className={classnames({ active: activeTab === '5' })} onClick={() => toggleTab('5')}>
-                            <FaList className="icon" /> Quản lý danh mục
+                            <FaList className="icon" /> Quản lý thể loại
                         </NavLink>
                         <FaChevronRight className="iconr" />
                     </NavItem>
@@ -134,7 +164,7 @@ function ManagerAdmin() {
             </div>
 
             {/* Nội dung chính */}
-            <div className="content flex-grow-1">
+            <div className={`content flex-grow-1${isSidebarVisible ? '' : ' content-full'}`}>
                 {/* Topbar */}
                 <div className="topbar bg-dark text-white p-3 d-flex justify-content-between">
                     <FaBars className="sidebar-toggle d-block" onClick={toggleSidebar} style={{ fontSize: '24px', cursor: 'pointer', color: 'white' }} />
@@ -167,7 +197,7 @@ function ManagerAdmin() {
                                     <TabHome />
                                 </TabPane>
                                 <TabPane tabId="2">
-                                    <TabUserManagement />
+                                    <TabUserManagement accountUser={users} />
                                 </TabPane>
                                 <TabPane tabId="3">
                                     <TabOrderManagement />

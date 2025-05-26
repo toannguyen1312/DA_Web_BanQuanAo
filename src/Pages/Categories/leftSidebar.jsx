@@ -52,6 +52,8 @@ function leftSidebar() {
     const handleFilterClick = (filter) => {
       setActiveFilter(filter);
     };
+
+    console.log("aloalo: ", products)
   
 
     return (

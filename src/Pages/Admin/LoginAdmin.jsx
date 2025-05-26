@@ -3,37 +3,59 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Form, FormGroup, Input, Button } from 'reactstrap';
 import logoImage from '../../assets/images/image.png';
 import '../../assets/css/Admin/LoginAd.css';
-
+import { login } from "../../store/reducer/authSlice"
+import { jwtDecode } from "jwt-decode"; 
+import { useDispatch, useSelector } from "react-redux";
 
 function LoginAdmin() {
-    const navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = useState('');
+    const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
 
-    const [formData, setFormData] = useState({
-        username: '',
-        password: '',
-    })
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        dispatch(login(formData)).then((res) => {
-            if (res.meta.requestStatus === "fulfilled") {
-                // navigate('/admin')
-                setErrorMessage(''); 
-            // console.log("✅ Login thành công, payload:", store.getState().auth.token); // 👈 log ở đây
-            } else {
-                const err = res.payload?.message || "Đăng nhập thất bại. Vui lòng thử lại!";
-                setErrorMessage(err);
-            }
-          });
-          
-    };
+    dispatch(login(formData)).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        const token = res.payload.result.token;
+        console.log("token: ", token)
+        if (!token) {
+          setErrorMessage("Không lấy được token!");
+          return;
+        }
+
+        try {
+          const decoded = jwtDecode(token);
+          const scopes = decoded.scope ? decoded.scope.split(' ') : [];
+          const hasRoleAdmin = scopes.includes('ROLE_ADMIN');
+
+          if (!hasRoleAdmin) {
+            setErrorMessage("Không được đăng nhập bằng tài khoản User.");
+          } else {
+            setErrorMessage('');
+            navigate('/admin');
+          }
+        } catch (decodeErr) {
+          console.error("Lỗi giải mã token:", decodeErr);
+          setErrorMessage("Token không hợp lệ.");
+        }
+      } else {
+        const err = res.payload?.message || "Đăng nhập thất bại. Vui lòng thử lại!";
+        setErrorMessage(err);
+      }
+    });
+  };
+
 
     return (
         <div className='page-wrapper login-admin'>

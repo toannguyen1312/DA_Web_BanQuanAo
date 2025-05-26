@@ -19,6 +19,8 @@ function ProductIndex() {
     dispatch(fetchAllProducts());
   }, []);
 
+  console.log("productIndex: ", newProducts)
+
   
   return (
     <>

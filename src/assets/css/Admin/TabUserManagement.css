@@ -1,0 +1,216 @@
+.user-table-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+  width: fit-content;
+  /* max-width: 100%; */
+  box-sizing: border-box;
+}
+
+.page-title {
+  font-size: 2rem;
+  color: #2d3748;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.search-bar {
+  position: relative;
+  width: 60%;
+}
+
+.search-bar input {
+  border-radius: 24px;
+  padding-left: 40px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  transition: border 0.2s;
+}
+
+.search-bar input:focus {
+  border: 1.5px solid #3182ce;
+  outline: none;
+}
+
+.search-bar svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0aec0;
+}
+
+.export-btn {
+  border-radius: 24px;
+  font-weight: 500;
+  background: #38b2ac;
+  border: none;
+  color: #fff;
+  transition: background 0.2s;
+}
+
+.export-btn:hover {
+  background: #319795;
+}
+
+.table {
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.table th, .table td {
+  vertical-align: middle !important;
+  text-align: center;
+  word-break: break-word;
+  padding: 12px 8px;
+}
+
+.table th {
+  background: #f7fafc;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background: #f8f9fa;
+}
+
+.page-item.active .page-link {
+  background: #3182ce;
+  border-color: #3182ce;
+  color: #fff;
+}
+
+.page-link {
+  color: #3182ce;
+  border-radius: 8px !important;
+}
+
+.d-flex.gap-2 > * {
+  margin-right: 8px;
+}
+
+.d-flex.gap-2 > *:last-child {
+  margin-right: 0;
+}
+
+.custom-modal .modal-content {
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+
+.custom-modal .modal-header {
+  background: #f7fafc;
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+}
+
+.custom-modal .modal-footer {
+  border-top: none;
+  background: #f7fafc;
+  border-radius: 0 0 16px 16px;
+}
+
+.content {
+  transition: width 0.3s;
+}
+
+.content-full {
+  width: 100% !important;
+  max-width: 100vw !important;
+  margin-left: 0 !important;
+}
+
+.user-id-cell {
+  vertical-align: middle !important;
+  text-align: center;
+  word-break: break-word;
+  padding: 12px 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.user-id-cell:hover::after {
+  content: attr(data-full-id);
+  position: absolute;
+  left: 0;
+  top: 100%;
+  background: #222;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: normal;
+  z-index: 10;
+  min-width: 200px;
+  max-width: 400px;
+  font-size: 0.95em;
+  margin-top: 2px;
+}
+
+/* Styles specifically for the form elements inside the custom modal */
+.custom-modal .modal-body .form-group {
+  margin-bottom: 1.5rem; /* Khoảng cách giữa các nhóm form */
+}
+
+.custom-modal .modal-body label {
+  font-weight: 600; /* Chữ label đậm hơn */
+  color: #4a5568; /* Màu label hơi xám */
+  display: block; /* Đảm bảo label nằm trên input */
+  margin-bottom: 0.5rem; /* Khoảng cách giữa label và input */
+}
+
+.custom-modal .modal-body .form-control { /* .form-control là class của reactstrap input */
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem; /* Padding bên trong input */
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da; /* Border mặc định */
+  border-radius: 0.25rem; /* Bo góc nhẹ */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.custom-modal .modal-body .form-control:focus {
+  border-color: #80bdff; /* Màu border khi focus */
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Hiệu ứng bóng khi focus */
+}
+
+.custom-modal .modal-body .form-control:disabled {
+  background-color: #e9ecef; /* Màu nền khi bị disabled */
+  opacity: 1; /* Giữ độ mờ */
+  cursor: not-allowed;
+}
+
+.custom-modal .modal-footer {
+  /* Giữ nguyên các style footer đã có */
+  border-top: none;
+  background: #f7fafc;
+  border-radius: 0 0 16px 16px;
+  padding: 1rem 1.5rem; /* Tăng padding footer */
+  justify-content: flex-end; /* Căn nút về bên phải */
+}
+
+.custom-modal .modal-footer button {
+    /* Style cho các nút trong footer nếu cần */
+    margin-left: 0.75rem;
+}
+
+/* Có thể thêm style cho select nếu cần */
+.custom-modal .modal-body select.form-control {
+    /* Style riêng cho select nếu khác input text */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 8px 10px;
+}
