@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import 'react-quill/dist/quill.snow.css';
 import Header from './components/Header/Header';
 import Footer from "./components/Footer/Footer";
-import Login from "./Pages/Login";
+import Login from "./pages/Login";
 import SignUp from "./Pages/SignUp";
 import ForgotPass from './pages/ForgotPass';
 import BackToTop from "./components/BackToTop/backToTop";
@@ -28,6 +28,8 @@ import ViewCart from './pages/ViewCart/viewCart';
 import Purchase from './pages/Purchase/Purchase';
 import loaderGif from './assets/images/loader.gif';
 import CheckOut from './pages/checkOut/ChekOut';
+import Search from './pages/Search/search';
+
 
 
 function App() {
@@ -145,7 +147,7 @@ function App() {
           <Route path="/checkout" element={<CheckOut/>} />
           <Route path="/admin/login" element={<LoginAdmin />} />
           <Route path="/admin" element={<AdminLayout><ProtectedRoute><ManagerAdmin /></ProtectedRoute></AdminLayout>} />
-
+          <Route path='/search-item' element={<Search/>} />
 
 
         </Routes>

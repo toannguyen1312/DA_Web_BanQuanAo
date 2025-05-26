@@ -1,0 +1,102 @@
+/* src/assets/css/Admin/TabCategoryManagement.css */
+
+.category-management-container {
+  padding: 20px;
+}
+
+.page-title {
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.top-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.top-controls .search-bar {
+  position: relative;
+  width: 60%; /* Adjust as needed */
+}
+
+.top-controls .search-bar input[type="text"] {
+  padding-left: 30px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.top-controls .search-bar svg {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+/* Table Styling */
+.table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table th,
+.table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  color: #333;
+}
+
+.table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.table .d-flex.gap-2 .btn {
+  margin-right: 5px; /* Space between buttons */
+}
+
+/* Pagination Styling (based on react-paginate defaults, adjust as needed) */
+.pagination {
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  border-radius: .25rem;
+  margin-top: 20px;
+}
+
+.pagination .page-item .page-link {
+  position: relative;
+  display: block;
+  padding: .5rem .75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #007bff;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+  z-index: 1;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  cursor: auto;
+  background-color: #fff;
+  border-color: #dee2e6;
+}

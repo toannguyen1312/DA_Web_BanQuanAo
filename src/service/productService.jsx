@@ -31,3 +31,17 @@ export const getProduct = async (id) => {
     }
   }; 
 
+
+
+export const searchProducts = async (name, categoryId) => {
+  try {
+    const params = { name };
+    if (categoryId) params.categoryId = categoryId;
+    const res = await axios.get(`http://localhost:8080/products/search`, { params });
+    return res.data.result;
+  } catch (error) {
+    console.error("Lỗi search sản phẩm:", error);
+    return [];
+  }
+}; 
+
