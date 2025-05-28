@@ -156,6 +156,59 @@ export const getAllProductVariant = async () => {
   }
 };
 
+// voucher
+export const addToVoucher = async (data) => {
+  try {
+    const res = await axios.post(`http://localhost:8080/coupons/createCoupon`, data);
+    console.log("Dữ liệu thêm mới: ", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("Không tìm thấy API");
+      return null;
+    } else {
+      console.error("Lỗi không xác định:", error);
+      return null;
+    }
+  }
+};
+
+export const getAllVoucher = async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/coupons/getAllCoupons`);
+    console.log("Dữ liệu thêm mới: ", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("Không tìm thấy API");
+      return null;
+    } else {
+      console.error("Lỗi không xác định:", error);
+      return null;
+    }
+  }
+};
+
+
+export const deleteVoucher = async (couponsID) => {
+  try {
+    const res = await axios.delete(`http://localhost:8080/coupons/deleteCoupon/${couponsID}`);
+    console.log("Dữ liệu thêm mới: ", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("Không tìm thấy API");
+      return null;
+    } else {
+      console.error("Lỗi không xác định:", error);
+      return null;
+    }
+  }
+};
+
+
+
+
 
 
   
