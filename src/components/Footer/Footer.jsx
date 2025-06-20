@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import '../../assets/css/bootstrap.min.css'
 import '../../assets/css/lightslider.min.css'
 import '../../assets/css/owl.carousel.css'
@@ -11,6 +12,7 @@ import '../../assets/css/footer.css'
 
 
 export default function Footer() {
+  const { t } = useTranslation();
   return (
     <>
       <footer className="py-11 bg-dark cusfooter">
@@ -22,7 +24,7 @@ export default function Footer() {
                 Eko<span className="text-primary">cart</span>
               </Link>
               <p className="my-3 text-muted">
-                Ekocart - Chúng tôi mang đến cho bạn những mẫu áo đẹp, đa dạng về kiểu dáng, mẫu mã và màu sắc, phù hợp với từng đối tượng.
+                {t('description')}
               </p>
               <ul className="list-inline mb-0">
                 <li className="list-inline-item">
@@ -55,101 +57,101 @@ export default function Footer() {
             <div className="col-12 col-lg-6 mt-6 mt-lg-0">
               <div className="row">
                 <div className="col-12 col-sm-4 navbar-dark">
-                  <h5 className="mb-4 text-white">Mục lục</h5>
+                  <h5 className="mb-4 text-white">{t('menu')}</h5>
                   <ul className="navbar-nav list-unstyled mb-0">
                     <li className="mb-3 nav-item">
                       <Link className="/#" to="/">
-                        Trang chủ
+                        {t('home')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="/about-us" to="about-us">
-                        Về chúng tôi
+                        {t('aboutUs')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="/shop" to="shop-grid-left-sidebar">
-                        Cửa hàng
+                        {t('shop')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="faq" to="faq">
-                        Câu hỏi và giải đáp
+                        {t('faq')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="blog" to="blog-card">
-                        Blogs
+                        {t('blogs')}
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link className="contact-us" to="contact-us">
-                        Liên hệ 
+                        {t('contact')}
                       </Link>
                     </li>
                   </ul>
                 </div>
                 <div className="col-12 col-sm-4 mt-6 mt-sm-0 navbar-dark">
-                  <h5 className="mb-4 text-white">Top sản phẩm</h5>
+                  <h5 className="mb-4 text-white">{t('topProducts')}</h5>
                   <ul className="navbar-nav list-unstyled mb-0">
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Áo nam
+                        {t('menShirts')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Quần nam
+                        {t('menPants')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Phụ kiện
+                        {t('accessories')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Giày dép
+                        {t('shoes')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Túi xách
+                        {t('bags')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                        Mũ nón
+                        {t('hats')}
                       </Link>
                     </li>
                   </ul>
                 </div>
                 <div className="col-12 col-sm-4 mt-6 mt-sm-0 navbar-dark">
-                  <h5 className="mb-4 text-white">Tính năng</h5>
+                  <h5 className="mb-4 text-white">{t('features')}</h5>
                   <ul className="navbar-nav list-unstyled mb-0">
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="terms-and-conditions">
-                      Điều khoản dịch vụ
+                      {t('terms')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="privacy-policy">
-                      Chính sách bảo mật
+                      {t('privacy')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                      Hỗ trợ
+                      {t('support')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                      Vận chuyển & Trả hàng
+                      {t('shippingReturns')}
                       </Link>
                     </li>
                     <li className="mb-3 nav-item">
                       <Link className="nav-link" to="#">
-                      Tuyển dụng
+                      {t('careers')}
                       </Link>
                     </li>
 
@@ -164,9 +166,9 @@ export default function Footer() {
                   <i className="las la-map ic-2x text-primary"></i>
                 </div>
                 <div>
-                  <h6 className="mb-1 text-light">Địa chỉ cửa hàng</h6>
+                  <h6 className="mb-1 text-light">{t('storeAddress')}</h6>
                   <p className="mb-0 text-muted">
-                    Đại học nông lâm TP Hồ Chí Minh
+                    {t('universityAddress')}
                   </p>
                 </div>
               </div>
@@ -176,7 +178,7 @@ export default function Footer() {
                   <i className="las la-envelope ic-2x text-primary"></i>
                 </div>
                 <div>
-                  <h6 className="mb-1 text-light">Email</h6>
+                  <h6 className="mb-1 text-light">{t('email')}</h6>
                   <Link className="text-muted" to="mailto:skytouchinfotech01@gmail.com">
                     {" "}
                     sinhviennlu@gmail.com                  </Link>
@@ -188,7 +190,7 @@ export default function Footer() {
                   <i className="las la-mobile ic-2x text-primary"></i>
                 </div>
                 <div>
-                  <h6 className="mb-1 text-light">Số điện thoại</h6>
+                  <h6 className="mb-1 text-light">{t('phone')}</h6>
                   <Link className="text-muted" to="tel:+987654321">
                     +91-234-567-8900
                   </Link>
@@ -200,8 +202,8 @@ export default function Footer() {
                   <i className="las la-clock ic-2x text-primary"></i>
                 </div>
                 <div>
-                  <h6 className="mb-1 text-light">Thời gian làm việc</h6>
-                  <span className="text-muted">Mon - Fri: 10AM - 7PM</span>
+                  <h6 className="mb-1 text-light">{t('workingHours')}</h6>
+                  <span className="text-muted">{t('workingHoursDetail')}</span>
                 </div>
               </div>
             </div>
@@ -209,7 +211,7 @@ export default function Footer() {
           <hr className="my-8" />
           <div className="row text-muted align-items-center">
             <div className="col-md-7">
-              Copyright ©2025 All rights reserved | This Template is made by{" "}
+              {t('copyright')}
               <i className="lar la-heart text-primary heartBeat2"></i>{" "}
               <u>
                 <Link className="text-primary" to="#">

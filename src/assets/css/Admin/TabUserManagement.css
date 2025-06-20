@@ -54,30 +54,6 @@
   background: #319795;
 }
 
-.table {
-  border-radius: 12px;
-  overflow: hidden;
-  margin-top: 16px;
-  width: 100%;
-}
-
-.table th, .table td {
-  vertical-align: middle !important;
-  text-align: center;
-  word-break: break-word;
-  padding: 12px 8px;
-}
-
-.table th {
-  background: #f7fafc;
-  color: #2d3748;
-  font-weight: 600;
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-  background: #f8f9fa;
-}
-
 .page-item.active .page-link {
   background: #3182ce;
   border-color: #3182ce;
@@ -124,14 +100,14 @@
   margin-left: 0 !important;
 }
 
-.user-id-cell {
+/* .user-id-cell {
   vertical-align: middle !important;
   text-align: center;
   word-break: break-word;
   padding: 12px 8px;
   cursor: pointer;
   position: relative;
-}
+} */
 
 .user-id-cell:hover::after {
   content: attr(data-full-id);

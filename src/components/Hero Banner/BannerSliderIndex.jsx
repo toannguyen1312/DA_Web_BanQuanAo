@@ -4,10 +4,12 @@ import OwlCarousel from "react-owl-carousel";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import bg1 from "../../assets/images/bg/01.jpg"
 import bg2 from "../../assets/images/bg/03.png"
 
 const Banner = () => {
+  const { t } = useTranslation();
   const options = {
     items: 1,
     nav: true,
@@ -19,15 +21,15 @@ const Banner = () => {
   const slides = [
     {
       bgImg: bg1,
-      title: "Một trải nghiệm mua sắm trực tuyến hoàn toàn mới",
-      subtitle: "Chào mừng đến với Ekocart",
-      button: "Mua ngay",
+      title: t("banner_slide1_title"),
+      subtitle: t("banner_slide1_subtitle"),
+      button: t("banner_slide1_button"),
     },
     {
       bgImg: bg2,
-      title: "Bộ sưu tập thịnh hành dành cho nam",
-      subtitle: "Phong cách mới nhất 2025",
-      button: "Xem bộ sưu tập",
+      title: t("banner_slide2_title"),
+      subtitle: t("banner_slide2_subtitle"),
+      button: t("banner_slide2_button"),
     },
   ];
 

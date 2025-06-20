@@ -58,7 +58,9 @@ const TabVoucherManagement = () => {
           console.log("voucher: ", dataToSave)
         }
       }
-
+    const updatedData = await getAllVoucher();
+    setVouchers(updatedData);
+    setFilteredVouchers(updatedData);
       // Sau khi gọi API xong, có thể gọi lại API get nếu muốn cập nhật lại bảng
       // hoặc emit sự kiện, tuỳ vào bạn xử lý state hay reload.
     } catch (error) {
@@ -291,8 +293,6 @@ useEffect(() => {
               />
               <Label for="active">Kích hoạt voucher</Label>
             </FormGroup>
-
-
           </Form>
         </ModalBody>
         <ModalFooter>

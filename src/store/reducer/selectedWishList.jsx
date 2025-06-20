@@ -2,9 +2,16 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 
-export const fetchWishList = createAsyncThunk("wishlist/fetchWishList", async (userId, { rejectWithValue }) => {
+export const fetchWishList = createAsyncThunk("wishlist/fetchWishList", async (userId, {getState, rejectWithValue }) => {
     try {
-        const res = await axios.get(`http://localhost:8080/wishlist/getByUserWishList/${userId}`);
+        const token = getState().auth.token;
+        const res = await axios.get(`http://localhost:8080/wishlist/getByUserWishList/${userId}`
+          , {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+        );
         return res.data; // giả sử trả về array []
     } catch (error) {
         return rejectWithValue(error.response.data);
@@ -13,9 +20,17 @@ export const fetchWishList = createAsyncThunk("wishlist/fetchWishList", async (u
 
 export const removeWishListItem = createAsyncThunk(
   "wishlist/removeWishListItem",
-  async ({ userId, productId }, { dispatch, rejectWithValue }) => {
+  async ({ userId, productId }, {getState, dispatch, rejectWithValue }) => {
     try {
-      const res = await axios.delete(`http://localhost:8080/wishlist/deleteByProduct/${productId}/${userId}`);
+      const token = getState().auth.token;
+      const res = await axios.delete(`http://localhost:8080/wishlist/deleteByProduct/${productId}/${userId}`
+        , {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+
+      );
       // Gọi lại fetch để cập nhật danh sách
       dispatch(fetchWishList(userId));
     } catch (error) {

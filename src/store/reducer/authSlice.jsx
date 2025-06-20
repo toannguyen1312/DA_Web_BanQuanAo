@@ -4,23 +4,28 @@ import axios from "axios";
 export const login = createAsyncThunk("auth/login", async (userData, { rejectWithValue }) => {
 
     try {
-      const response = await axios.post("http://localhost:8080/Authentication/log-in-token", userData);
+      const lang = localStorage.getItem("lang") ;
+      const response = await axios.post(`http://localhost:8080/Authentication/log-in-token?lang=${lang}`, userData);
+        console.log("lỗi gì thế: ", response.data)
+      
       return response.data; 
     } catch (error) {
         return rejectWithValue(error.response?.data || "Lỗi không xác định");
     }
   });
 
-//   export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
-//     const accessToken = getState().auth.token;
-//     try {
-//         const res = await axios.post("http://localhost:8080/Authentication/refresh", { accessToken });
-//         console.log(res.data)
-//         return res.data;
-//     } catch (error) {
-//         return rejectWithValue(error.response?.data || "Không thể refresh token");
-//     }
-// });
+  export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, { getState, rejectWithValue }) => {
+    const accessToken = getState().auth.token;
+    try {
+        const res = await axios.post("http://localhost:8080/Authentication/refresh", {
+          token: accessToken,
+        });
+        console.log(res.data)
+        return res.data;
+    } catch (error) {
+        return rejectWithValue(error.response?.data || "Không thể refresh token");
+    }
+});
 
 export const logout = createAsyncThunk("auth/logout", async (logoutToken, { rejectWithValue }) => {
   // console.log(logoutToken)
@@ -55,6 +60,11 @@ const loginSlice = createSlice({
           state.iserror = false;
           state.shouldPersist = true; 
         })
+        .addCase(refreshToken.fulfilled, (state, action) => {
+          state.token = action.payload.result.token; // cập nhật token mới
+          state.shouldPersist = true; // giữ lại để persist
+        })
+
         
         .addCase(login.rejected, (state, action) => {
           state.isLoading = false;

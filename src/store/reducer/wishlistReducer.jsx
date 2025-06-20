@@ -1,15 +1,31 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const createWishList = createAsyncThunk("wishlist/createWishlist", async (wishlistData, { rejectWithValue }) => {
+export const createWishList = createAsyncThunk(
+  "wishlist/createWishlist",
+  async (wishlistData, { getState, rejectWithValue }) => {
     try {
-      const res = await axios.post(`http://localhost:8080/wishlist/createWishlist`, wishlistData);
+      const token = getState().auth.token;
+      console.log("aloalo: ", token)
+
+      const res = await axios.post(
+        "http://localhost:8080/wishlist/createWishlist",
+        wishlistData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       return res.data;
     } catch (error) {
       console.error("Lỗi kiểm tra categoryID:", error);
-      return [];
+      return rejectWithValue(error.response?.data || "Lỗi không xác định");
     }
-  }); 
+  }
+);
+
 
   const wishListSlice = createSlice({
       name: "wishlist",

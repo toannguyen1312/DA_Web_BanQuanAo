@@ -14,6 +14,7 @@ import { resetCartItemState  } from "../../store/reducer/selectedCartItem";
 import { resetWishListState  } from "../../store/reducer/selectedWishList";
 import { increaseCartIemQuantity, decreaseCartIemQuantity } from "../../service/cartService";
 import { fetchCartItem } from "../../store/reducer/selectedCartItem";
+import { useNavigate } from 'react-router-dom'
 import {
   Button,
   Col,
@@ -26,10 +27,13 @@ import "../../assets/css/bootstrap.min.css"
 import CatalogDropDown from "./CatalogDropDown";
 import ShopDropdown from "./DropDownMenuBarTable";
 import DropdownMenuNavBar from "./DropDownMenuNavBar";
+import { useTranslation } from "react-i18next";
 
 export default function HeaderNavBar() {
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const navigate = useNavigate(); 
   const token = useSelector(state =>state.auth.token)
   const wishList = useSelector(state => state.fetchWishListSlice.SelectedWishList)
   const cartItem = useSelector(state => state.fetchCartItemSlice.SelectedCartItem)
@@ -93,7 +97,6 @@ export default function HeaderNavBar() {
     fetchUser();
   }, [token]);
 
-  console.log(token)
 
 
 
@@ -159,6 +162,14 @@ export default function HeaderNavBar() {
   0
 );
 
+const handleLinkYear = (e, year) => {
+  e.preventDefault(); // chặn reload nếu cần
+  const queryParams = new URLSearchParams();
+  queryParams.set("year", year);
+
+  navigate(`/search-year?${queryParams.toString()}`);
+};
+
 
   return (
     <div>
@@ -185,48 +196,48 @@ export default function HeaderNavBar() {
                   <div className="collapse navbar-collapse" id="navbarNav" style={{cursor: "pointer"}}>
                     <ul className="navbar-nav" >
                       <div className="position-relative">
-                        <Link className="nav-item" to="/" style={{color: "black"}}>HÀNG MỚI VỀ</Link>
-                        <span className="hot-badge">Hot</span>
+                        <Link className="nav-item" to="/" style={{color: "black"}}>{t("new_arrivals")}</Link>
+                        <span className="hot-badge">{t("hot")}</span>
                       </div>
                       <li className="nav-item dropdown">
-                        BỘ SƯU TẬP
+                        {t("collection")}
                         <div className="dropdown-content">
-                          <a href="#">Bộ sưu tập 2025</a>
-                          <a href="#">Bộ sưu tập 2024</a>
-                          <a href="#">Bộ sưu tập 2023</a>
+                          <Link onClick={(e) => handleLinkYear(e, "2025")}>{t("collection_2025")}</Link>
+                          <Link onClick={(e) => handleLinkYear(e, "2024")}>{t("collection_2024")}</Link>
+                          <Link onClick={(e) => handleLinkYear(e, "2023")}>{t("collection_2023")}</Link>
                         </div>
                       </li>
 
                       <li className="nav-item dropdown">
-                        ÁO NAM
+                        {t("menShirts")}
                         <div className="dropdown-content">
 
-                          <Link to="shop-grid-left-sidebar" state={{ title: "Áo Sơ Mi", categoryID: "2" }}>Áo Sơ Mi</Link>
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Áo Sơ Mi", categoryID: "2" }}>{t("men_shirts_dress")}</Link>
                           {/* <a href="#">Áo thun</a> */}
-                          <Link to="shop-grid-left-sidebar" state={{ title: "Áo Khoác",  categoryID: "3" }}>Áo Khoác</Link>
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Áo Khoác",  categoryID: "3" }}>{t("men_shirts_jacket")}</Link>
                         </div>
                       </li>
 
                       <li className="nav-item dropdown">
-                          QUẦN NAM
+                          {t("menPants")}
                           <div className="dropdown-content">
-                          <Link to="shop-grid-left-sidebar" state={{ title: "Quần Jeans",  categoryID: "4" }}>Quần Jeans</Link>
-                          <Link to="shop-grid-left-sidebar" state={{ title: "Quần Short",  categoryID: "5" }}>Quần Short</Link>
-                            <a href="#">Quần tây</a>
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Quần Jeans",  categoryID: "4" }}>{t("men_pants_jeans")}</Link>
+                          <Link to="shop-grid-left-sidebar" state={{ title: "Quần Short",  categoryID: "5" }}>{t("men_pants_short")}</Link>
+                            <a href="#">{t("men_pants_trousers")}</a>
                           </div>
                         </li>
 
                         <li className="nav-item dropdown">
-                          PHỤ KIỆN
-                          <div className="dropdown-content">
-                            <a href="#">Ba lo</a>
-                            <a href="#">Túi xách</a>
-                            <a href="#">Giày</a>
-                          </div>
+                          {t("accessories")}
+                          {/* <div className="dropdown-content">
+                            <a href="#">{t("accessories_backpack")}</a>
+                            <a href="#">{t("accessories_handbag")}</a>
+                            <a href="#">{t("shoes")}</a>
+                          </div> */}
                         </li>
                         <div className="position-relative">
-                          <li className="nav-item">OUTLET SALE</li>
-                        <span className="hot-badge">Hot</span>
+                          <Link className="nav-item" style={{color:"black"}} to="selectProductDiscounted">{t("outlet_sale")}</Link>
+                        <span className="hot-badge">{t("hot")}</span>
                         </div>
                     </ul>
                   </div>
@@ -238,9 +249,9 @@ export default function HeaderNavBar() {
                             <i className="las la-user-alt me-1" style={{fontSize: "27px"}}></i>
                             <div>{decoded?.sub}</div>
                             <div className="dropdown-content">
-                              <a href="#">Tài Khoản Của Tôi</a>
-                              <Link to="my-purchase">Đơn Mua</Link>
-                              <a href="#"onClick={handleLogout}>Đăng Xuất</a>
+                              <a href="#">{t("my_account")}</a>
+                              <Link to="my-purchase">{t("my_purchases")}</Link>
+                              <a href="#"onClick={handleLogout}>{t("logout")}</a>
                             </div>
                         </div>
                       ) : ( 
@@ -278,8 +289,8 @@ export default function HeaderNavBar() {
 
                     <div>
                       <div className="ml-4 d-none d-md-block"> 
-                        <small className="d-block text-muted">Giỏ hàng</small>
-                        <span className="text-dark">{cartItem?.result?.length || 0} sản phẩm - <span className="text-primary"  style={{fontSize: "14px"}}>{total.toLocaleString("vi-VN")} ₫</span></span>
+                        <small className="d-block text-muted">{t("cart")}</small>
+                        <span className="text-dark">{cartItem?.result?.length || 0} {t("products")} - <span className="text-primary"  style={{fontSize: "14px"}}>{total.toLocaleString("vi-VN")} ₫</span></span>
                       </div>
                     </div>
                   </div>              
@@ -301,7 +312,7 @@ export default function HeaderNavBar() {
             <Col xs={9} className="py-4 align-item-center">
               {" "}
               <h5 className=" px-4">
-                    Giỏ Hàng ({cartItem?.result?.length || 0})
+                    {t("cart_modal_title")} ({cartItem?.result?.length || 0})
               </h5>
             </Col>
             <Col xs={2} className=" align-items-center justify-content-end ">
@@ -400,7 +411,7 @@ export default function HeaderNavBar() {
 
           <hr className="my-5" />
           <div className="d-flex justify-content-between align-items-center mb-8">
-            <span className="text-muted">Tổng Tiền:</span>
+            <span className="text-muted">{t("total_amount")}:</span>
             <span className="text-dark text-primary">{total.toLocaleString("vi-VN")} ₫</span>
           </div>
           <div  className="d-flex justify-content-between align-items-center">
@@ -408,10 +419,10 @@ export default function HeaderNavBar() {
             to="/view-cart"
             className="btn btn-primary btn-animated mr-2"
           >
-            <i className="las la-shopping-cart mr-1"></i>Xem Giỏ Hàng
+            <i className="las la-shopping-cart mr-1"></i>{t("view_cart")}
           </Link>
           <Link to="/product-checkout" className="btn btn-dark">
-            <i className="las la-money-check mr-1"></i>Continue To Checkout
+            <i className="las la-money-check mr-1"></i>{t("continue_to_checkout")}
           </Link>
           </div>
         </ModalBody>
@@ -430,7 +441,7 @@ export default function HeaderNavBar() {
             <Col xs={9} className="py-4 align-items-center">
               {" "}
               <h5 className=" px-4">
-                Sản Phẩm Yêu Thích ({wishList?.result?.length || 0})
+                {t("wishlist_modal_title")} ({wishList?.result?.length || 0})
               </h5>
             </Col>
             <Col xs={3} className="align-items-center">
@@ -464,14 +475,14 @@ export default function HeaderNavBar() {
                           onClick={() => {
 
                             if (!user || !token) {
-                              alert("Bạn cần đăng nhập để sử dụng chức năng yêu thích.");
+                              alert(t("wishlist_login_required"));
                               return;
                             }
 
                             dispatch(
                               removeWishListItem({
                               productId: firstVariant.product.productId,
-                              userId: user.userId, 
+                              userId: user.userId,
                               
                             })
                           );
@@ -525,7 +536,7 @@ export default function HeaderNavBar() {
               );
             }
 
-             return null; 
+             return null;
            })} 
           {/* <hr className="my-5" />
           <div className="d-flex justify-content-between align-items-center mb-8">

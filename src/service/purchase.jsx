@@ -66,5 +66,15 @@ export const getReviewUser = async (userId) => {
 };
 
 
+// voucher 
+export const getVoucher = async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/coupons/getAllCoupons`);
+    return res.data.result;
+  } catch (error) {
+    console.error("Lỗi khi gửi đánh giá:", error);
+    throw error;
+  }
+};
 
 

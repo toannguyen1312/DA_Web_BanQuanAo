@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { checkUsernameExists } from "../service/userService"
 import "../assets/css/login/register.css"
 import { useNavigate } from 'react-router-dom'; 
+import { useTranslation } from "react-i18next";
 
 function SignUp() {
     // "idle" | "checking" | "exists" | "available"
@@ -20,6 +21,7 @@ function SignUp() {
     const [addressValid, setAddressValid]  = useState("idle")
     const navigate = useNavigate(); 
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
         const [formData, setFormData] = useState({
             username: "",
@@ -41,9 +43,9 @@ function SignUp() {
     // }, [user])
 
       
-    const firstBreadcrumb = { label: "Trang" };
+    const firstBreadcrumb = { label: t("breadcrumb_home") };
     const secondBreadcrumb = {
-        label: "Đăng Ký",
+        label: t("breadcrumb_signup"),
         active: true,
     };
 
@@ -139,7 +141,7 @@ const handleChange = async (e) => {
     return (
         <div className='page-wrapper'>
             <PageHeading
-                title="Đăng Ký"
+                title={t("page_title_signup")}
                 firstBreadcrumb={firstBreadcrumb}
                 secondBreadcrumb={secondBreadcrumb}
             />
@@ -150,9 +152,9 @@ const handleChange = async (e) => {
                             <div className="col-lg-8 col-md-12">
                                 <div className="mb-6">
                                     <h6 className="text-primary mb-1">
-                                        — Đăng Ký
+                                        {t("signup_slogan_one")}
                                     </h6>
-                                    <h3>Đăng ký tài khoảng đơn giản và dễ dàng</h3>
+                                    <h3>{t("signup_slogan_two")}</h3>
                                 </div>
                             </div>
                         </div>
@@ -193,7 +195,7 @@ const handleChange = async (e) => {
                                                         type="text" 
                                                         name="firstName" 
                                                         id="form_firstName" 
-                                                        placeholder="First name"   
+                                                        placeholder={t("firstname_placeholder")}   
                                                         onChange={handleChange} 
                                                         required 
                                                          className={
@@ -261,7 +263,7 @@ const handleChange = async (e) => {
                                                         type="email" 
                                                         name="email" 
                                                         id="form_email" 
-                                                        placeholder="Email"  
+                                                        placeholder={t("email_placeholder")}  
                                                         onChange={handleChange} 
                                                         required 
                                                         className={
@@ -285,7 +287,7 @@ const handleChange = async (e) => {
                                                         type="tel" 
                                                         name="phone" 
                                                         id="form_phone" 
-                                                        placeholder="Phone"  
+                                                        placeholder={t("phone_placeholder")}  
                                                         onChange={handleChange} 
                                                         required 
                                                         className={
@@ -297,7 +299,7 @@ const handleChange = async (e) => {
                                                         }
                                                         />
                                                         {phoneValid === "is-invalid" && (
-                                                            <div className="help-block with-errors">Lỗi định dạng!</div>
+                                                            <div className="help-block with-errors">{t("phone_format_error")}</div>
                                                         )}
                                                     </FormGroup>
                                                 </Col>
@@ -310,7 +312,7 @@ const handleChange = async (e) => {
                                                         type="text" 
                                                         name="address" 
                                                         id="form_address" 
-                                                        placeholder="Address"  
+                                                        placeholder={t("address_placeholder")}  
                                                         onChange={handleChange} 
                                                         required 
                                                         className={
@@ -327,7 +329,7 @@ const handleChange = async (e) => {
                                                 <Col md={6}>
                                                     <FormGroup>
 
-                                                        <Input type="date" name="birthday" id="form_birthday" placeholder="Birthday Password" onChange={handleChange} required />
+                                                        <Input type="date" name="birthday" id="form_birthday" placeholder={t("birthday_placeholder")} onChange={handleChange} required />
                                                         <div className="help-block with-errors"></div>
                                                     </FormGroup>
                                                 </Col>
@@ -338,16 +340,16 @@ const handleChange = async (e) => {
                                                     <div className="remember-checkbox clearfix mb-5">
                                                         <div className="custom-control custom-checkbox">
                                                             <input type="checkbox" className="custom-control-input" id="customCheck1" />
-                                                            <label className="custom-control-label" for="customCheck1">Tôi đồng ý với điều khoản sử dụng và chính sách bảo mật</label>
+                                                            <label className="custom-control-label" for="customCheck1">{t("terms_and_conditions_checkbox")}</label>
                                                         </div>
                                                     </div>
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col md={12}>
-                                                    <Button type="submit" color="primary">Tạo Tài Khoảng</Button>
+                                                    <Button type="submit" color="primary">{t("signup_button")}</Button>
                                                     <span className="mt-4 d-block">
-                                                        Có tài khoảng? <Link to="/login"><i>Đăng nhập!</i></Link>
+                                                        {t("already_have_account_text")} <Link to="/login"><i>{t("login_link_signup")}</i></Link>
                                                     </span>
                                                 </Col>
                                             </Row>

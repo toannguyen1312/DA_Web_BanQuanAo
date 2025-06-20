@@ -1,11 +1,7 @@
 import React from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import { useSelector } from 'react-redux';
-// import AboutUsTestimonial from '../Components/AboutUsTestimonial';
-// import BlogSection from '../Components/Blog/BlogSection';
-// import InstagramSection from '../Components/InstagramSection/InstagramSection';
-// import LogoSection from '../Components/LogoSection/LogoSection';
-// import NewsletterSection from '../Components/News/NewsLetterSection';
+import { useTranslation } from 'react-i18next';
 import PageHeading from '../Components/PageHeading/PageHeading';
 
 import aboutImage1 from '../assets/image/about/01.jpg';
@@ -13,9 +9,10 @@ import aboutImage2 from '../assets/image/about/02.jpg';
 import aboutImage3 from '../assets/image/about/03.jpg';
 
 function AboutUs() {
-    const firstBreadcrumb = { label: "Trang" }; // 'Pages' -> 'Trang'
+    const { t } = useTranslation();
+    const firstBreadcrumb = { label: t('about_breadcrumb_home') };
     const secondBreadcrumb = {
-        label: "Về Chúng Tôi", // 'About Us' -> 'Về Chúng Tôi'
+        label: t('about_breadcrumb_title'),
         active: true,
     };
     const logos = [
@@ -29,7 +26,7 @@ function AboutUs() {
         "assets/images/client/08.png",
     ];
     const blogs = useSelector(
-        (state) => state.blog ? state.blog.blogItems : [] //check này để tránh lỗi
+        (state) => state.blog ? state.blog.blogItems : []
     );
     const filteredBlogs = blogs.filter(
         (blog) => blog.category.includes("Cloth") || blog.category.includes("Fashion")
@@ -37,29 +34,29 @@ function AboutUs() {
     const reasonsData = [
         {
             icon: <i className="las la-credit-card ic-3x text-primary"></i>,
-            title: 'Thẻ Tín Dụng',
-            description: 'Serspiciatis unde omnis iste natus error sit.',
+            title: t('about_reason_card'),
+            description: t('about_reason_card_desc'),
         },
         {
             icon: <i className="las la-shipping-fast ic-3x text-primary"></i>,
-            title: 'Vận Chuyển Miễn Phí', 
-            description: 'Serspiciatis unde omnis iste natus error sit.',
+            title: t('about_reason_shipping'),
+            description: t('about_reason_shipping_desc'),
         },
         {
             icon: <i className="las la-history ic-3x text-primary"></i>,
-            title: 'Hỗ Trợ 24/7', 
-            description: 'Serspiciatis unde omnis iste natus error sit.',
+            title: t('about_reason_support'),
+            description: t('about_reason_support_desc'),
         },
         {
             icon: <i className="las la-undo-alt ic-3x text-primary"></i>,
-            title: 'Hoàn Trả Trong 30 Ngày', 
-            description: 'Serspiciatis unde omnis iste natus error sit.',
+            title: t('about_reason_return'),
+            description: t('about_reason_return_desc'),
         },
     ];
     return (
         <div className='page-wrapper'>
             <PageHeading
-                title="Về Chúng Tôi" 
+                title={t('about_breadcrumb_title')}
                 firstBreadcrumb={firstBreadcrumb}
                 secondBreadcrumb={secondBreadcrumb}
             />
@@ -80,34 +77,34 @@ function AboutUs() {
                             </Col>
                             <Col lg="5">
                                 <div>
-                                    <h6 className="text-primary mb-1">— Về Chúng Tôi</h6> 
-                                    <h2 className="mt-3 font-w-5">Chúng Tôi Có Những Tài Năng Mới</h2> 
-                                    <p className="lead">Chúng tôi sử dụng các công nghệ mới nhất để phát triển và cải tiến trải nghiệm của bạn.</p>
-                                    <p className="mb-0">Chúng tôi sử dụng các công nghệ mới nhất để phát triển và cải tiến trải nghiệm của bạn.</p>
+                                    <h6 className="text-primary mb-1">— {t('about_breadcrumb_title')}</h6>
+                                    <h2 className="mt-3 font-w-5">{t('about_talents_title')}</h2>
+                                    <p className="lead">{t('about_talents_lead')}</p>
+                                    <p className="mb-0">{t('about_talents_lead')}</p>
                                 </div>
                             </Col>
                         </div>
                         <Row className="mt-8">
                             <Col lg="4" md="4">
                                 <h5>
-                                    <span className="text-primary font-w-7">01.</span> Sứ Mệnh Của Chúng Tôi 
+                                    <span className="text-primary font-w-7">01.</span> {t('about_mission_title')}
                                 </h5>
-                                <p>Nhiều gói xuất bản desktop và trình chỉnh sửa trang web hiện nay sử dụng Lorem Ipsum làm mô hình mặc định.</p>
+                                <p>{t('about_mission_desc')}</p>
                             </Col>
                             <Col lg="4" md="4">
                                 <h5>
-                                    <span className="text-primary font-w-7">02.</span> Tầm Nhìn Của Chúng Tôi 
+                                    <span className="text-primary font-w-7">02.</span> {t('about_vision_title')}
                                 </h5>
                                 <p>
-                                    Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia Neque porro est.
+                                    {t('about_vision_desc')}
                                 </p>
                             </Col>
                             <Col lg="4" md="4">
                                 <h5>
-                                    <span className="text-primary font-w-7">03.</span> Giá Trị Của Chúng Tôi 
+                                    <span className="text-primary font-w-7">03.</span> {t('about_value_title')}
                                 </h5>
                                 <p>
-                                    Officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et non recusandae.
+                                    {t('about_value_desc')}
                                 </p>
                             </Col>
                         </Row>
@@ -118,13 +115,13 @@ function AboutUs() {
                         <Row className="align-items-end mb-5">
                             <Col lg="6">
                                 <div>
-                                    <h6 className="text-primary mb-1">— Tại Sao Lựa Chọn Chúng Tôi</h6> 
-                                    <h2 className="mb-0">Chúng Tôi Nổi Bật Với Những Thị Trường Năng Lực.</h2> 
+                                    <h6 className="text-primary mb-1">— {t('about_why_choose_us')}</h6>
+                                    <h2 className="mb-0">{t('about_why_choose_us_title')}</h2>
                                 </div>
                             </Col>
                             <Col lg="6">
                                 <div>
-                                    <p className="lead mb-0">Tất cả các loại hình kinh doanh đều cần tài nguyên phát triển, vì vậy chúng tôi cung cấp cho bạn sự lựa chọn về cách thức và mức độ sử dụng tài nguyên.</p>
+                                    <p className="lead mb-0">{t('about_why_choose_us_lead')}</p>
                                 </div>
                             </Col>
                         </Row>
@@ -141,12 +138,6 @@ function AboutUs() {
                         </Row>
                     </Container>
                 </section>
-              
-                {/* <AboutUsTestimonial /> */}
-                {/* <NewsletterSection /> */}
-                {/* <LogoSection logos={logos} /> */}
-                {/* <BlogSection blogs={filteredBlogs} title={"Fashion Blogs"} /> */}
-                {/* <InstagramSection /> */}
             </div>
         </div>
     )

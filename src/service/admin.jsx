@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const getAllUser = async (token) => {
-    console.log("token: ", token)
+    console.log("token1: ", token)
     try {
       const res = await axios.get(`http://localhost:8080/users/getAllUsers`, {
         headers: {
@@ -120,7 +120,6 @@ export const addCategorys = async (data) => {
 };
 
 
-
 export const updateCategorys = async (categoryId, newCategory) => {
   try {
     const res = await axios.put(`http://localhost:8080/category/updateCategory/${categoryId}`, newCategory);
@@ -136,6 +135,30 @@ export const updateCategorys = async (categoryId, newCategory) => {
     }
   }
 };
+
+
+
+export const getAllCategory = async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/category/getAllCategory`);
+    console.log("Dữ liệu thêm mới: ", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("Không tìm thấy API");
+      return null;
+    } else {
+      console.error("Lỗi không xác định:", error);
+      return null;
+    }
+  }
+};
+
+
+
+
+
+
 
 // productVariant
 
@@ -193,7 +216,6 @@ export const getAllVoucher = async () => {
 export const deleteVoucher = async (couponsID) => {
   try {
     const res = await axios.delete(`http://localhost:8080/coupons/deleteCoupon/${couponsID}`);
-    console.log("Dữ liệu thêm mới: ", res.data.result);
     return res.data.result;
   } catch (error) {
     if (error.response && error.response.status === 404) {
@@ -207,8 +229,80 @@ export const deleteVoucher = async (couponsID) => {
 };
 
 
+//  Product
+export const createProductVariant= async (formData) => {
+  try {
+    const res = await axios.post(`http://localhost:8080/products/createProductVariant`, formData
+      
+    );
+    return res.data.result;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("Không tìm thấy API");
+      return null;
+    } else {
+      console.error("Lỗi không xác định:", error);
+      return null;
+    }
+  }
+};
+
+export const createProduct= async (product) => {
+  try {
+    const res = await axios.post(`http://localhost:8080/products/createProduct_1`, product);
+    return res.data.result;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("Không tìm thấy API");
+      return null;
+    } else {
+      console.error("Lỗi không xác định:", error);
+      return null;
+    }
+  }
+};
 
 
+export const getAllProductID= async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/products/getAllProducts`);
+    console.log("Dữ liệu thêm mới: 1", res.data.result); 
+    return res.data.result;
+  } catch (error) {
+    if (error.response && error.response.status === 404) {
+      console.warn("Không tìm thấy API");
+      return null;
+    } else {
+      console.error("Lỗi không xác định:", error);
+      return null;
+    }
+  }
+};
 
 
+export const deleteProductVariant = async (productId, size,  color) => {
+  try {
+    const res = await axios.delete('http://localhost:8080/productVariant/deleteByAttributes', {
+      params: {
+        productId,
+        size,
+        color
+      }
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa biến thể:", error);
+    throw error;
+  }
+};
+
+export const deleteProduct = async (productId) => {
+  try {
+    const res = await axios.delete(`http://localhost:8080/productVariant/deleteByProductId/${productId}`);
+    return res.data;
+  } catch (error) {
+    console.error("Lỗi khi xóa biến thể:", error);
+    throw error;
+  }
+};
   

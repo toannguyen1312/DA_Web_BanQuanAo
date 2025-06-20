@@ -20,6 +20,8 @@ import { getOrderDetailsByOrderId, updateOrders, deleteCartItem, updateProductVa
 function CheckOut() {
     const location = useLocation();
     const orderId = location.state?.orderId;
+    const discount = location.state?.discount;
+    const totalAmount = location.state?.totalAmount
     const [orderDetails, setOrderDetails] = useState([]);
     const [formData, setFormData] = useState({
         address: '',
@@ -276,7 +278,9 @@ function CheckOut() {
                                                         borderTop: 'none'
                                                     }}>
                                                         <span>Giảm giá: </span>
-
+                                                        <span className="text-primary" style={{display:"flex", justifyContent:"space-between"}}>
+                                                            {discount?.toLocaleString("vi-VN")} ₫
+                                                        </span>
                                                     </ListGroupItem>
                                                     <ListGroupItem className="mb-3 pb-3 d-flex justify-content-between" style={{
                                                         borderLeft: 'none',
@@ -287,7 +291,7 @@ function CheckOut() {
                                                             <strong className="cart-total">Tổng tiền: </strong>
                                                         </span>
                                                         <span className="text-primary">
-                                                            {/* {orderDetails[0].order.totalAmount.toLocaleString("vi-VN")} ₫ */}
+                                                           {(totalAmount-discount)?.toLocaleString("vi-VN")} ₫
                                                         </span>
                                                     </ListGroupItem>
                                                 </ListGroup>

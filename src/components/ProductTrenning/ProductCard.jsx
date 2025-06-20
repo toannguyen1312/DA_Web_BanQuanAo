@@ -13,6 +13,9 @@ import { getCart, getVariantProduct } from "../../service/cartService";
 import { toggleCart, openCart } from "../../store/reducer/cartOpen";
 import { createCartIem } from "../../store/reducer/cartItem"
 import { fetchCartItem } from "../../store/reducer/selectedCartItem";
+import { refreshToken } from "../../store/reducer/authSlice";
+import { store } from "../../store/store"; // điều chỉnh lại path nếu khác
+
 function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, discountPercent, rating }) {
 
     const dispatch = useDispatch();
@@ -29,6 +32,9 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
     const token = useSelector(state =>state.auth.token)
     let decoded = null;
 
+    console.log("token: ", token)
+
+
      try {
         if (token) {
           decoded = jwtDecode(token);
@@ -39,6 +45,37 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
         console.error("Invalid token:", error);
         decoded = null;
       }
+
+
+      // Kiểm tra token còn bao lâu sẽ hết hạn (dưới 1 phút thì gọi refresh)
+      const isTokenNearExpiry = (token) => {
+        if (!token) return true;
+        try {
+          const decoded = jwtDecode(token);
+          const currentTime = Math.floor(Date.now() / 1000); // giây
+          const remainingTime = decoded.exp - currentTime;
+          return remainingTime < 60; // Nếu còn dưới 60s thì coi là sắp hết hạn
+        } catch (err) {
+          console.error("Token decode lỗi:", err);
+          return true; // lỗi thì cũng nên refresh
+        }
+      };
+
+       // 1. Kiểm tra nếu token gần hết hạn thì refresh
+      // useEffect(() => {
+      //   const checkAndRefreshToken = async () => {
+      //     if (isTokenNearExpiry(token)) {
+      //       const res = await  dispatch(refreshToken());
+      //       if (res.meta.requestStatus === "fulfilled") {
+      //         console.log("Token đã được làm mới");
+      //       } else {
+      //         console.warn("Không thể làm mới token, có thể người dùng cần đăng nhập lại");
+      //       }
+      //     }
+      //   };
+      //   checkAndRefreshToken();
+      // }, [token, dispatch]);
+
 
     useEffect(() => {
       if (selectedProduct !== null) {
@@ -86,12 +123,23 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
         // sửa lý khi thêm vào sản phẩm yêu thích
         const handleAddToWishList = async (id) => {
           try {
+
+        if (isTokenNearExpiry(store.getState().auth.token)) {
+              const res = await dispatch(refreshToken());
+              if (res.meta.requestStatus !== "fulfilled") {
+                console.warn("Không thể làm mới token");
+                return;
+              }
+            }
+
             let user = null;
             const product = await getProduct(id);
             
             if (decoded.sub !== null) {
               user = await getUser(decoded.sub); // gọi đúng hàm getUser
             }
+
+             
         
             const today = new Date();
             const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
@@ -230,6 +278,7 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
             <Link className="card-img-hover d-block" to="/product-left-image" 
             onClick={() => {
               dispatch(setSelectedProduct(id));
+              // dispatch(setSelectedProduct(11))
             }}
             >
               <img className="card-img-top card-img-back" src={imgBackSrc} alt="..." />

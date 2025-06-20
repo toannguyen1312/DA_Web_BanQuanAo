@@ -3,32 +3,33 @@ import { useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, CardText } from 'reactstrap';
 import PageHeading from '../../Components/PageHeading/PageHeading';
 import ProductCard from '../../components/ProductTrenning/ProductCard';
-import { searchProducts } from '../../service/productService';
+import { getByYear } from '../../service/productService';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-function Search() {
+
+function ViewProductYear() {
   const query = useQuery();
-  const keyword = query.get("name") || "";
-  const categoryId = query.get("categoryId") || "";
+  const year = query.get("year") || "";
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const firstBreadcrumb = { label: "Trang", link: "/search-item" };
+  const firstBreadcrumb = { label: "Trang", link: "/search-year" };
   const secondBreadcrumb = {
-    label: "Tìm kiếm sản phẩm",
-    link: "/search-item",
+    label: "hiển thị sản phẩm",
+    link: "/search-year",
     active: true,
   };
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
+      console.log("year: ", year)
       try {
-        const results = await searchProducts(keyword, categoryId);
+        const results = await getByYear(year);
         setProducts(results);
       } catch (error) {
         console.error("Lỗi khi tìm kiếm sản phẩm:", error);
@@ -37,9 +38,7 @@ function Search() {
       }
     };
     fetchProducts();
-  }, [keyword, categoryId]);
-
- 
+  }, [year]);
 
   return (
     <div>
@@ -112,5 +111,4 @@ function Search() {
     </div>
   );
 }
-
-export default Search;
+export default ViewProductYear;

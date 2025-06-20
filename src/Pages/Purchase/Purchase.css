@@ -452,3 +452,159 @@
 .modal-close-btn:hover {
   color: #FF3366;
 }
+/* voucher */
+
+/* Styles for Voucher List */
+.voucher-list {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between voucher items */
+}
+
+.voucher-item {
+    display: flex;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden; /* Ensures rounded corners clip content */
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.voucher-left {
+    width: 120px; /* Adjust as needed */
+    background-color: #f05d40; /* Shopee orange color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 10px;
+    position: relative;
+}
+
+/* Add perforations style */
+.voucher-left::after {
+    content: '';
+    position: absolute;
+    right: -10px; /* Position the cutouts */
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    background: radial-gradient(circle at 0 5px, transparent 5px, #f05d40 5px) repeat-y;
+    background-size: 20px 20px;
+}
+
+
+.voucher-logo {
+    width: 60px; /* Adjust size */
+    height: 60px; /* Adjust size */
+    background-color: white;
+    border-radius: 50%; /* Circle shape */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #f05d40;
+    margin-bottom: 8px;
+}
+
+.voucher-shop-name {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.voucher-right {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    position: relative; /* Needed for the "x3" style */
+}
+
+.voucher-right::before {
+     content: '';
+    position: absolute;
+    left: -10px; /* Position the cutouts */
+    bottom: 0;
+    width: 20px;
+    background: radial-gradient(circle at 100% 5px, transparent 5px, #fff 5px) repeat-y;
+    background-size: 20px 20px;
+    z-index: 1; /* Ensure it's above the right content */
+}
+
+
+.voucher-details {
+    flex-grow: 1;
+    margin-right: 15px;
+    margin-left: 20px;
+}
+
+.voucher-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.voucher-discount {
+    font-size: 20px;
+    color: #f05d40;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.voucher-min-spend {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.voucher-expiry {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.voucher-conditions a {
+    font-size: 12px;
+    color: #05a; /* Link color */
+    text-decoration: none;
+}
+
+.voucher-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.voucher-save-btn {
+    background-color: #f05d40; /* Shopee orange */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.voucher-save-btn:hover {
+    background-color: #e04c30; /* Darker shade on hover */
+}
+
+.voucher-usage-limit {
+    font-size: 13px;
+    color: #888;
+    background-color: #ffebee; /* Light red background for the 'x3' tag */
+    padding: 2px 8px;
+    border-radius: 12px;
+    position: absolute; /* Position relative to voucher-right */
+    top: 5px;
+    right: 5px;
+    font-weight: bold;
+    color: #f05d40; /* Shopee orange text color */
+}
