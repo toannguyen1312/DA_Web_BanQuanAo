@@ -278,7 +278,7 @@ function ProductCard({ id, imgBackSrc, imgFrontSrc, title, price, actualPrice, d
             <Link className="card-img-hover d-block" to="/product-left-image" 
             onClick={() => {
               dispatch(setSelectedProduct(id));
-              // dispatch(setSelectedProduct(11))
+              dispatch(setSelectedProduct(11))
             }}
             >
               <img className="card-img-top card-img-back" src={imgBackSrc} alt="..." />

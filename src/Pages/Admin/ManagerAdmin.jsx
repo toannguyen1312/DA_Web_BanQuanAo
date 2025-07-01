@@ -55,7 +55,7 @@ function ManagerAdmin() {
 
     const handleLogout = () => {
         dispatch(logout({token: token}));  
-        navigate('/admin/login');
+        navigate('/');
     };
 
    useEffect(() => {
