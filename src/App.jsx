@@ -29,6 +29,8 @@ import Purchase from './pages/Purchase/Purchase';
 import loaderGif from './assets/images/loader.gif';
 import CheckOut from './pages/checkOut/ChekOut';
 import Search from './pages/Search/search';
+import ViewProductYear from './pages/Search/viewProductYear';
+import OutletSale from './components/Outlet sale/OutletSale';
 
 
 
@@ -148,6 +150,8 @@ function App() {
           <Route path="/admin/login" element={<LoginAdmin />} />
           <Route path="/admin" element={<AdminLayout><ProtectedRoute><ManagerAdmin /></ProtectedRoute></AdminLayout>} />
           <Route path='/search-item' element={<Search/>} />
+          <Route path='/search-year' element={<ViewProductYear/>}/>
+          <Route path='/selectProductDiscounted' element={<OutletSale/>}/>
 
 
         </Routes>

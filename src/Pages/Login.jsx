@@ -9,15 +9,17 @@ import { store } from "../store/store";
 import { useNavigate } from 'react-router-dom'
 import { fetchWishList } from '../store/reducer/selectedWishList';
 import { fetchCartItem } from '../store/reducer/selectedCartItem';
+import { useTranslation } from "react-i18next";
 function Login() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate(); 
+    const { t } = useTranslation();
     const [errorMessage, setErrorMessage] = useState('');
 
-    const firstBreadcrumb = { label: "Trang" };
+    const firstBreadcrumb = { label: t("breadcrumb_home") };
     const secondBreadcrumb = {
-        label: "Đăng Nhập",
+        label: t("breadcrumb_login"),
         active: true,
     };
 
@@ -41,7 +43,8 @@ function Login() {
                 setErrorMessage(''); 
             // console.log("✅ Login thành công, payload:", store.getState().auth.token); // 👈 log ở đây
             } else {
-                const err = res.payload?.message || "Đăng nhập thất bại. Vui lòng thử lại!";
+                const err = res.payload?.message || t("login_failed_error");
+                console.log("lỗi: ", err)
                 setErrorMessage(err);
             }
           });
@@ -51,7 +54,7 @@ function Login() {
     return (
         <div className='page-wrapper'>
             <PageHeading
-                title="Đăng Nhập"
+                title={t("page_title_login")}
                 firstBreadcrumb={firstBreadcrumb}
                 secondBreadcrumb={secondBreadcrumb}
             />
@@ -62,7 +65,7 @@ function Login() {
                             <Col xs="12" sm="10" md="8" lg="6">
                                 <div className="shadow p-3">
                                     <img className="img-fluid mb-5" src="src\assets\image\login.png" alt="" />
-                                    <h3 className="text-center mb-3 text-uppercase">Đăng Nhập</h3>
+                                    <h3 className="text-center mb-3 text-uppercase">{t("login_title")}</h3>
                                         {errorMessage && (
                                             <div className="alert alert-danger text-center mb-3">
                                                 {errorMessage}
@@ -75,7 +78,7 @@ function Login() {
                                                 type="text"
                                                 name="username"
                                                 id="form_name"
-                                                placeholder="Tên Đăng Nhập"
+                                                placeholder={t("username_placeholder")}
                                                 value={formData.username}
                                                 onChange={handleChange}
                                                 required
@@ -89,7 +92,7 @@ function Login() {
                                                 id="form_password"
                                                 value={formData.password}
                                                 onChange={handleChange}
-                                                placeholder="Mật Khẩu"
+                                                placeholder={t("password_placeholder")}
                                                 required
                                             />
                                             <div className="help-block with-errors"></div>
@@ -100,14 +103,14 @@ function Login() {
                                                     <Input type="checkbox" id="check2" name="check2" />
                                                     <Label for="check2">Remember me</Label>
                                                 </div> */}
-                                                <Link to="/forgotpass">Forgot Password?</Link>
+                                                <Link to="/forgotpass">{t("forgot_password_link")}</Link>
                                             </div>
                                         </div>
-                                        <Button type="submit" color="primary" block>Đăng Nhập</Button>
+                                        <Button type="submit" color="primary" block>{t("login_button")}</Button>
                                     </Form>
                                     <div className="d-flex align-items-center text-center justify-content-center mt-4">
-                                        <span className="text-muted mr-1">Bạn mới đến Ekocart?</span>
-                                        <Link to="/signup">Đăng Ký</Link>
+                                        <span className="text-muted mr-1">{t("new_to_ekocart_text")}</span>
+                                        <Link to="/signup">{t("signup_link")}</Link>
                                     </div>
                                 </div>
                             </Col>

@@ -20,6 +20,20 @@ function TabOrderManagement() {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
 
+
+  const [newProduct, setNewProduct] = useState({
+  image: '',
+  name: '',
+  category: '',
+  price: '',
+  p_discount: '',
+  size: '',
+  color: '',
+  customer: '',
+  quantity: ''
+});
+
+
   const token = useSelector(state =>state.auth.token)
   const [decoded, setDecoded] = useState(null);
   const [user, setUser] = useState(null);
@@ -53,12 +67,12 @@ function TabOrderManagement() {
          const payments = await getAllPayments();
          const sortedPayments = payments
            .filter(p => p.paymentDate)
-           .sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate))
-           .slice(0, 5);
+           .sort((a, b) => b.paymentId - a.paymentId);
 
          const detailPromises = sortedPayments.map(payment =>
            getOrderDetailsByOrderId(payment.order.orderId)
          );
+
 
          const orderDetailsList = await Promise.all(detailPromises);
 
@@ -67,7 +81,6 @@ function TabOrderManagement() {
            products: orderDetailsList[index],
          }));
          setEarliestPayments(combined);
-         setFilteredPayments(combined);
      } catch (error) {
        console.error("Lỗi khi lấy thanh toán và sản phẩm:", error);
      }
@@ -75,6 +88,8 @@ function TabOrderManagement() {
 
    fetchPaymentsAndDetails();
  }, [user]);
+
+
 
   useEffect(() => {
     const searchResults = earliestPayments.filter(paymentItem =>
@@ -89,6 +104,7 @@ function TabOrderManagement() {
 
   const offset = currentPage * itemsPerPage;
   const paginatedPayments = filteredPayments.slice(offset, offset + itemsPerPage);
+         console.log("dữ liệu alolo: ", paginatedPayments)
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);
@@ -133,11 +149,6 @@ function TabOrderManagement() {
       // Update the local state to reflect the change immediately
       setEarliestPayments(prevPayments =>
         prevPayments.map(paymentItem => {
-          // Find the payment item that contains the order with the matching orderId
-          // Note: The structure is earliestPayments -> payment -> order -> orderId
-          // We need to update the paymentStatus within the payment object for this order.
-          // This assumes there's only one payment object per order in your earliestPayments structure.
-          // If an order can have multiple payments listed separately, this logic might need adjustment.
           if (paymentItem.payment.order.orderId === orderId) {
             return {
               ...paymentItem,
@@ -175,6 +186,8 @@ function TabOrderManagement() {
                 },
               };
             }
+
+             
             return product;
           }),
         }))
@@ -204,6 +217,7 @@ function TabOrderManagement() {
   };
 
   const toggleModal = (product = null) => {
+    console.log("product: ", product)
     setSelectedProduct(product);
     setNewProduct(product || {
       image: '',
@@ -289,6 +303,7 @@ function TabOrderManagement() {
         <tbody>
             {/* Use paginatedPayments for rendering */}
             {paginatedPayments.map((paymentItem, index) =>
+              
               paymentItem.products.map((product, idx) => (
                 <tr key={product.productVariant.product.productId || `${index}-${idx}`}>
                   <td>{product.order.orderId}</td>
@@ -330,7 +345,7 @@ function TabOrderManagement() {
                     </select>
                     </td>
                 
-                  <td >
+                  <td style={{display:"flex"}}>
                     <Button color="warning" size="sm" onClick={() => toggleModal(product)}>
                       <FaEdit />
                     </Button>
@@ -342,7 +357,6 @@ function TabOrderManagement() {
               ))
             )}
           </tbody>
-
       </Table>
 
       <ReactPaginate
@@ -364,50 +378,32 @@ function TabOrderManagement() {
         nextLinkClassName={'page-link'}
       />
 
-      {/* <Modal isOpen={modal} toggle={() => setModal(false)} className="custom-modal">
-        <ModalHeader toggle={() => setModal(false)}>{selectedProduct ? 'Chỉnh sửa đơn hàng' : 'Thêm đơn hàng'}</ModalHeader>
+      <Modal isOpen={modal} toggle={() => setModal(false)} className="custom-modal">
+        <ModalHeader toggle={() => setModal(false)}>
+          {selectedProduct ? 'Chỉnh sửa đơn hàng' : 'Thêm đơn hàng'}
+          </ModalHeader>
         <ModalBody>
           <Form>
-            <FormGroup>
-              <Label for="image">Hình ảnh</Label>
-              <Input
-                type="text"
-                id="image"
-                value={newProduct.image}
-                onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                placeholder="Nhập đường dẫn hình ảnh"
-                required
-              />
-            </FormGroup>
+           
             <FormGroup>
               <Label for="name">Tên sản phẩm</Label>
               <Input
                 type="text"
                 id="name"
-                value={newProduct.name}
-                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                // value={newProduct.name}
+                // onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
                 placeholder="Nhập tên sản phẩm"
                 required
               />
             </FormGroup>
-            <FormGroup>
-              <Label for="category">Loại sản phẩm</Label>
-              <Input
-                type="text"
-                id="category"
-                value={newProduct.category}
-                onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                placeholder="Nhập loại sản phẩm"
-                required
-              />
-            </FormGroup>
+           
             <FormGroup>
               <Label for="price">Giá</Label>
               <Input
                 type="number"
                 id="price"
-                value={newProduct.price}
-                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                // value={newProduct.price}
+                // onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
                 placeholder="Nhập giá sản phẩm"
                 required
               />
@@ -417,8 +413,8 @@ function TabOrderManagement() {
               <Input
                 type="number"
                 id="p_discount"
-                value={newProduct.p_discount}
-                onChange={(e) => setNewProduct({ ...newProduct, p_discount: e.target.value })}
+                // value={newProduct.p_discount}
+                // onChange={(e) => setNewProduct({ ...newProduct, p_discount: e.target.value })}
                 placeholder="Nhập % giảm giá"
                 required
               />
@@ -428,8 +424,8 @@ function TabOrderManagement() {
               <Input
                 type="text"
                 id="size"
-                value={newProduct.size}
-                onChange={(e) => setNewProduct({ ...newProduct, size: e.target.value })}
+                // value={newProduct.size}
+                // onChange={(e) => setNewProduct({ ...newProduct, size: e.target.value })}
                 placeholder="Nhập kích thước"
                 required
               />
@@ -439,8 +435,8 @@ function TabOrderManagement() {
               <Input
                 type="text"
                 id="color"
-                value={newProduct.color}
-                onChange={(e) => setNewProduct({ ...newProduct, color: e.target.value })}
+                // value={newProduct.color}
+                // onChange={(e) => setNewProduct({ ...newProduct, color: e.target.value })}
                 placeholder="Nhập màu sắc"
                 required
               />
@@ -450,8 +446,8 @@ function TabOrderManagement() {
               <Input
                 type="text"
                 id="customer"
-                value={newProduct.customer}
-                onChange={(e) => setNewProduct({ ...newProduct, customer: e.target.value })}
+                // value={newProduct.customer}
+                // onChange={(e) => setNewProduct({ ...newProduct, customer: e.target.value })}
                 placeholder="Nhập tên khách hàng"
                 required
               />
@@ -461,8 +457,8 @@ function TabOrderManagement() {
               <Input
                 type="number"
                 id="quantity"
-                value={newProduct.quantity}
-                onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
+                // value={newProduct.quantity}
+                // onChange={(e) => setNewProduct({ ...newProduct, quantity: e.target.value })}
                 placeholder="Nhập số lượng"
                 required
               />
@@ -470,12 +466,16 @@ function TabOrderManagement() {
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button color="secondary" onClick={() => setModal(false)}>Hủy</Button>
-          <Button color="primary" onClick={handleAddProduct}>
+          <Button color="secondary" 
+          // onClick={() => setModal(false)          }
+          >Hủy</Button>
+          <Button color="primary" 
+          // onClick={handleAddProduct}
+          >
             {selectedProduct ? 'Cập nhật đơn hàng' : 'Thêm đơn hàng'}
           </Button>
         </ModalFooter>
-      </Modal> */}
+      </Modal>
     </div>
   );
 }

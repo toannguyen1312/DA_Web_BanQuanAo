@@ -5,7 +5,7 @@ import { getUser } from "../../service/productService";
 import { jwtDecode } from "jwt-decode"; 
 import { getOrderDetailsByOrderId, getPayments } from "../../service/ordersService";
 import imgEmpty from "../../assets/images/empty.png";
-import { updateStatus, updatePaymentStatus, addReview, getReviewUser } from "../../service/purchase";
+import { updateStatus, updatePaymentStatus, addReview, getReviewUser, getVoucher } from "../../service/purchase";
 
 const tabs = [
   "Tất cả",
@@ -17,18 +17,18 @@ const tabs = [
   "Trả hàng/Hoàn tiền",
 ];
 
+
 const sidebarMenus = [
   { icon: "🔔", label: "Thông Báo" },
   { icon: "👤", label: "Tài Khoản Của Tôi" },
   { icon: "📦", label: "Đơn Mua", active: true },
   { icon: "🎫", label: "Kho Voucher" },
-  { icon: "🪙", label: "Shopee Xu" },
 ];
 
 export default function Purchase() {
   const [activeTab, setActiveTab] = useState(0); // Mặc định chọn 'Tất cả'
+  const [activeMenu, setActiveMenu] = useState("Đơn Mua");
   const token = useSelector(state =>state.auth.token)
-
   const [decoded, setDecoded] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -61,11 +61,13 @@ useEffect(() => {
       if (user && user.userId) {
         const payments = await getPayments(user.userId);
 
+
         // Lấy 5 đơn thanh toán sớm nhất
         const sortedPayments = payments
           .filter(p => p.paymentDate)
-          .sort((a, b) => new Date(a.paymentDate) - new Date(b.paymentDate))
+          .sort((a, b) => new Date(b.paymentDate) - new Date(a.paymentDate))
           .slice(0, 5);
+
 
         // Lấy orderId từ mỗi payment
         const detailPromises = sortedPayments.map(payment =>
@@ -255,6 +257,7 @@ const handleSubmitReview = async (e) => {
         alert("Bạn cần chọn ít nhất 1 ảnh để gửi đánh giá.");
         return;
       }
+
       const result =await addReview(formData);
     }
     alert("Đã gửi đánh giá thành công!");
@@ -266,22 +269,37 @@ const handleSubmitReview = async (e) => {
 };
 
 
-useEffect(() => {
-  const fetchReviews = async () => {
-    try {
-      const data = await getReviewUser(user?.userId)
-      if(data){
-      setCheckReview(true);
+// useEffect(() => {
+//   const fetchReviews = async () => {
+//     try {
+//       const data = await getReviewUser(user?.userId)
+//       if(data){
+//       setCheckReview(true);
+//       }
+//     } catch (error) {
+//       console.error("Lỗi khi lấy thanh toán và sản phẩm:", error);
+//     }
+//   };
+//   fetchReviews();
+// }, []);
+
+
+  // hiển thị mã voucher
+   const [voucher, setVoucher] = useState([]);
+
+  useEffect(() => {
+    const fetchVoucher = async () => {
+      try {
+        const data = await getVoucher(); // giả sử đây trả về một mảng các voucher
+        const activeVouchers = data.filter(item => item.active === true);
+        setVoucher(activeVouchers); // lưu các voucher đang hoạt động
+      } catch (error) {
+        console.error("Error fetching voucher:", error);
       }
-    } catch (error) {
-      console.error("Lỗi khi lấy thanh toán và sản phẩm:", error);
-    }
-  };
-  fetchReviews();
-}, []);
+    };
 
-
-
+    fetchVoucher();
+  }, [])
 
 
   return (
@@ -297,7 +315,8 @@ useEffect(() => {
           {sidebarMenus.map((item, idx) => (
             <div
               key={item.label}
-              className={`sidebar-menu-item${item.label === "Đơn Mua" ? " active" : ""}`}
+              className={`sidebar-menu-item${activeMenu === item.label ? " active" : ""}`}
+              onClick={() => setActiveMenu(item.label)}
             >
               <span className="sidebar-menu-icon">{item.icon}</span>
               <span>{item.label}</span>
@@ -307,98 +326,150 @@ useEffect(() => {
       </div>
       {/* Main Content */}
       <div className="purchase-main">
-        <div className="purchase-tabs">
-          {tabs.map((tab, idx) => (
-            <div
-              key={tab}
-              className={`purchase-tab${activeTab === idx ? " active" : ""}`}
-              onClick={() => setActiveTab(idx)}
-            >
-              {tab}
-            </div>
-          ))}
-        </div>
-        <div className="purchase-search-bar">
-          <input
-            type="text"
-            placeholder="Bạn có thể tìm kiếm theo tên Shop, ID đơn hàng hoặc Tên Sản phẩm"
-            className="purchase-search-input"
-          />
-        </div>
-        <div className="purchase-content-center">
-          {getFilteredPayments().length === 0 ? (
-            <div className="empty-order" style={{marginTop: "50px"}} >
-              <img
-                src= {imgEmpty}
-                alt="empty"
-              />
-              <div>Chưa có đơn hàng</div>
-            </div>
-          ) : (
-            getFilteredPayments().map((item, i) => {
-             const orderTotal = item.products.reduce(
-                (sum, p) => sum + p.productVariant.price * p.quantity,
-                0
-              );
-                return (
-              <div className="order-item" key={i}>
-                <div className="order-header">
-                  <span className="shop-name">Đơn hàng #{item.payment.order.orderId}</span>
-                  <span className="order-status">{item.payment.order.status === "Đã huỷ" ? "Đã huỷ" : item.payment.paymentStatus}</span>
+        {activeMenu === "Đơn Mua" && (
+          <>
+            <div className="purchase-tabs">
+              {tabs.map((tab, idx) => (
+                <div
+                  key={tab}
+                  className={`purchase-tab${activeTab === idx ? " active" : ""}`}
+                  onClick={() => setActiveTab(idx)}
+                >
+                  {tab}
                 </div>
-                {item.products.map((product, j) => (
-                  <div className="order-body" key={j}>
-                    <img src={"http://localhost:8080/images/" + product.productVariant.imageUrl || "https://via.placeholder.com/100"}  alt={product.productVariant.productName} className="order-product-img" />
-                    <div className="order-product-info">
-                      <div className="order-product-name">{product.productVariant.product.name}</div>
-                      <div className="order-product-quantity">x{product.quantity}</div>
+              ))}
+            </div>
+            <div className="purchase-search-bar">
+              <input
+                type="text"
+                placeholder="Bạn có thể tìm kiếm theo tên Shop, ID đơn hàng hoặc Tên Sản phẩm"
+                className="purchase-search-input"
+              />
+            </div>
+            <div className="purchase-content-center">
+              {getFilteredPayments().length === 0 ? (
+                <div className="empty-order" style={{marginTop: "50px"}} >
+                  <img
+                    src= {imgEmpty}
+                    alt="empty"
+                  />
+                  <div>Chưa có đơn hàng</div>
+                </div>
+              ) : (
+                getFilteredPayments().map((item, i) => {
+                 const orderTotal = item.products.reduce(
+                    (sum, p) => sum + p.productVariant.price * p.quantity,
+                    0
+                  );
+                    return (
+                  <div className="order-item" key={i}>
+                    <div className="order-header">
+                      <span className="shop-name">Đơn hàng #{item.payment.order.orderId}</span>
+                      <span className="order-status">{item.payment.order.status === "Đã huỷ" ? "Đã huỷ" : item.payment.paymentStatus}</span>
                     </div>
-                    <div className="order-product-price">
-                      <span className="old-price">  {(product.productVariant.price).toLocaleString()}₫</span>
-                      <span className="price">{product.productVariant.price.toLocaleString()}₫</span>
+                    {item.products.map((product, j) => (
+                      <div className="order-body" key={j}>
+                        <img src={"http://localhost:8080/images/" + product.productVariant.imageUrl || "https://via.placeholder.com/100"}  alt={product.productVariant.productName} className="order-product-img" />
+                        <div className="order-product-info">
+                          <div className="order-product-name">{product.productVariant.product.name}</div>
+                          <div className="order-product-quantity">x{product.quantity}</div>
+                        </div>
+                        <div className="order-product-price">
+                          <span className="old-price">  {(product.productVariant.price).toLocaleString()}₫</span>
+                          <span className="price">{product.productVariant.price.toLocaleString()}₫</span>
+                        </div>
+                      </div>
+                     ))}
+                    <div className="order-footer">
+                      <span>Thành tiền: <span className="order-total">{orderTotal.toLocaleString()}₫</span></span>
+                      {item.payment.order.status === "Hoàn thành" ? (
+                        checkReview ?
+                         <button
+                          className="order-action-btn"
+                         disabled
+                        >
+                          Đã đánh giá
+                        </button>
+                        :
+                        <button
+                          className="order-action-btn"
+                          onClick={() => handleOpenReviewModal(item)}
+                        >
+                          Đánh Giá Sản Phẩm
+                        </button>
+                      ) : item.payment.order.status === "Đã huỷ" ? (
+                        <button
+                          className="order-action-btn"
+                          disabled
+                        >
+                          Đã huỷ
+                        </button>
+                      ) : (
+                        <button
+                          className="order-action-btn"
+                          onClick={() => handleCancelOrder(item)}
+                        >
+                          Huỷ Đơn Hàng
+                        </button>
+                      )}
                     </div>
                   </div>
-                 ))}
-                <div className="order-footer">
-                  <span>Thành tiền: <span className="order-total">{orderTotal.toLocaleString()}₫</span></span>
-                  {item.payment.order.status === "Hoàn thành" ? (
-                    checkReview ?
-
-                     <button
-                      className="order-action-btn"
-                     disabled
-                    >
-                      Đã đánh giá
-                    </button>
-                    :
-                    <button
-                      className="order-action-btn"
-                      onClick={() => handleOpenReviewModal(item)}
-                    >
-                      Đánh Giá Sản Phẩm
-                    </button>
-                  ) : item.payment.order.status === "Đã huỷ" ? (
-                    <button
-                      className="order-action-btn"
-                      disabled
-                    >
-                      Đã huỷ
-                    </button>
-                  ) : (
-                    <button
-                      className="order-action-btn"
-                      onClick={() => handleCancelOrder(item)}
-                    >
-                      Huỷ Đơn Hàng
-                    </button>
-                  )}
-                </div>
+                )}
+              )
+              )
+              }
+            </div>
+          </>
+        )}
+        {activeMenu === "Kho Voucher" && (
+          <div className="voucher-list">
+            {voucher.length === 0 ? (
+              <div className="empty-order" style={{marginTop: "50px"}}>
+                <img
+                  src={imgEmpty}
+                  alt="empty"
+                />
+                <div>Chưa có Voucher nào</div>
               </div>
+            ) : (
+              voucher.map((v, index) => (
+                <div className="voucher-item" key={index}>
+                  <div className="voucher-left">
+                    {/* Placeholder for shop/voucher logo */}
+                    <div className="voucher-logo">
+                      {/* You might replace this with an actual image or logo component */}
+                      <span>LOGO</span>
+                    </div>
+                    <div className="voucher-shop-name">{v.voucherName || "Shopee Style"}</div>
+                  </div>
+                  <div className="voucher-right">
+                    <div className="voucher-details">
+                      <div className="voucher-title">{v.description || `Giảm ${v.discount}% Giảm tối đa`}</div>
+                      <div className="voucher-discount">₫{v.maxDiscount || 100}k</div>
+                      <div className="voucher-min-spend">Đơn Tối Thiểu ₫{v.minDiscount || 150}k</div>
+                      <div className="voucher-expiry">Có hiệu lực từ {v.startDate ? new Date(v.startDate).toLocaleDateString('vi-VN') : 'N/A'}</div> {/* Assuming startDate is available */}
+                      <div className="voucher-conditions">
+                        <a href="#">Điều Kiện</a> {/* Link or modal for conditions */}
+                      </div>
+                    </div>
+                    <div className="voucher-actions">
+                       <button className="voucher-save-btn">Còn hạng</button>
+                       {v.usageLimit && <span className="voucher-usage-limit">x {v.usageLimit}</span>} {/* Assuming usageLimit is available */}
+                    </div>
+                  </div>
+                </div>
+              ))
             )}
-          )
-          )
-          }
-        </div>
+          </div>
+        )}
+        {activeMenu === "Thông Báo" && (
+          <>
+            {/* Nội dung cho Thông Báo */}
+            <div className="notification-content">Đây là trang Thông Báo</div>
+            {/* Có thể render một component Thông Báo riêng */}
+          </>
+        )}
+        {/* Thêm các điều kiện cho các mục menu khác */}
       </div>
 
       {/* Modal đánh giá sản phẩm */}

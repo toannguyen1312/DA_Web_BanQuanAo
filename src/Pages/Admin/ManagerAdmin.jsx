@@ -55,7 +55,7 @@ function ManagerAdmin() {
 
     const handleLogout = () => {
         dispatch(logout({token: token}));  
-        navigate('/admin/login');
+        navigate('/');
     };
 
    useEffect(() => {
@@ -142,18 +142,8 @@ function ManagerAdmin() {
                         </NavLink>
                         <FaChevronRight className="iconr" />
                     </NavItem>
-                    <NavItem className="d-flex justify-content-between align-items-center">
-                        <NavLink className={classnames({ active: activeTab === '6' })} onClick={() => toggleTab('6')}>
-                            <FaClipboardList className="icon" /> Quản lý bài đăng
-                        </NavLink>
-                        <FaChevronRight className="icon" />
-                    </NavItem>
-                    <NavItem className="d-flex justify-content-between align-items-center">
-                        <NavLink className={classnames({ active: activeTab === '7' })} onClick={() => toggleTab('7')}>
-                            <FaShippingFast className="icon" /> Quản lý loại ship
-                        </NavLink>
-                        <FaChevronRight className="iconr" />
-                    </NavItem>
+                    
+                   
                     <NavItem className="d-flex justify-content-between align-items-center">
                         <NavLink className={classnames({ active: activeTab === '8' })} onClick={() => toggleTab('8')}>
                             <FaTag className="icon" /> Quản lý voucher

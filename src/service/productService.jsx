@@ -45,3 +45,37 @@ export const searchProducts = async (name, categoryId) => {
   }
 }; 
 
+
+export const getByYear = async (year) => {
+  try {
+    const res = await axios.get(`http://localhost:8080/products/getByYear/${year}`);
+    return res.data.result;
+  } catch (error) {
+    console.error("Lỗi search sản phẩm:", error);
+    return [];
+  }
+}; 
+
+
+export const getBestSellerProduct = async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/products/best-selling`);
+    return res.data.result;
+  } catch (error) {
+    console.error("Lỗi search sản phẩm:", error);
+    return [];
+  }
+}; 
+
+// API lấy danh sách sản phẩm có khuyến mãi
+export const getDiscountedProducts = async () => {
+  try {
+    const res = await axios.get("http://localhost:8080/products/discount");
+    return res.data.result;
+  } catch (error) {
+    console.error("Lỗi khi lấy sản phẩm giảm giá:", error);
+    return [];
+  }
+};
+
+

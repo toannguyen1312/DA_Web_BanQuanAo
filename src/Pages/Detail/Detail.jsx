@@ -41,7 +41,6 @@ function Detail() {
     const wishList = useSelector(state => state.fetchWishListSlice.SelectedWishList);
     const selectedProduct = useSelector((state) => state.selectProduct.selectedProduct)
     const token = useSelector(state =>state.auth.token)
-
     // size
     const handleSizeChange = (event) => {
         setSelectedSize(event.target.value);
@@ -281,6 +280,29 @@ const starRatings = [5, 4, 3, 2, 1].map((stars) => {
         <span className="text-muted ms-3">{percentage}%</span>
     </div>
     );
+
+
+    //  const filterProducts = () => {
+    //     const topRatedProducts = allProducts.filter((product) => product.category === cat);
+    //     return renderProductCards(topRatedProducts);
+    // };
+    const renderProductCards = (filteredProducts) => {
+        return filteredProducts.map((product) => (
+            <div className="item" key={product.id}>
+                {/* Rest of the ProductCard component code */}
+                <ProductCard
+                    id={product.id}
+                    imgBackSrc={`assets/images/${product.pictures[0]}`}
+                    imgFrontSrc={`assets/images/${product.pictures[1]}`}
+                    title={product.name}
+                    price={product.salePrice}
+                    actualPrice={product.price}
+                    rating={product.rating}
+                    onClick={() => { refreshPage() }}
+                />
+            </div>
+        ));
+    };
 
 
     return (
@@ -541,7 +563,6 @@ const starRatings = [5, 4, 3, 2, 1].map((stars) => {
                                                 </td>
                                                 </tr>
 
-
                                                 <tr>
                                                     <td>Giá</td>
                                                     <td>{selectProduct?.price.toLocaleString('vi-VN')} ₫</td>
@@ -589,8 +610,7 @@ const starRatings = [5, 4, 3, 2, 1].map((stars) => {
                                                 </div>
                                             </Col>
                                         </Row>
-                                        <Row className="mt-7">
-
+                                        <div>
                                             {reviews.map(
                                                 (item, i) => (
                                                       <ReviewItem
@@ -603,13 +623,13 @@ const starRatings = [5, 4, 3, 2, 1].map((stars) => {
                                                     />
                                                 )
                                             )}
-                                        </Row>
+                                        </div>
                                     </TabPane>
                                 </TabContent>
                             </Col>
                         </Row>
                     </Container>
-                    {/* <section>
+                    <section>
                         <Container>
                             <div className="row justify-content-center text-center">
                                 <div className="col-lg-8 col-md-10">
@@ -636,12 +656,12 @@ const starRatings = [5, 4, 3, 2, 1].map((stars) => {
                                         }}
                                         navText={["<span class='las la-arrow-left'><span></span></span>","<span class='las la-arrow-right'><span></span></span>"]}
                                     >
-                                        {filterProducts()}
+                                        {/* {filterProducts()} */}
                                     </OwlCarousel>
                                 </Col>
                             </Row>
                         </Container>
-                    </section> */}
+                    </section>
                 </div>
             </div>
         </div>

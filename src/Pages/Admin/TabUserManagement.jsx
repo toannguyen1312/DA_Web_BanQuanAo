@@ -6,6 +6,7 @@ import ReactPaginate from 'react-paginate';
 import "../../assets/css/Admin/TabUserManagement.css";
 import { updateUser, deleteUser } from '../../service/admin';
 import { useSelector } from 'react-redux';
+import { getAllUser } from '../../service/admin';
 
 const initialUsers = [
   { id: 1, name: 'John Doe', email: 'john.doe@example.com', phone: '123456789', role: 'Quản trị viên', status: 'Hoạt động' },
@@ -45,15 +46,17 @@ function TabUserManagement({accountUser}) {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
 
-  useEffect(() => {
-    const results = users.filter(user =>
-      user.username?.toLowerCase().includes(search.toLowerCase()) ||
-      user.email?.toLowerCase().includes(search.toLowerCase()) ||
-      user.phone?.includes(search)
-    );
-    setFilteredUsers(results);
-  }, [search, users]);
-
+useEffect(() => {
+  const fetchUsers = async () => {
+    const data = await getAllUser(token);
+    console.log("data:1 ", data)
+    if (data) {
+      setUsers(data);         
+      setFilteredUsers(data);
+    }
+  };
+  fetchUsers();
+}, [token]);
   const offset = currentPage * itemsPerPage;
   const paginatedUsers = filteredUsers.slice(offset, offset + itemsPerPage);
   console.log("accountUser: ", paginatedUsers)

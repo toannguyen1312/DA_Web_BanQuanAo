@@ -81,41 +81,6 @@
     margin-right: 8px;
 }
 
-.table {
-  border-radius: 12px;
-  overflow: hidden; /* Ensures rounded corners clip content */
-  margin-top: 16px;
-  width: 100%;
-  table-layout: auto; /* Let table determine column widths */
-}
-
-.table th, .table td {
-  vertical-align: middle !important;
-  text-align: center;
-  word-break: break-word; /* Break long words */
-  padding: 12px 8px; /* Adjust padding as needed */
-}
-
-.table th {
-  background: #f7fafc;
-  color: #2d3748;
-  font-weight: 600;
-  border-bottom: 2px solid #e2e8f0; /* Add a stronger line under headers */
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-  background: #f8f9fa; /* Light gray for odd rows */
-}
-
-.table tbody tr:hover {
-    background-color: #ebf8ff; /* Light blue on hover */
-}
-
-.table img {
-    border-radius: 8px; /* Rounded corners for images */
-}
-
-
 /* Pagination styles (assuming react-paginate) */
 .pagination {
     display: flex;

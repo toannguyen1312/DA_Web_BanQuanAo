@@ -62,6 +62,10 @@
   transform: scale(1);
 }
 
+.nav-item{
+  font-size: 15px;
+}
+
 .nav-item:hover{
   color: #dc460b;
 }

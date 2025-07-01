@@ -4,12 +4,13 @@ import { useTranslation } from "react-i18next";
 import "../../assets/css/bootstrap.min.css";
 import.meta.glob('../../assets/css/*.css');
 import "../../assets/css/header/HeaderNavBar.css";
+import axios from 'axios'; 
 
 export default function HeaderTop() {
   const { t, i18n } = useTranslation();
 
   const languages = [
-    { name: "Vietnamese", value: "vn" },
+    { name: "Vietnamese", value: "vi" },
     { name: "English", value: "en" },
   ];
 
@@ -23,10 +24,22 @@ export default function HeaderTop() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [activeIcon, setActiveIcon] = useState(null);
 
+
   function handleLanguageChange(language) {
-    i18n.changeLanguage(language); // change app language
-    setDropdownOpen(false);
-  }
+  i18n.changeLanguage(language); // đổi ngôn ngữ giao diện React
+  setDropdownOpen(false);
+  localStorage.setItem("lang", language);
+
+  // Gửi yêu cầu đến backend để test i18n
+  axios.get(`http://localhost:8080/test/api/test-i18n?lang=${language}`)
+    .then(res => {
+      console.log("Server response:", res.data); // bạn có thể hiển thị ra giao diện
+      // alert("Backend says: " + res.data);
+    })
+    .catch(err => {
+      console.error("Lỗi gọi API i18n từ backend:", err);
+    });
+}
 
   return (
     <div className="header-top bg-dark py-1">

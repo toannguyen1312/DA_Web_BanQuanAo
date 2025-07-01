@@ -2,6 +2,7 @@ import React from "react";
 import BannerSliderIndex from "../components/Hero Banner/BannerSliderIndex"
 import FeatureIndex from "../components/Feature/FeatureIndex"
 import ProductIndex from "../components/ProductTrenning/ProductIndex"
+import BestSellingProduct from "../components/BestSellingProduct/BestSellingProduct";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {fetchWishList} from "../store/reducer/selectedWishList"
@@ -9,10 +10,12 @@ import {fetchCartItem} from "../store/reducer/selectedCartItem"
 import { jwtDecode } from "jwt-decode"; 
 import {  getUser } from "../service/productService"
 import { getCart, createCart } from "../service/cartService";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
 
     const dispatch = useDispatch()
+    const { t } = useTranslation();
 
 
      const token = useSelector(state =>state.auth.token)
@@ -31,23 +34,23 @@ export default function Home() {
     const feature = [
       {
         icon: "las la-truck ic-2x text-primary",
-        title: "Miễn phí vận chuyển",
-        description: "Miễn phí giao hàng toàn quốc",
+        title: t("feature_free_shipping_title"),
+        description: t("feature_free_shipping_description"),
       },
       {
         icon: "las la-hand-holding-usd ic-2x text-primary",
-        title: "Hoàn tiền",
-        description: "Hoàn tiền dễ dàng trong 7 ngày",
+        title: t("feature_refund_title"),
+        description: t("feature_refund_description"),
       },
       {
         icon: "las la-lock ic-2x text-primary",
-        title: "Thanh toán an toàn",
-        description: "Bảo mật thanh toán tuyệt đối",
+        title: t("feature_secure_payment_title"),
+        description: t("feature_secure_payment_description"),
       },
       {
         icon: "las la-headset ic-2x text-primary",
-        title: "Hỗ trợ 24/7",
-        description: "Hỗ trợ khách hàng 24/7, kể cả ngày lễ",
+        title: t("feature_support_title"),
+        description: t("feature_support_description"),
       },
     ];
 
@@ -79,10 +82,7 @@ export default function Home() {
         }
       fetchData()
     }, [])
-
-
    
-
      useEffect(() => {
             window.scrollTo(0, 0); // ✅ Thêm cái này
         }, []);
@@ -93,6 +93,8 @@ export default function Home() {
           <div className="page-content">
             <FeatureIndex feature={feature}/>
             <ProductIndex/>
+            <hr/>
+            <BestSellingProduct/>
           </div>
         </div>
       );
